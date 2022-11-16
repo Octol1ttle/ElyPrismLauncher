@@ -31,6 +31,9 @@ public:
     {
         return false;
     }
+	
+	static QString m_injectorPath;
+	static bool isMSA;
 private:
     std::unique_ptr<UseLock> lock;
     MinecraftAccountPtr m_account;
