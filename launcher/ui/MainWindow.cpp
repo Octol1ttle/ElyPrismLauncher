@@ -39,6 +39,7 @@
 
 #include "Application.h"
 #include "BuildConfig.h"
+#include "FileSystem.h"
 
 #include "MainWindow.h"
 
@@ -49,7 +50,7 @@
 
 #include <QKeyEvent>
 #include <QAction>
-
+#include <QActionGroup>
 #include <QApplication>
 #include <QButtonGroup>
 #include <QHBoxLayout>
@@ -71,6 +72,7 @@
 
 #include <BaseInstance.h>
 #include <InstanceList.h>
+#include <minecraft/MinecraftInstance.h>
 #include <MMCZip.h>
 #include <icons/IconList.h>
 #include <java/JavaUtils.h>
@@ -106,6 +108,13 @@
 #include "ui/dialogs/UpdateDialog.h"
 #include "ui/dialogs/EditAccountDialog.h"
 #include "ui/dialogs/ExportInstanceDialog.h"
+#include "ui/dialogs/ImportResourcePackDialog.h"
+#include "ui/themes/ITheme.h"
+
+#include <minecraft/mod/ResourcePackFolderModel.h>
+#include <minecraft/mod/tasks/LocalResourcePackParseTask.h>
+#include <minecraft/mod/TexturePackFolderModel.h>
+#include <minecraft/mod/tasks/LocalTexturePackParseTask.h>
 
 #include "UpdateController.h"
 #include "KonamiCode.h"
@@ -238,6 +247,7 @@ public:
     TranslatedAction actionLaunchInstanceOffline;
     TranslatedAction actionLaunchInstanceDemo;
     TranslatedAction actionExportInstance;
+    TranslatedAction actionCreateInstanceShortcut;
     QVector<TranslatedAction *> all_actions;
 
     LabeledToolButton *renameButton = nullptr;
@@ -268,6 +278,8 @@ public:
 
     TranslatedAction actionLockToolbars;
 
+    TranslatedAction actionChangeTheme;
+
     QVector<TranslatedToolButton *> all_toolbuttons;
 
     QWidget *centralWidget = nullptr;
@@ -294,7 +306,6 @@ public:
         actionAddInstance = TranslatedAction(MainWindow);
         actionAddInstance->setObjectName(QStringLiteral("actionAddInstance"));
         actionAddInstance->setIcon(APPLICATION->getThemedIcon("new"));
-        actionAddInstance->setIconVisibleInMenu(false);
         actionAddInstance.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Add Instanc&e..."));
         actionAddInstance.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Add a new instance."));
         actionAddInstance->setShortcut(QKeySequence::New);
@@ -440,6 +451,11 @@ public:
         actionLockToolbars.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Lock Toolbars"));
         actionLockToolbars->setCheckable(true);
         all_actions.append(&actionLockToolbars);
+
+        actionChangeTheme = TranslatedAction(MainWindow);
+        actionChangeTheme->setObjectName(QStringLiteral("actionChangeTheme"));
+        actionChangeTheme.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Themes"));
+        all_actions.append(&actionChangeTheme);
     }
 
     void createMainToolbar(QMainWindow *MainWindow)
@@ -525,8 +541,6 @@ public:
         fileMenu->setSeparatorsCollapsible(false);
         fileMenu->addAction(actionAddInstance);
         fileMenu->addAction(actionLaunchInstance);
-        fileMenu->addAction(actionLaunchInstanceOffline);
-        fileMenu->addAction(actionLaunchInstanceDemo);
         fileMenu->addAction(actionKillInstance);
         fileMenu->addAction(actionCloseWindow);
         fileMenu->addSeparator();
@@ -544,6 +558,8 @@ public:
 
         viewMenu = menuBar->addMenu(tr("&View"));
         viewMenu->setSeparatorsCollapsible(false);
+        viewMenu->addAction(actionChangeTheme);
+        viewMenu->addSeparator();
         viewMenu->addAction(actionCAT);
         viewMenu->addSeparator();
 
@@ -574,10 +590,11 @@ public:
             helpMenu->addAction(actionDISCORD);
         if (!BuildConfig.SUBREDDIT_URL.isEmpty())
             helpMenu->addAction(actionREDDIT);
-        helpMenu->addSeparator();
         if(BuildConfig.UPDATER_ENABLED)
+        {
+            helpMenu->addSeparator();
             helpMenu->addAction(actionCheckUpdate);
-
+        }
         MainWindow->setMenuBar(menuBar);
     }
 
@@ -595,6 +612,7 @@ public:
         actionOpenWiki->setObjectName(QStringLiteral("actionOpenWiki"));
         actionOpenWiki.setTextId(QT_TRANSLATE_NOOP("MainWindow", "%1 &Help"));
         actionOpenWiki.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Open the %1 wiki"));
+        actionOpenWiki->setIcon(APPLICATION->getThemedIcon("help"));
         connect(actionOpenWiki, &QAction::triggered, MainWindow, &MainWindow::on_actionOpenWiki_triggered);
         all_actions.append(&actionOpenWiki);
 
@@ -602,6 +620,7 @@ public:
         actionNewsMenuBar->setObjectName(QStringLiteral("actionNewsMenuBar"));
         actionNewsMenuBar.setTextId(QT_TRANSLATE_NOOP("MainWindow", "%1 &News"));
         actionNewsMenuBar.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Open the %1 wiki"));
+        actionNewsMenuBar->setIcon(APPLICATION->getThemedIcon("news"));
         connect(actionNewsMenuBar, &QAction::triggered, MainWindow, &MainWindow::on_actionMoreNews_triggered);
         all_actions.append(&actionNewsMenuBar);
     }
@@ -616,6 +635,7 @@ public:
         actionExportInstance->setEnabled(enabled);
         actionDeleteInstance->setEnabled(enabled);
         actionCopyInstance->setEnabled(enabled);
+        actionCreateInstanceShortcut->setEnabled(enabled);
     }
 
     void createStatusBar(QMainWindow *MainWindow)
@@ -754,6 +774,15 @@ public:
         actionCopyInstance->setIcon(APPLICATION->getThemedIcon("copy"));
         all_actions.append(&actionCopyInstance);
 
+        actionCreateInstanceShortcut = TranslatedAction(MainWindow);
+        actionCreateInstanceShortcut->setObjectName(QStringLiteral("actionCreateInstanceShortcut"));
+        actionCreateInstanceShortcut.setTextId(QT_TRANSLATE_NOOP("MainWindow", "Create Shortcut"));
+        actionCreateInstanceShortcut.setTooltipId(QT_TRANSLATE_NOOP("MainWindow", "Creates a shortcut on your desktop to launch the selected instance."));
+        //actionCreateInstanceShortcut->setShortcut(QKeySequence(tr("Ctrl+D")));     // TODO
+        // FIXME missing on Legacy, Flat and Flat (White)
+        actionCreateInstanceShortcut->setIcon(APPLICATION->getThemedIcon("shortcut"));
+        all_actions.append(&actionCreateInstanceShortcut);
+
         setInstanceActionsEnabled(false);
     }
 
@@ -791,6 +820,8 @@ public:
         instanceToolBar->addAction(actionExportInstance);
         instanceToolBar->addAction(actionCopyInstance);
         instanceToolBar->addAction(actionDeleteInstance);
+
+        instanceToolBar->addAction(actionCreateInstanceShortcut); // TODO find better position for this
 
         QLayout * lay = instanceToolBar->layout();
         for(int i = 0; i < lay->count(); i++)
@@ -841,6 +872,7 @@ public:
         createInstanceToolbar(MainWindow);
 
         MainWindow->updateToolsMenu();
+        MainWindow->updateThemeMenu();
 
         retranslateUi(MainWindow);
 
@@ -1288,6 +1320,38 @@ void MainWindow::updateToolsMenu()
         }
     }
     ui->actionLaunchInstance->setMenu(launchMenu);
+}
+
+void MainWindow::updateThemeMenu()
+{
+    QMenu *themeMenu = ui->actionChangeTheme->menu();
+
+    if (themeMenu) {
+        themeMenu->clear();
+    } else {
+        themeMenu = new QMenu(this);
+    }
+
+    auto themes = APPLICATION->getValidApplicationThemes();
+
+    QActionGroup* themesGroup = new QActionGroup( this );
+
+    for (auto* theme : themes) {
+        QAction * themeAction = themeMenu->addAction(theme->name());
+
+        themeAction->setCheckable(true);
+        if (APPLICATION->settings()->get("ApplicationTheme").toString() == theme->id()) {
+            themeAction->setChecked(true);
+        }
+        themeAction->setActionGroup(themesGroup);
+
+        connect(themeAction, &QAction::triggered, [theme]() {
+            APPLICATION->setApplicationTheme(theme->id(),false);
+            APPLICATION->settings()->set("ApplicationTheme", theme->id());
+        });
+    }
+
+    ui->actionChangeTheme->setMenu(themeMenu);
 }
 
 void MainWindow::repopulateAccountsMenu()
@@ -1751,17 +1815,41 @@ void MainWindow::on_actionAddInstance_triggered()
 
 void MainWindow::droppedURLs(QList<QUrl> urls)
 {
-    for(auto & url:urls)
-    {
-        if(url.isLocalFile())
-        {
-            addInstance(url.toLocalFile());
-        }
-        else
-        {
+    // NOTE: This loop only processes one dropped file!
+    for (auto& url : urls) {
+        // The isLocalFile() check below doesn't work as intended without an explicit scheme.
+        if (url.scheme().isEmpty())
+            url.setScheme("file");
+
+        if (!url.isLocalFile()) {  // probably instance/modpack
             addInstance(url.toString());
+            break;
         }
-        // Only process one dropped file...
+
+        auto localFileName = url.toLocalFile();
+        QFileInfo localFileInfo(localFileName);
+
+        bool isResourcePack = ResourcePackUtils::validate(localFileInfo);
+        bool isTexturePack = TexturePackUtils::validate(localFileInfo);
+
+        if (!isResourcePack && !isTexturePack) {  // probably instance/modpack
+            addInstance(localFileName);
+            break;
+        }
+
+        ImportResourcePackDialog dlg(this);
+
+        if (dlg.exec() != QDialog::Accepted)
+            break;
+
+        qDebug() << "Adding resource/texture pack" << localFileName << "to" << dlg.selectedInstanceKey;
+
+        auto inst = APPLICATION->instances()->getInstanceById(dlg.selectedInstanceKey);
+        auto minecraftInst = std::dynamic_pointer_cast<MinecraftInstance>(inst);
+        if (isResourcePack)
+            minecraftInst->resourcePackList()->installResource(localFileName);
+        else if (isTexturePack)
+            minecraftInst->texturePackList()->installResource(localFileName);
         break;
     }
 }
@@ -1920,6 +2008,7 @@ void MainWindow::globalSettingsClosed()
     proxymodel->sort(0);
     updateMainToolBar();
     updateToolsMenu();
+    updateThemeMenu();
     updateStatusCenter();
     // This needs to be done to prevent UI elements disappearing in the event the config is changed
     // but Prism Launcher exits abnormally, causing the window state to never be saved:
@@ -1999,27 +2088,25 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionDeleteInstance_triggered()
 {
-    if (!m_selectedInstance)
-    {
+    if (!m_selectedInstance) {
         return;
     }
 
     auto id = m_selectedInstance->id();
-    if (APPLICATION->instances()->trashInstance(id)) {
-        ui->actionUndoTrashInstance->setEnabled(APPLICATION->instances()->trashedSomething());
-        return;
-    }
-    
-    auto response = CustomMessageBox::selectable(
-        this,
-        tr("CAREFUL!"),
-        tr("About to delete: %1\nThis is permanent and will completely delete the instance.\n\nAre you sure?").arg(m_selectedInstance->name()),
-        QMessageBox::Warning,
-        QMessageBox::Yes | QMessageBox::No,
-        QMessageBox::No
-    )->exec();
-    if (response == QMessageBox::Yes)
-    {
+
+    auto response =
+        CustomMessageBox::selectable(this, tr("CAREFUL!"),
+                                     tr("About to delete: %1\nThis may be permanent and will completely delete the instance.\n\nAre you sure?")
+                                         .arg(m_selectedInstance->name()),
+                                     QMessageBox::Warning, QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
+            ->exec();
+
+    if (response == QMessageBox::Yes) {
+        if (APPLICATION->instances()->trashInstance(id)) {
+            ui->actionUndoTrashInstance->setEnabled(APPLICATION->instances()->trashedSomething());
+            return;
+        }
+
         APPLICATION->instances()->deleteInstance(id);
     }
 }
@@ -2114,6 +2201,130 @@ void MainWindow::on_actionKillInstance_triggered()
     if(m_selectedInstance && m_selectedInstance->isRunning())
     {
         APPLICATION->kill(m_selectedInstance);
+    }
+}
+
+void MainWindow::on_actionCreateInstanceShortcut_triggered()
+{
+    if (m_selectedInstance)
+    {
+        auto desktopPath = FS::getDesktopDir();
+        if (desktopPath.isEmpty()) {
+            // TODO come up with an alternative solution (open "save file" dialog)
+            QMessageBox::critical(this, tr("Create instance shortcut"), tr("Couldn't find desktop?!"));
+            return;
+        }
+
+#if defined(Q_OS_MACOS)
+        QString appPath = QApplication::applicationFilePath();
+        if (appPath.startsWith("/private/var/")) {
+            QMessageBox::critical(this, tr("Create instance shortcut"), tr("The launcher is in the folder it was extracted from, therefore it cannot create shortcuts."));
+            return;
+        }
+
+        if (FS::createShortcut(FS::PathCombine(desktopPath, m_selectedInstance->name()),
+                           appPath, { "--launch", m_selectedInstance->id() },
+                           m_selectedInstance->name(), "")) {
+            QMessageBox::information(this, tr("Create instance shortcut"), tr("Created a shortcut to this instance on your desktop!"));
+        }
+        else
+        {
+            QMessageBox::critical(this, tr("Create instance shortcut"), tr("Failed to create instance shortcut!"));
+        }
+#elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD) || defined(Q_OS_OPENBSD)
+        QString appPath = QApplication::applicationFilePath();
+        if (appPath.startsWith("/tmp/.mount_")) {
+            // AppImage!
+            appPath = QProcessEnvironment::systemEnvironment().value(QStringLiteral("APPIMAGE"));
+            if (appPath.isEmpty())
+            {
+                QMessageBox::critical(this, tr("Create instance shortcut"), tr("Launcher is running as misconfigured AppImage? ($APPIMAGE environment variable is missing)"));
+            }
+            else if (appPath.endsWith("/"))
+            {
+                appPath.chop(1);
+            }
+        }
+
+        auto icon = APPLICATION->icons()->icon(m_selectedInstance->iconKey());
+        if (icon == nullptr)
+        {
+            icon = APPLICATION->icons()->icon("grass");
+        }
+
+        QString iconPath = FS::PathCombine(m_selectedInstance->instanceRoot(), "icon.png");
+        
+        QFile iconFile(iconPath);
+        if (!iconFile.open(QFile::WriteOnly))
+        {
+            QMessageBox::critical(this, tr("Create instance shortcut"), tr("Failed to create icon for shortcut."));
+            return;
+        }
+        bool success = icon->icon().pixmap(64, 64).save(&iconFile, "PNG");
+        iconFile.close();
+        
+        if (!success)
+        {
+            iconFile.remove();
+            QMessageBox::critical(this, tr("Create instance shortcut"), tr("Failed to create icon for shortcut."));
+            return;
+        }
+        
+        if (FS::createShortcut(FS::PathCombine(desktopPath, m_selectedInstance->name()),
+                           appPath, { "--launch", m_selectedInstance->id() },
+                           m_selectedInstance->name(), iconPath)) {
+            QMessageBox::information(this, tr("Create instance shortcut"), tr("Created a shortcut to this instance on your desktop!"));
+        }
+        else
+        {
+            iconFile.remove();
+            QMessageBox::critical(this, tr("Create instance shortcut"), tr("Failed to create instance shortcut!"));
+        }
+#elif defined(Q_OS_WIN)
+        auto icon = APPLICATION->icons()->icon(m_selectedInstance->iconKey());
+        if (icon == nullptr)
+        {
+            icon = APPLICATION->icons()->icon("grass");
+        }
+
+        QString iconPath = FS::PathCombine(m_selectedInstance->instanceRoot(), "icon.ico");
+        
+        // part of fix for weird bug involving the window icon being replaced
+        // dunno why it happens, but this 2-line fix seems to be enough, so w/e
+        auto appIcon = APPLICATION->getThemedIcon("logo");
+
+        QFile iconFile(iconPath);
+        if (!iconFile.open(QFile::WriteOnly))
+        {
+            QMessageBox::critical(this, tr("Create instance shortcut"), tr("Failed to create icon for shortcut."));
+            return;
+        }
+        bool success = icon->icon().pixmap(64, 64).save(&iconFile, "ICO");
+        iconFile.close();
+
+        // restore original window icon
+        QGuiApplication::setWindowIcon(appIcon);
+
+        if (!success)
+        {
+            iconFile.remove();
+            QMessageBox::critical(this, tr("Create instance shortcut"), tr("Failed to create icon for shortcut."));
+            return;
+        }
+        
+        if (FS::createShortcut(FS::PathCombine(desktopPath, m_selectedInstance->name()),
+                           QApplication::applicationFilePath(), { "--launch", m_selectedInstance->id() },
+                           m_selectedInstance->name(), iconPath)) {
+            QMessageBox::information(this, tr("Create instance shortcut"), tr("Created a shortcut to this instance on your desktop!"));
+        }
+        else
+        {
+            iconFile.remove();
+            QMessageBox::critical(this, tr("Create instance shortcut"), tr("Failed to create instance shortcut!"));
+        }
+#else
+        QMessageBox::critical(this, tr("Create instance shortcut"), tr("Not supported on your platform!"));
+#endif
     }
 }
 

@@ -21,26 +21,15 @@ This is a **fork** of the MultiMC Launcher and is not endorsed by MultiMC.
     <img src="https://repology.org/badge/vertical-allrepos/prismlauncher.svg" alt="Packaging status" align="right">
 </a>
 
-- All downloads and instructions for Prism Launcher can be found on our [Website](https://prismlauncher.org/download/).
-- Last build status can be found in the [GitHub Actions](https://github.com/PrismLauncher/PrismLauncher/actions).
+- https://github.com/l1ttleO/PrismLauncher-elyby/releases/latest
 
 ### Development Builds
 
-There are development builds available [here](https://github.com/PrismLauncher/PrismLauncher/actions). These have debug information in the binaries, so their file sizes are relatively larger.
+There are development builds available [here](https://github.com/l1ttleO/PrismLauncher-elyby/actions). These have debug information in the binaries, so their file sizes are relatively larger.
 
 Prebuilt Development builds are provided for **Linux**, **Windows** and **macOS**.
 
-For **Arch**, **Debian**, **Fedora**, **OpenSUSE (Tumbleweed)** and **Gentoo**, respectively, you can use these packages for the latest development versions:
-
-[![prismlauncher-git](https://img.shields.io/badge/aur-prismlauncher--git-1793D1?style=flat-square&logo=archlinux&logoColor=white)](https://aur.archlinux.org/packages/prismlauncher-qt5-git/) [![prismlauncher-git](https://img.shields.io/badge/aur-prismlauncher--qt5--git-1793D1?style=flat-square&logo=archlinux&logoColor=white)](https://aur.archlinux.org/packages/prismlauncher-git/) [![prismlauncher-git](https://img.shields.io/badge/mpr-prismlauncher--git-A80030?style=flat-square&logo=debian&logoColor=white)](https://mpr.makedeb.org/packages/prismlauncher-git) [![prismlauncher-nightly](https://img.shields.io/badge/copr-prismlauncher--nightly-51A2DA?style=flat-square&logo=fedora&logoColor=white)](https://copr.fedorainfracloud.org/coprs/g3tchoo/prismlauncher/) [![prismlauncher-nightly](https://img.shields.io/badge/OBS-prismlauncher--nightly-3AB6A9?style=flat-square&logo=opensuse&logoColor=white)](https://build.opensuse.org/project/show/home:getchoo) [![prismlauncher-9999](https://img.shields.io/badge/gentoo-prismlauncher--9999-4D4270?style=flat-square&logo=gentoo&logoColor=white)](https://packages.gentoo.org/packages/games-action/prismlauncher)
-
-## Building
-
 If you want to build Prism Launcher yourself, check the [Build Instructions](https://prismlauncher.org/wiki/development/build-instructions/).
-
-## Translations
-
-The translation effort for PrismLauncher is hosted on [Weblate](https://hosted.weblate.org/projects/prismlauncher/launcher/) and information about translating Prism Launcher is available at <https://github.com/PrismLauncher/Translations>
 
 ## Forking/Redistributing/Custom builds policy
 

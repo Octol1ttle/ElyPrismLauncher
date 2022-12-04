@@ -97,6 +97,7 @@ set(PATHMATCHER_SOURCES
     pathmatcher/IPathMatcher.h
     pathmatcher/MultiMatcher.h
     pathmatcher/RegexpMatcher.h
+    pathmatcher/SimplePrefixMatcher.h
 )
 
 set(NET_SOURCES
@@ -575,6 +576,8 @@ SET(LAUNCHER_SOURCES
     # Application base
     Application.h
     Application.cpp
+    DataMigrationTask.h
+    DataMigrationTask.cpp
     UpdateController.cpp
     UpdateController.h
     ApplicationMessage.h
@@ -598,6 +601,8 @@ SET(LAUNCHER_SOURCES
     resources/pe_light/pe_light.qrc
     resources/pe_colored/pe_colored.qrc
     resources/pe_blue/pe_blue.qrc
+    resources/breeze_dark/breeze_dark.qrc
+    resources/breeze_light/breeze_light.qrc
     resources/OSX/OSX.qrc
     resources/iOS/iOS.qrc
     resources/flat/flat.qrc
@@ -789,6 +794,8 @@ SET(LAUNCHER_SOURCES
     ui/dialogs/ExportInstanceDialog.h
     ui/dialogs/IconPickerDialog.cpp
     ui/dialogs/IconPickerDialog.h
+    ui/dialogs/ImportResourcePackDialog.cpp
+    ui/dialogs/ImportResourcePackDialog.h
     ui/dialogs/LoginDialog.cpp
     ui/dialogs/LoginDialog.h
     ui/dialogs/MSALoginDialog.cpp
@@ -936,6 +943,7 @@ qt_wrap_ui(LAUNCHER_UI
     ui/dialogs/SkinUploadDialog.ui
     ui/dialogs/ExportInstanceDialog.ui
     ui/dialogs/IconPickerDialog.ui
+    ui/dialogs/ImportResourcePackDialog.ui
     ui/dialogs/MSALoginDialog.ui
     ui/dialogs/OfflineLoginDialog.ui
     ui/dialogs/AboutDialog.ui
@@ -954,6 +962,8 @@ qt_add_resources(LAUNCHER_RESOURCES
     resources/pe_light/pe_light.qrc
     resources/pe_colored/pe_colored.qrc
     resources/pe_blue/pe_blue.qrc
+    resources/breeze_dark/breeze_dark.qrc
+    resources/breeze_light/breeze_light.qrc
     resources/OSX/OSX.qrc
     resources/iOS/iOS.qrc
     resources/flat/flat.qrc
