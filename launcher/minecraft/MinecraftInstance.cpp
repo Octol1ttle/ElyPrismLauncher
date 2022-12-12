@@ -382,8 +382,7 @@ QStringList MinecraftInstance::extraArguments()
         list.append("-javaagent:"+jar[0]+(agent->argument().isEmpty() ? "" : "="+agent->argument()));
     }
 	if (!ClaimAccount::isMSA) {
-		list.append("-javaagent:"+ClaimAccount::m_injectorPath+"=ely.by");
-		list.append("-Dauthlibinjector.disableHttpd");
+		list.append("-javaagent:"+ClaimAccount::m_injectorPath+"=https://account.ely.by/api/authlib-injector");
 		list.append("-Dauthlibinjector.noShowServerName");
 	}
     return list;
