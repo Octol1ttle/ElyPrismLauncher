@@ -1461,7 +1461,7 @@ void MainWindow::changeActiveAccount()
 {
     QAction *sAction = (QAction *)sender();
 
-    // Profile's associated Mojang username
+    // Profile's associated Ely.by username
     if (sAction->data().type() != QVariant::Type::Int)
         return;
 
@@ -1766,7 +1766,7 @@ void MainWindow::finalizeInstance(InstancePtr inst)
             this,
             tr("Error"),
             tr("The launcher cannot download Minecraft or update instances unless you have at least "
-                "one account added.\nPlease add your Mojang or Minecraft account."),
+                "one account added.\nPlease add your Ely.by or Minecraft account."),
             QMessageBox::Warning
         )->show();
     }
