@@ -1,5 +1,6 @@
 #include "ClaimAccount.h"
 #include <launch/LaunchTask.h>
+#include "net/NetJob.h"
 
 #include "Application.h"
 #include "minecraft/auth/AccountList.h"
