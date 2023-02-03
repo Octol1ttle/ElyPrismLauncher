@@ -340,7 +340,7 @@ void LaunchController::launchInstance()
         online_mode = "online";
 
         // Prepend Server Status
-        QStringList servers = {"authserver.ely.by", "account.ely.by", "skinsystem.ely.by", "api.mojang.com"};
+        QStringList servers = {"authserver.ely.by", "session.minecraft.net", "skinsystem.ely.by", "api.mojang.com"};
         QString resolved_servers = "";
         QHostInfo host_info;
 
