@@ -13,10 +13,6 @@
 
 ## Installation
 
-<a href="https://repology.org/project/prismlauncher/versions">
-    <img src="https://repology.org/badge/vertical-allrepos/prismlauncher.svg" alt="Packaging status" align="right">
-</a>
-
 - All downloads can be found [here](https://github.com/Octol1ttle/PrismLauncher-elyby/releases/latest).
 - Last build status can be found in the [GitHub Actions](https://github.com/Octol1ttle/PrismLauncher-elyby/actions).
 
