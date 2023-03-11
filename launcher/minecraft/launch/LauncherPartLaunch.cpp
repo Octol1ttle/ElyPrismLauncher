@@ -36,13 +36,16 @@
 #include "LauncherPartLaunch.h"
 
 #include <QStandardPaths>
+#include <QHostInfo>
 #include <QRegularExpression>
 
 #include "launch/LaunchTask.h"
 #include "minecraft/MinecraftInstance.h"
+#include <minecraft/auth/AccountList.h>
 #include "FileSystem.h"
 #include "Commandline.h"
 #include "Application.h"
+#include "net/NetJob.h"
 
 #ifdef Q_OS_LINUX
 #include "gamemode_client.h"
@@ -112,6 +115,20 @@ void LauncherPartLaunch::executeTask()
     QStringList args = minecraftInstance->javaArguments();
     QString allArgs = args.join(", ");
     emit logLine("Java Arguments:\n[" + m_parent->censorPrivateInfo(allArgs) + "]\n\n", MessageLevel::Launcher);
+
+    auto accounts = APPLICATION->accounts();
+    auto account = accounts->at(accounts->findAccountByProfileId(m_session->uuid));
+    if (!account->isMSA() && !QHostInfo::fromName("account.ely.by").addresses().empty()) {
+        auto entry = APPLICATION->metacache()->resolveEntry("general", "authlib-injector.jar");
+        entry->setStale(true);
+
+        auto netJob = new NetJob("Injector download", APPLICATION->network());
+        netJob->addNetAction(Net::Download::makeCached(QUrl("https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.1/authlib-injector-1.2.1.jar"), entry));
+        netJob->start();
+
+        args.append("-javaagent:" + entry->getFullPath() + "=https://account.ely.by/api/authlib-injector");
+        args.append("-Dauthlibinjector.noShowServerName");
+    }
 
     auto javaPath = FS::ResolveExecutable(instance->settings()->get("JavaPath").toString());
 

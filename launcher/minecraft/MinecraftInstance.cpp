@@ -385,10 +385,6 @@ QStringList MinecraftInstance::extraArguments()
         agent->library()->getApplicableFiles(runtimeContext(), jar, temp1, temp2, temp3, getLocalLibraryPath());
         list.append("-javaagent:"+jar[0]+(agent->argument().isEmpty() ? "" : "="+agent->argument()));
     }
-	if (!ClaimAccount::isMSA) {
-		list.append("-javaagent:"+ClaimAccount::m_injectorPath+"=https://account.ely.by/api/authlib-injector");
-		list.append("-Dauthlibinjector.noShowServerName");
-	}
     return list;
 }
 

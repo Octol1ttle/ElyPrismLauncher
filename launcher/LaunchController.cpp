@@ -43,6 +43,7 @@
 #include "ui/dialogs/ProfileSelectDialog.h"
 #include "ui/dialogs/ProgressDialog.h"
 #include "ui/dialogs/EditAccountDialog.h"
+#include "ui/dialogs/ProfileSetupDialog.h"
 
 #include <QLineEdit>
 #include <QInputDialog>
@@ -222,6 +223,20 @@ void LaunchController::login() {
                     // offline flavored game from here :3
                 }
                 if(m_accountToUse->ownsMinecraft()) {
+                    if(!m_accountToUse->hasProfile()) {
+                        // Now handle setting up a profile name here...
+                        ProfileSetupDialog dialog(m_accountToUse, m_parentWidget);
+                        if (dialog.exec() == QDialog::Accepted)
+                        {
+                            tryagain = true;
+                            continue;
+                        }
+                        else
+                        {
+                            emitFailed(tr("Received undetermined session status during login."));
+                            return;
+                        }
+                    }
                     // we own Minecraft, there is a profile, it's all ready to go!
                     launchInstance();
                     return;
@@ -348,7 +363,7 @@ void LaunchController::launchInstance()
         online_mode = "online";
 
         // Prepend Server Status
-        QStringList servers = {"authserver.ely.by", "session.minecraft.net", "skinsystem.ely.by", "api.mojang.com"};
+        QStringList servers = {"authserver.mojang.com", "session.minecraft.net", "textures.minecraft.net", "api.mojang.com"};
         QString resolved_servers = "";
         QHostInfo host_info;
 
