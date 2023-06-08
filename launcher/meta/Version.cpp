@@ -99,6 +99,11 @@ QString Meta::Version::localFilename() const
     return m_uid + '/' + m_version + ".json";
 }
 
+::Version Meta::Version::toComparableVersion() const
+{
+    return { const_cast<Meta::Version*>(this)->descriptor() };
+}
+
 void Meta::Version::setType(const QString &type)
 {
     m_type = type;
@@ -111,9 +116,9 @@ void Meta::Version::setTime(const qint64 time)
     emit timeChanged();
 }
 
-void Meta::Version::setRequires(const Meta::RequireSet &requires, const Meta::RequireSet &conflicts)
+void Meta::Version::setRequires(const Meta::RequireSet &reqs, const Meta::RequireSet &conflicts)
 {
-    m_requires = requires;
+    m_requires = reqs;
     m_conflicts = conflicts;
     emit requiresChanged();
 }

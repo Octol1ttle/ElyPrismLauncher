@@ -35,6 +35,9 @@ class QVBoxLayout;
 class QDialogButtonBox;
 class ResourceDownloadTask;
 class ResourceFolderModel;
+class ResourcePackFolderModel;
+class TexturePackFolderModel;
+class ShaderPackFolderModel;
 
 namespace ResourceDownload {
 
@@ -59,8 +62,8 @@ class ResourceDownloadDialog : public QDialog, public BasePageProvider {
     bool selectPage(QString pageId);
     ResourcePage* getSelectedPage();
 
-    void addResource(ModPlatform::IndexedPack&, ModPlatform::IndexedVersion&, bool is_indexed = false);
-    void removeResource(ModPlatform::IndexedPack&, ModPlatform::IndexedVersion&);
+    void addResource(ModPlatform::IndexedPack::Ptr, ModPlatform::IndexedVersion&);
+    void removeResource(const QString&);
 
     const QList<DownloadTaskPtr> getTasks();
     [[nodiscard]] const std::shared_ptr<ResourceFolderModel> getBaseModel() const { return m_base_model; }
@@ -76,6 +79,7 @@ class ResourceDownloadDialog : public QDialog, public BasePageProvider {
 
    protected:
     [[nodiscard]] virtual QString geometrySaveKey() const { return ""; }
+    void setButtonStatus();
 
    protected:
     const std::shared_ptr<ResourceFolderModel> m_base_model;
@@ -85,11 +89,7 @@ class ResourceDownloadDialog : public QDialog, public BasePageProvider {
 
     QDialogButtonBox m_buttons;
     QVBoxLayout m_vertical_layout;
-
-    QHash<QString, DownloadTaskPtr> m_selected;
 };
-
-
 
 class ModDownloadDialog final : public ResourceDownloadDialog {
     Q_OBJECT
@@ -101,6 +101,61 @@ class ModDownloadDialog final : public ResourceDownloadDialog {
     //: String that gets appended to the mod download dialog title ("Download " + resourcesString())
     [[nodiscard]] QString resourcesString() const override { return tr("mods"); }
     [[nodiscard]] QString geometrySaveKey() const override { return "ModDownloadGeometry"; }
+
+    QList<BasePage*> getPages() override;
+
+   private:
+    BaseInstance* m_instance;
+};
+
+class ResourcePackDownloadDialog final : public ResourceDownloadDialog {
+    Q_OBJECT
+
+   public:
+    explicit ResourcePackDownloadDialog(QWidget* parent,
+                                        const std::shared_ptr<ResourcePackFolderModel>& resource_packs,
+                                        BaseInstance* instance);
+    ~ResourcePackDownloadDialog() override = default;
+
+    //: String that gets appended to the resource pack download dialog title ("Download " + resourcesString())
+    [[nodiscard]] QString resourcesString() const override { return tr("resource packs"); }
+    [[nodiscard]] QString geometrySaveKey() const override { return "RPDownloadGeometry"; }
+
+    QList<BasePage*> getPages() override;
+
+   private:
+    BaseInstance* m_instance;
+};
+
+class TexturePackDownloadDialog final : public ResourceDownloadDialog {
+    Q_OBJECT
+
+   public:
+    explicit TexturePackDownloadDialog(QWidget* parent,
+                                       const std::shared_ptr<TexturePackFolderModel>& resource_packs,
+                                       BaseInstance* instance);
+    ~TexturePackDownloadDialog() override = default;
+
+    //: String that gets appended to the texture pack download dialog title ("Download " + resourcesString())
+    [[nodiscard]] QString resourcesString() const override { return tr("texture packs"); }
+    [[nodiscard]] QString geometrySaveKey() const override { return "TPDownloadGeometry"; }
+
+    QList<BasePage*> getPages() override;
+
+   private:
+    BaseInstance* m_instance;
+};
+
+class ShaderPackDownloadDialog final : public ResourceDownloadDialog {
+    Q_OBJECT
+
+   public:
+    explicit ShaderPackDownloadDialog(QWidget* parent, const std::shared_ptr<ShaderPackFolderModel>& shader_packs, BaseInstance* instance);
+    ~ShaderPackDownloadDialog() override = default;
+
+    //: String that gets appended to the shader pack download dialog title ("Download " + resourcesString())
+    [[nodiscard]] QString resourcesString() const override { return tr("shader packs"); }
+    [[nodiscard]] QString geometrySaveKey() const override { return "ShaderDownloadGeometry"; }
 
     QList<BasePage*> getPages() override;
 

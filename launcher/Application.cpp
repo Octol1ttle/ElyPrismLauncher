@@ -7,6 +7,8 @@
  *  Copyright (C) 2022 Sefa Eyeoglu <contact@scrumplex.net>
  *  Copyright (C) 2022 Lenny McLennington <lenny@sneed.church>
  *  Copyright (C) 2022 Tayou <tayou@gmx.net>
+ *  Copyright (C) 2023 TheKodeToad <TheKodeToad@proton.me>
+ *  Copyright (C) 2023 Rachel Powers <508861+Ryex@users.noreply.github.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -45,6 +47,7 @@
 #include "net/PasteUpload.h"
 #include "pathmatcher/MultiMatcher.h"
 #include "pathmatcher/SimplePrefixMatcher.h"
+#include "settings/INIFile.h"
 #include "ui/MainWindow.h"
 #include "ui/InstanceWindow.h"
 
@@ -77,7 +80,9 @@
 #include "ApplicationMessage.h"
 
 #include <iostream>
+#include <mutex>
 
+#include <QFileOpenEvent>
 #include <QAccessible>
 #include <QCommandLineParser>
 #include <QDir>
@@ -150,6 +155,9 @@ namespace {
 /** This is used so that we can output to the log file in addition to the CLI. */
 void appDebugOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    static std::mutex loggerMutex;
+    const std::lock_guard<std::mutex> lock(loggerMutex); // synchronized, QFile logFile is not thread-safe
+
     QString out = qFormatLogMessage(type, context, msg);
     out += QChar::LineFeed;
 
@@ -220,7 +228,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
     m_serverToJoin = parser.value("server");
     m_profileToUse = parser.value("profile");
     m_liveCheck = parser.isSet("alive");
-    
+
     m_instanceIdToShowWindowOf = parser.value("show");
 
     for (auto zip_path : parser.values("import")){
@@ -280,6 +288,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         if (QFile::exists(FS::PathCombine(m_rootPath, "portable.txt"))) {
             dataPath = m_rootPath;
             adjustedBy = "Portable data path";
+            m_portable = true;
         }
 #endif
     }
@@ -341,7 +350,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
                         import.command = "import";
                         import.args.insert("path", zip_url.toString());
                         m_peerInstance->sendMessage(import.serialize(), timeout);
-                    } 
+                    }
                 }
             }
             else
@@ -404,6 +413,47 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
                 " " "|" " "
                 "%{if-category}[%{category}]: %{endif}"
                 "%{message}");
+      
+        bool foundLoggingRules = false;
+        
+        auto logRulesFile = QStringLiteral("qtlogging.ini");
+        auto logRulesPath = FS::PathCombine(dataPath, logRulesFile);
+        
+        qDebug() << "Testing" << logRulesPath << "...";              
+        foundLoggingRules = QFile::exists(logRulesPath);
+
+        // search the dataPath()
+        // seach app data standard path
+        if(!foundLoggingRules && !isPortable() && dirParam.isEmpty()) {
+            logRulesPath = QStandardPaths::locate(QStandardPaths::AppDataLocation, FS::PathCombine("..", logRulesFile));
+            if(!logRulesPath.isEmpty()) {
+                qDebug() << "Found" << logRulesPath << "...";
+                foundLoggingRules = true;
+            }
+        }
+        // seach root path
+        if(!foundLoggingRules) {
+           logRulesPath = FS::PathCombine(m_rootPath, logRulesFile); 
+            qDebug() << "Testing" << logRulesPath << "...";
+            foundLoggingRules = QFile::exists(logRulesPath);
+        }
+        
+        if(foundLoggingRules) {
+            // load and set logging rules
+            qDebug() << "Loading logging rules from:" << logRulesPath;
+            QSettings loggingRules(logRulesPath, QSettings::IniFormat); 
+            loggingRules.beginGroup("Rules");
+            QStringList rule_names = loggingRules.childKeys();
+            QStringList rules;
+            qDebug() << "Setting log rules:";
+            for (auto rule_name : rule_names) {
+                auto rule = QString("%1=%2").arg(rule_name).arg(loggingRules.value(rule_name).toString());
+                rules.append(rule);
+                qDebug() << "    " << rule;
+            }
+            auto rules_str = rules.join("\n");
+            QLoggingCategory::setFilterRules(rules_str);
+        }
 
         qDebug() << "<> Log initialized.";
     }
@@ -510,6 +560,8 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         m_settings->registerSetting("InstanceDir", "instances");
         m_settings->registerSetting({"CentralModsDir", "ModsDir"}, "mods");
         m_settings->registerSetting("IconsDir", "icons");
+        m_settings->registerSetting("DownloadsDir", QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+        m_settings->registerSetting("DownloadsDirWatchRecursive", false);
 
         // Editors
         m_settings->registerSetting("JsonEditor", QString());
@@ -606,6 +658,9 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         m_settings->registerSetting("UpdateDialogGeometry", "");
 
         m_settings->registerSetting("ModDownloadGeometry", "");
+        m_settings->registerSetting("RPDownloadGeometry", "");
+        m_settings->registerSetting("TPDownloadGeometry", "");
+        m_settings->registerSetting("ShaderDownloadGeometry", "");
 
         // HACK: This code feels so stupid is there a less stupid way of doing this?
         {
@@ -652,6 +707,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
                 m_settings->set("FlameKeyOverride", flameKey);
             m_settings->reset("CFKeyOverride");
         }
+        m_settings->registerSetting("ModrinthToken", "");
         m_settings->registerSetting("UserAgentOverride", "");
 
         // Init page provider
@@ -819,9 +875,7 @@ Application::Application(int &argc, char **argv) : QApplication(argc, argv)
         }
     });
 
-    {
-        applyCurrentlySelectedTheme();
-    }
+    applyCurrentlySelectedTheme(true);
 
     updateCapabilities();
 
@@ -1096,9 +1150,9 @@ QList<ITheme*> Application::getValidApplicationThemes()
     return m_themeManager->getValidApplicationThemes();
 }
 
-void Application::applyCurrentlySelectedTheme()
+void Application::applyCurrentlySelectedTheme(bool initial)
 {
-    m_themeManager->applyCurrentlySelectedTheme();
+    m_themeManager->applyCurrentlySelectedTheme(initial);
 }
 
 void Application::setApplicationTheme(const QString& name)
@@ -1538,6 +1592,15 @@ QString Application::getFlameAPIKey()
     }
 
     return BuildConfig.FLAME_API_KEY;
+}
+
+QString Application::getModrinthAPIToken()
+{
+    QString tokenOverride = m_settings->get("ModrinthToken").toString();
+    if (!tokenOverride.isEmpty())
+        return tokenOverride;
+
+    return QString();
 }
 
 QString Application::getUserAgent()
