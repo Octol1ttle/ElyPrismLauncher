@@ -61,11 +61,11 @@ void DirectJavaLaunch::executeTask()
     auto accounts = APPLICATION->accounts();
     auto account = accounts->at(accounts->findAccountByProfileId(m_session->uuid));
     if (!account->isMSA() && !QHostInfo::fromName("account.ely.by").addresses().empty()) {
-        auto entry = APPLICATION->metacache()->resolveEntry("general", "authlib-injector-1.2.2.jar");
+        auto entry = APPLICATION->metacache()->resolveEntry("general", "authlib-injector-1.2.3.jar");
         entry->setStale(true);
 
         auto netJob = new NetJob("Injector download", APPLICATION->network());
-        netJob->addNetAction(Net::Download::makeCached(QUrl("https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.2/authlib-injector-1.2.2.jar"), entry));
+        netJob->addNetAction(Net::Download::makeCached(QUrl("https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.3/authlib-injector-1.2.3.jar"), entry));
         netJob->start();
 
         args.append("-javaagent:" + entry->getFullPath() + "=https://account.ely.by/api/authlib-injector");
