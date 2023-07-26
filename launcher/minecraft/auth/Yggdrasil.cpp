@@ -273,6 +273,7 @@ void Yggdrasil::processReply() {
             AccountTaskState::STATE_FAILED_GONE,
             tr("The Ely.by account no longer exists.")
         );
+        return;
     }
     default:
         changeState(
