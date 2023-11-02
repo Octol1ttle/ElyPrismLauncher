@@ -84,7 +84,7 @@ void Yggdrasil::refresh() {
     req.insert("requestUser", false);
     QJsonDocument doc(req);
 
-    QUrl reqUrl("https://authserver.mojang.com/refresh");
+    QUrl reqUrl("https://authserver.ely.by/auth/refresh");
     QByteArray requestData = doc.toJson();
 
     sendRequest(reqUrl, requestData);
@@ -129,7 +129,7 @@ void Yggdrasil::login(QString password) {
 
     QJsonDocument doc(req);
 
-    QUrl reqUrl("https://authserver.mojang.com/authenticate");
+    QUrl reqUrl("https://authserver.ely.by/auth/authenticate");
     QNetworkRequest netRequest(reqUrl);
     QByteArray requestData = doc.toJson();
 
@@ -271,7 +271,7 @@ void Yggdrasil::processReply() {
     case QNetworkReply::ContentGoneError: {
         changeState(
             AccountTaskState::STATE_FAILED_GONE,
-            tr("The Mojang account no longer exists. It may have been migrated to a Microsoft account.")
+            tr("The Ely.by account no longer exists.")
         );
         return;
     }

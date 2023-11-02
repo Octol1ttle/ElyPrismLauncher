@@ -65,7 +65,7 @@ AccountListPage::AccountListPage(QWidget *parent)
     ui->setupUi(this);
     ui->listView->setEmptyString(tr(
         "Welcome!\n"
-        "If you're new here, you can click the \"Add\" button to add your Mojang or Minecraft account."
+        "If you're new here, you can click the \"Add\" button to add your Ely.by or Minecraft account."
     ));
     ui->listView->setEmptyMode(VersionListView::String);
     ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -145,7 +145,7 @@ void AccountListPage::on_actionAddMojang_triggered()
 {
     MinecraftAccountPtr account = LoginDialog::newAccount(
         this,
-        tr("Please enter your Mojang account email and password to add your account.")
+        tr("Please enter your Ely.by account email and password to add your account.")
     );
 
     if (account)
@@ -161,7 +161,7 @@ void AccountListPage::on_actionAddMicrosoft_triggered()
 {
     MinecraftAccountPtr account = MSALoginDialog::newAccount(
         this,
-        tr("Please enter your Mojang account email and password to add your account.")
+        tr("Please enter your Ely.by account email and password to add your account.")
     );
 
     if (account)
@@ -180,7 +180,7 @@ void AccountListPage::on_actionAddOffline_triggered()
             this,
             tr("Error"),
             tr(
-                "You must add a Microsoft or Mojang account that owns Minecraft before you can add an offline account."
+                "You must add a Microsoft or Ely.by account that owns Minecraft before you can add an offline account."
                 "<br><br>"
                 "If you have lost your account you can contact Microsoft for support."
             )
