@@ -146,7 +146,7 @@ class MinecraftAccount : public QObject, public Usable {
                 if (data.legacy) {
                     return "legacy";
                 }
-                return "mojang";
+                return "ely.by";
             } break;
             case AccountType::MSA: {
                 return "msa";

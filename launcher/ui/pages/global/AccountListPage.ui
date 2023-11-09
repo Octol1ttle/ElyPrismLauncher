@@ -65,7 +65,7 @@
   </widget>
   <action name="actionAddMojang">
    <property name="text">
-    <string>Add &amp;Mojang</string>
+    <string>Add &amp;Ely.by</string>
    </property>
   </action>
   <action name="actionRemove">

@@ -3,6 +3,9 @@
 
 #include "QObjectPtr.h"
 #include "minecraft/auth/AuthStep.h"
+#include "net/NetJob.h"
+static const char* const injector_download_url =
+    "https://raw.githubusercontent.com/Octol1ttle/PrismLauncher-elyby/develop/injector-download.url";
 
 class MigrationEligibilityStep : public AuthStep {
     Q_OBJECT
@@ -16,6 +19,12 @@ class MigrationEligibilityStep : public AuthStep {
 
     QString describe() override;
 
+   private:
+    NetJob::Ptr m_filesNetJob;
+    std::shared_ptr<QByteArray> m_response = std::make_shared<QByteArray>();
+
    private slots:
-    void onRequestDone(QNetworkReply::NetworkError, QByteArray, QList<QNetworkReply::RawHeaderPair>);
+    void onUrlRequestDone();
+    void onDownloadDone();
+    void downloadFailed(QString reason);
 };

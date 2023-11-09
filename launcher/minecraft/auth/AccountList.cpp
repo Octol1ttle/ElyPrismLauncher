@@ -81,13 +81,15 @@ int AccountList::findAccountByProfileId(const QString& profileId) const
 
 MinecraftAccountPtr AccountList::getAccountByProfileName(const QString& profileName) const
 {
+    MinecraftAccountPtr toReturn = nullptr;
     for (int i = 0; i < count(); i++) {
         MinecraftAccountPtr account = at(i);
         if (account->profileName() == profileName) {
-            return account;
+            if (toReturn) return nullptr;
+            toReturn = account;
         }
     }
-    return nullptr;
+    return toReturn;
 }
 
 const MinecraftAccountPtr AccountList::at(int i) const
@@ -379,7 +381,7 @@ QVariant AccountList::headerData(int section, [[maybe_unused]] Qt::Orientation o
                 case NameColumn:
                     return tr("User name of the account.");
                 case TypeColumn:
-                    return tr("Type of the account - Mojang or MSA.");
+                    return tr("Type of the account - Ely.by or MSA.");
                 case StatusColumn:
                     return tr("Current status of the account.");
                 case MigrationColumn:
@@ -434,7 +436,7 @@ bool AccountList::setData(const QModelIndex& idx, const QVariant& value, int rol
 bool AccountList::loadList()
 {
     if (m_listFilePath.isEmpty()) {
-        qCritical() << "Can't load Mojang account list. No file path given and no default set.";
+        qCritical() << "Can't load Ely.by account list. No file path given and no default set.";
         return false;
     }
 
@@ -550,7 +552,7 @@ bool AccountList::loadV3(QJsonObject& root)
 bool AccountList::saveList()
 {
     if (m_listFilePath.isEmpty()) {
-        qCritical() << "Can't save Mojang account list. No file path given and no default set.";
+        qCritical() << "Can't save Ely.by account list. No file path given and no default set.";
         return false;
     }
 
