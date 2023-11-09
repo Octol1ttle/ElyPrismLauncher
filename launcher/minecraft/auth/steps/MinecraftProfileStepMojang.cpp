@@ -1,4 +1,4 @@
-#include "MinecraftProfileStep.h"
+#include "MinecraftProfileStepMojang.h"
 
 #include <QNetworkRequest>
 
@@ -7,33 +7,38 @@
 #include "minecraft/auth/Parsers.h"
 #include "net/NetUtils.h"
 
-MinecraftProfileStep::MinecraftProfileStep(AccountData* data) : AuthStep(data) {}
+MinecraftProfileStepMojang::MinecraftProfileStepMojang(AccountData* data) : AuthStep(data) {}
 
-MinecraftProfileStep::~MinecraftProfileStep() noexcept = default;
+MinecraftProfileStepMojang::~MinecraftProfileStepMojang() noexcept = default;
 
-QString MinecraftProfileStep::describe()
+QString MinecraftProfileStepMojang::describe()
 {
     return tr("Fetching the Minecraft profile.");
 }
 
-void MinecraftProfileStep::perform()
+void MinecraftProfileStepMojang::perform()
 {
-    auto url = QUrl("https://api.minecraftservices.com/minecraft/profile");
-    QNetworkRequest request = QNetworkRequest(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_data->yggdrasilToken.token).toUtf8());
+    if (m_data->minecraftProfile.id.isEmpty()) {
+        emit finished(AccountTaskState::STATE_FAILED_HARD, tr("A UUID is required to get the profile."));
+        return;
+    }
 
-    AuthRequest* requestor = new AuthRequest(this);
-    connect(requestor, &AuthRequest::finished, this, &MinecraftProfileStep::onRequestDone);
-    requestor->get(request);
+    // use session server instead of profile due to profile endpoint being locked for locked Mojang accounts
+    QUrl url = QUrl("https://sessionserver.mojang.com/session/minecraft/profile/" + m_data->minecraftProfile.id);
+    QNetworkRequest req = QNetworkRequest(url);
+    AuthRequest* request = new AuthRequest(this);
+    connect(request, &AuthRequest::finished, this, &MinecraftProfileStepMojang::onRequestDone);
+    request->get(req);
 }
 
-void MinecraftProfileStep::rehydrate()
+void MinecraftProfileStepMojang::rehydrate()
 {
     // NOOP, for now. We only save bools and there's nothing to check.
 }
 
-void MinecraftProfileStep::onRequestDone(QNetworkReply::NetworkError error, QByteArray data, QList<QNetworkReply::RawHeaderPair> headers)
+void MinecraftProfileStepMojang::onRequestDone(QNetworkReply::NetworkError error,
+                                               QByteArray data,
+                                               QList<QNetworkReply::RawHeaderPair> headers)
 {
     auto requestor = qobject_cast<AuthRequest*>(QObject::sender());
     requestor->deleteLater();
@@ -67,7 +72,7 @@ void MinecraftProfileStep::onRequestDone(QNetworkReply::NetworkError error, QByt
         }
         return;
     }
-    if (!Parsers::parseMinecraftProfile(data, m_data->minecraftProfile)) {
+    if (!Parsers::parseMinecraftProfileMojang(data, m_data->minecraftProfile)) {
         m_data->minecraftProfile = MinecraftProfile();
         emit finished(AccountTaskState::STATE_FAILED_SOFT, tr("Minecraft Java profile response could not be parsed"));
         return;

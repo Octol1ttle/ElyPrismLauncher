@@ -12,6 +12,7 @@
 #include "minecraft/auth/AccountData.h"
 #include "minecraft/auth/AccountTask.h"
 #include "minecraft/auth/AuthStep.h"
+#include "minecraft/auth/Yggdrasil.h"
 
 class AuthFlow : public AccountTask {
     Q_OBJECT
