@@ -138,7 +138,7 @@ void AccountListPage::listChanged()
 void AccountListPage::on_actionAddMojang_triggered()
 {
     MinecraftAccountPtr account =
-        LoginDialog::newAccount(this, tr("Please enter your Ely.by account email and password to add your account."));
+        LoginDialog::newAccount(this, tr("Please enter your Ely.by account email, password and 2FA token (if present) to add your account."));
 
     if (account) {
         m_accounts->addAccount(account);
