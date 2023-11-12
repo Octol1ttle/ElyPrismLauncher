@@ -139,12 +139,15 @@ class MinecraftAccount : public QObject, public Usable {
 
     bool hasProfile() const { return data.profileId().size() != 0; }
 
-    QString typeString() const
+    QString typeString(bool forUserType) const
     {
         switch (data.type) {
             case AccountType::Mojang: {
                 if (data.legacy) {
                     return "legacy";
+                }
+                if (forUserType) {
+                    return "mojang";
                 }
                 return "ely.by";
             } break;
