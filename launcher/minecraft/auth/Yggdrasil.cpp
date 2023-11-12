@@ -270,7 +270,7 @@ void Yggdrasil::processReply()
             break;
         case QNetworkReply::ContentGoneError: {
             changeState(AccountTaskState::STATE_FAILED_GONE,
-                        tr("The Ely.by account no longer exists. It may have been migrated to a Microsoft account."));
+                        tr("The Ely.by account no longer exists."));
             return;
         }
         default:
