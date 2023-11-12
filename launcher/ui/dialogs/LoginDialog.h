@@ -48,6 +48,7 @@ class LoginDialog : public QDialog {
 
     void on_userTextBox_textEdited(const QString& newText);
     void on_passTextBox_textEdited(const QString& newText);
+    void on_twofaTextBox_textEdited(const QString& newText);
 
    private:
     Ui::LoginDialog* ui;

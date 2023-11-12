@@ -51,6 +51,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QLineEdit" name="twofaTextBox">
+     <property name="placeholderText">
+      <string>2FA token (if present)</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QProgressBar" name="progressBar">
      <property name="value">
       <number>24</number>

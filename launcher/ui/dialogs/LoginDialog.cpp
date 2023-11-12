@@ -18,6 +18,7 @@
 
 #include "minecraft/auth/AccountTask.h"
 
+#include <QRegExp>
 #include <QtWidgets/QPushButton>
 
 LoginDialog::LoginDialog(QWidget* parent) : QDialog(parent), ui(new Ui::LoginDialog)
@@ -43,7 +44,11 @@ void LoginDialog::accept()
 
     // Setup the login task and start it
     m_account = MinecraftAccount::createFromUsername(ui->userTextBox->text());
-    m_loginTask = m_account->login(ui->passTextBox->text());
+    if (!ui->twofaTextBox->text().isEmpty()) {
+        m_loginTask = m_account->login(ui->passTextBox->text() + ":" + ui->twofaTextBox->text());
+    } else {
+        m_loginTask = m_account->login(ui->passTextBox->text());
+    }
     connect(m_loginTask.get(), &Task::failed, this, &LoginDialog::onTaskFailed);
     connect(m_loginTask.get(), &Task::succeeded, this, &LoginDialog::onTaskSucceeded);
     connect(m_loginTask.get(), &Task::status, this, &LoginDialog::onTaskStatus);
@@ -55,6 +60,7 @@ void LoginDialog::setUserInputsEnabled(bool enable)
 {
     ui->userTextBox->setEnabled(enable);
     ui->passTextBox->setEnabled(enable);
+    ui->twofaTextBox->setEnabled(enable);
     ui->buttonBox->setEnabled(enable);
 }
 
@@ -66,6 +72,12 @@ void LoginDialog::on_userTextBox_textEdited(const QString& newText)
 void LoginDialog::on_passTextBox_textEdited(const QString& newText)
 {
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(!newText.isEmpty() && !ui->userTextBox->text().isEmpty());
+}
+void LoginDialog::on_twofaTextBox_textEdited(const QString& newText)
+{
+    QRegExp re("\\d*");
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled((newText.isEmpty() || ui->twofaTextBox->text().isEmpty())
+                                                            || (ui->twofaTextBox->text().length() == 6 && re.exactMatch(ui->twofaTextBox->text())));
 }
 
 void LoginDialog::onTaskFailed(const QString& reason)
