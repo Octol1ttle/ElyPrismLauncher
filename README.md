@@ -8,7 +8,7 @@
 
 <p align="center">
   This <b>fork</b> of Prism Launcher replaces legacy Mojang accounts with Ely.by accounts<br />
-  <br />This is <b>not</b> endorsed by Prism Launcher.
+  <br />This is <b>not</b> endorsed by Prism Launcher or Ely.by.
 </p>
 
 ## Installation
