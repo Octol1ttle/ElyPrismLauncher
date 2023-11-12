@@ -166,7 +166,7 @@ void AccountListPage::on_actionAddOffline_triggered()
         QMessageBox::warning(this, tr("Error"),
                              tr("You must add a Microsoft or Ely.by account that owns Minecraft before you can add an offline account."
                                 "<br><br>"
-                                "If you have lost your account you can contact Microsoft for support."));
+                                "If you have lost your account you can contact Ely.by/Microsoft for support."));
         return;
     }
 
