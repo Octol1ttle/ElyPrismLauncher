@@ -86,19 +86,6 @@
     <string>&amp;No Default</string>
    </property>
   </action>
-  <action name="actionUploadSkin">
-   <property name="text">
-    <string>&amp;Upload Skin</string>
-   </property>
-  </action>
-  <action name="actionDeleteSkin">
-   <property name="text">
-    <string>&amp;Delete Skin</string>
-   </property>
-   <property name="toolTip">
-    <string>Delete the currently active skin and go back to the default one</string>
-   </property>
-  </action>
   <action name="actionAddMicrosoft">
    <property name="text">
     <string>&amp;Add Microsoft</string>
