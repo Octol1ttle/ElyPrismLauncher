@@ -54,6 +54,7 @@
 #include "tasks/Task.h"
 
 #include "Application.h"
+#include "DesktopServices.h"
 
 AccountListPage::AccountListPage(QWidget* parent) : QMainWindow(parent), ui(new Ui::AccountListPage)
 {
@@ -229,16 +230,18 @@ void AccountListPage::updateButtonStates()
     bool hasSelection = !selection.empty();
     bool accountIsReady = false;
     bool accountIsOnline = false;
+    bool accountCanDeleteSkin = false;
     if (hasSelection) {
         QModelIndex selected = selection.first();
         MinecraftAccountPtr account = selected.data(AccountList::PointerRole).value<MinecraftAccountPtr>();
         accountIsReady = !account->isActive();
         accountIsOnline = account->accountType() != AccountType::Offline;
+        accountCanDeleteSkin = account->accountType() == AccountType::MSA;
     }
     ui->actionRemove->setEnabled(accountIsReady);
     ui->actionSetDefault->setEnabled(accountIsReady);
     ui->actionUploadSkin->setEnabled(accountIsReady && accountIsOnline);
-    ui->actionDeleteSkin->setEnabled(accountIsReady && accountIsOnline);
+    ui->actionDeleteSkin->setEnabled(accountIsReady && accountIsOnline && accountCanDeleteSkin);
     ui->actionRefresh->setEnabled(accountIsReady && accountIsOnline);
 
     if (m_accounts->defaultAccount().get() == nullptr) {
@@ -257,6 +260,11 @@ void AccountListPage::on_actionUploadSkin_triggered()
     if (selection.size() > 0) {
         QModelIndex selected = selection.first();
         MinecraftAccountPtr account = selected.data(AccountList::PointerRole).value<MinecraftAccountPtr>();
+        if (account->accountType() == AccountType::Mojang) {
+            DesktopServices::openUrl(QUrl("https://ely.by/skins/add"));
+            return;
+        }
+
         SkinUploadDialog dialog(account, this);
         dialog.exec();
     }
