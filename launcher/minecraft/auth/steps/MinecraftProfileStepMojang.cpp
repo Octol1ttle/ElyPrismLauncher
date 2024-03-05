@@ -24,7 +24,7 @@ void MinecraftProfileStepMojang::perform()
     }
 
     // use session server instead of profile due to profile endpoint being locked for locked Mojang accounts
-    QUrl url = QUrl("https://sessionserver.mojang.com/session/minecraft/profile/" + m_data->minecraftProfile.id);
+    QUrl url = QUrl("https://account.ely.by/api/minecraft/session/profile/" + m_data->minecraftProfile.id);
     QNetworkRequest req = QNetworkRequest(url);
     AuthRequest* request = new AuthRequest(this);
     connect(request, &AuthRequest::finished, this, &MinecraftProfileStepMojang::onRequestDone);

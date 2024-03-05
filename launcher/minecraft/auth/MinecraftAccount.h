@@ -137,7 +137,7 @@ class MinecraftAccount : public QObject, public Usable {
     QString typeString() const
     {
         switch (data.type) {
-            case AccountType::Mojang: { // TODO
+            case AccountType::Mojang: {
                 if (data.legacy) {
                     return "legacy";
                 }

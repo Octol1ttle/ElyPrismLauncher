@@ -60,15 +60,6 @@ MinecraftAccount::MinecraftAccount(QObject* parent) : QObject(parent)
     data.internalId = QUuid::createUuid().toString().remove(QRegularExpression("[{}-]"));
 }
 
-MinecraftAccountPtr MinecraftAccount::loadFromJsonV2(const QJsonObject& json)
-{
-    MinecraftAccountPtr account(new MinecraftAccount());
-    if (account->data.resumeStateFromV2(json)) {
-        return account;
-    }
-    return nullptr;
-}
-
 MinecraftAccountPtr MinecraftAccount::loadFromJsonV3(const QJsonObject& json)
 {
     MinecraftAccountPtr account(new MinecraftAccount());

@@ -44,6 +44,9 @@
 #include "launch/LaunchTask.h"
 #include "minecraft/MinecraftInstance.h"
 
+#include <QHostInfo>
+#include <minecraft/auth/AccountList.h>
+
 #ifdef Q_OS_LINUX
 #include "gamemode_client.h"
 #endif
@@ -120,6 +123,14 @@ void LauncherPartLaunch::executeTask()
     QStringList args = minecraftInstance->javaArguments();
     QString allArgs = args.join(", ");
     emit logLine("Java Arguments:\n[" + m_parent->censorPrivateInfo(allArgs) + "]\n\n", MessageLevel::Launcher);
+
+    auto accounts = APPLICATION->accounts();
+    auto account = accounts->at(accounts->findAccountByProfileId(m_session->uuid));
+
+    if (account->accountType() != AccountType::MSA && !QHostInfo::fromName("account.ely.by").addresses().empty()) {
+        args.append("-javaagent:" + QDir::current().absoluteFilePath("authlib-injector.jar") + "=https://account.ely.by/api/authlib-injector");
+        args.append("-Dauthlibinjector.noShowServerName");
+    }
 
     auto javaPath = FS::ResolveExecutable(instance->settings()->get("JavaPath").toString());
 

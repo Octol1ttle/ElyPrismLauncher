@@ -2,7 +2,7 @@
 
 #include <QNetworkRequest>
 
-#include "minecraft/auth/AuthRequest.h"
+#include "Application.h"
 #include "minecraft/auth/Parsers.h"
 
 MigrationEligibilityStep::MigrationEligibilityStep(AccountData* data) : AuthStep(data) {}
@@ -16,14 +16,14 @@ QString MigrationEligibilityStep::describe()
 
 void MigrationEligibilityStep::perform()
 {
-    auto url = QUrl("https://api.minecraftservices.com/rollout/v1/msamigration");
-    QNetworkRequest request = QNetworkRequest(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    request.setRawHeader("Authorization", QString("Bearer %1").arg(m_data->yggdrasilToken.token).toUtf8());
+    m_filesNetJob.reset(new NetJob(tr("Injector URL download"), APPLICATION->network()));
 
-    AuthRequest* requestor = new AuthRequest(this);
-    connect(requestor, &AuthRequest::finished, this, &MigrationEligibilityStep::onRequestDone);
-    requestor->get(request);
+    m_filesNetJob->addNetAction(Net::Download::makeByteArray(QUrl(injector_download_url), m_response));
+
+    connect(m_filesNetJob.get(), &NetJob::succeeded, this, &MigrationEligibilityStep::onUrlRequestDone);
+    connect(m_filesNetJob.get(), &NetJob::failed, this, &MigrationEligibilityStep::downloadFailed);
+
+    m_filesNetJob->start();
 }
 
 void MigrationEligibilityStep::rehydrate()
@@ -31,15 +31,23 @@ void MigrationEligibilityStep::rehydrate()
     // NOOP, for now. We only save bools and there's nothing to check.
 }
 
-void MigrationEligibilityStep::onRequestDone(QNetworkReply::NetworkError error,
-                                             QByteArray data,
-                                             QList<QNetworkReply::RawHeaderPair> headers)
-{
-    auto requestor = qobject_cast<AuthRequest*>(QObject::sender());
-    requestor->deleteLater();
+void MigrationEligibilityStep::onUrlRequestDone() {
+    m_filesNetJob.reset(new NetJob(tr("Injector download"), APPLICATION->network()));
 
-    if (error == QNetworkReply::NoError) {
-        Parsers::parseRolloutResponse(data, m_data->canMigrateToMSA);
-    }
-    emit finished(AccountTaskState::STATE_WORKING, tr("Got migration flags"));
+    m_filesNetJob->addNetAction(Net::Download::makeFile(QUrl(*m_response), "authlib-injector.jar"));
+
+    connect(m_filesNetJob.get(), &NetJob::succeeded, this, &MigrationEligibilityStep::onDownloadDone);
+    connect(m_filesNetJob.get(), &NetJob::failed, this, &MigrationEligibilityStep::downloadFailed);
+
+    m_filesNetJob->start();
+}
+
+void MigrationEligibilityStep::onDownloadDone()
+{
+    emit finished(AccountTaskState::STATE_WORKING, tr("Downloaded injector"));
+}
+
+void MigrationEligibilityStep::downloadFailed(QString reason)
+{
+    emit finished(AccountTaskState::STATE_OFFLINE, tr("Injector download failed"));
 }
