@@ -222,9 +222,13 @@ set(MINECRAFT_SOURCES
     minecraft/auth/MinecraftAccount.h
     minecraft/auth/Parsers.cpp
     minecraft/auth/Parsers.h
+    minecraft/auth/Yggdrasil.cpp
+    minecraft/auth/Yggdrasil.h
 
     minecraft/auth/flows/AuthFlow.cpp
     minecraft/auth/flows/AuthFlow.h
+    minecraft/auth/flows/Mojang.cpp
+    minecraft/auth/flows/Mojang.h
     minecraft/auth/flows/MSA.cpp
     minecraft/auth/flows/MSA.h
     minecraft/auth/flows/Offline.cpp
@@ -238,8 +242,12 @@ set(MINECRAFT_SOURCES
     minecraft/auth/steps/GetSkinStep.h
     minecraft/auth/steps/LauncherLoginStep.cpp
     minecraft/auth/steps/LauncherLoginStep.h
+    minecraft/auth/steps/MigrationEligibilityStep.cpp
+    minecraft/auth/steps/MigrationEligibilityStep.h
     minecraft/auth/steps/MinecraftProfileStep.cpp
     minecraft/auth/steps/MinecraftProfileStep.h
+    minecraft/auth/steps/MinecraftProfileStepMojang.cpp
+    minecraft/auth/steps/MinecraftProfileStepMojang.h
     minecraft/auth/steps/MSAStep.cpp
     minecraft/auth/steps/MSAStep.h
     minecraft/auth/steps/XboxAuthorizationStep.cpp
@@ -248,6 +256,8 @@ set(MINECRAFT_SOURCES
     minecraft/auth/steps/XboxProfileStep.h
     minecraft/auth/steps/XboxUserStep.cpp
     minecraft/auth/steps/XboxUserStep.h
+    minecraft/auth/steps/YggdrasilStep.cpp
+    minecraft/auth/steps/YggdrasilStep.h
 
     minecraft/gameoptions/GameOptions.h
     minecraft/gameoptions/GameOptions.cpp
@@ -1004,6 +1014,8 @@ SET(LAUNCHER_SOURCES
     ui/dialogs/IconPickerDialog.h
     ui/dialogs/ImportResourceDialog.cpp
     ui/dialogs/ImportResourceDialog.h
+    ui/dialogs/LoginDialog.cpp
+    ui/dialogs/LoginDialog.h
     ui/dialogs/MSALoginDialog.cpp
     ui/dialogs/MSALoginDialog.h
     ui/dialogs/OfflineLoginDialog.cpp
@@ -1175,6 +1187,7 @@ qt_wrap_ui(LAUNCHER_UI
     ui/dialogs/MSALoginDialog.ui
     ui/dialogs/OfflineLoginDialog.ui
     ui/dialogs/AboutDialog.ui
+    ui/dialogs/LoginDialog.ui
     ui/dialogs/EditAccountDialog.ui
     ui/dialogs/ReviewMessageBox.ui
     ui/dialogs/ScrollMessageBox.ui

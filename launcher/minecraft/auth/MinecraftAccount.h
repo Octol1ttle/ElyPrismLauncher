@@ -85,6 +85,8 @@ class MinecraftAccount : public QObject, public Usable {
     //! Default constructor
     explicit MinecraftAccount(QObject* parent = 0);
 
+    static MinecraftAccountPtr createFromUsername(const QString& username);
+
     static MinecraftAccountPtr createBlankMSA();
 
     static MinecraftAccountPtr createOffline(const QString& username);
@@ -97,6 +99,12 @@ class MinecraftAccount : public QObject, public Usable {
     QJsonObject saveToJson() const;
 
    public: /* manipulation */
+    /**
+     * Attempt to login. Empty password means we use the token.
+     * If the attempt fails because we already are performing some task, it returns false.
+     */
+    shared_qobject_ptr<AccountTask> login(QString password);
+
     shared_qobject_ptr<AccountTask> loginMSA();
 
     shared_qobject_ptr<AccountTask> loginOffline();
@@ -109,6 +117,8 @@ class MinecraftAccount : public QObject, public Usable {
     QString internalId() const { return data.internalId; }
 
     QString accountDisplayString() const { return data.accountDisplayString(); }
+
+    QString mojangUserName() const { return data.userName(); }
 
     QString accessToken() const { return data.accessToken(); }
 
@@ -127,6 +137,12 @@ class MinecraftAccount : public QObject, public Usable {
     QString typeString() const
     {
         switch (data.type) {
+            case AccountType::Mojang: { // TODO
+                if (data.legacy) {
+                    return "legacy";
+                }
+                return "mojang";
+            } break;
             case AccountType::MSA: {
                 return "msa";
             } break;
