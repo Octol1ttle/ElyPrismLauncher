@@ -77,6 +77,7 @@ class LaunchProfile : public ProblemProvider {
     const QStringList& getTweakers() const;
     const QList<LibraryPtr>& getJarMods() const;
     const QList<LibraryPtr>& getLibraries() const;
+    QList<LibraryPtr>& getLibrariesMut() { return m_libraries; }
     const QList<LibraryPtr>& getNativeLibraries() const;
     const QList<LibraryPtr>& getMavenFiles() const;
     const QList<AgentPtr>& getAgents() const;
