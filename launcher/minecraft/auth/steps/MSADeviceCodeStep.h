@@ -57,6 +57,12 @@ class MSADeviceCodeStep : public AuthStep {
    signals:
     void authorizeWithBrowser(QString url, QString code, int expiresIn);
 
+   protected:
+    QString m_clientId;
+    QString m_scopes = "XboxLive.SignIn XboxLive.offline_access";
+    QUrl m_deviceCodeUrl = QUrl("https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode");
+    QUrl m_tokenUrl = QUrl("https://login.microsoftonline.com/consumers/oauth2/v2.0/token");
+
    private slots:
     void deviceAuthorizationFinished();
     void startPoolTimer();
@@ -64,7 +70,6 @@ class MSADeviceCodeStep : public AuthStep {
     void authenticationFinished();
 
    private:
-    QString m_clientId;
     QString m_device_code;
     bool m_is_aborted = false;
     int interval = 5;

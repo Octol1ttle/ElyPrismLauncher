@@ -65,6 +65,53 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
+            <widget class="QGroupBox" name="elyGroupBox">
+             <property name="title">
+              <string>Ely.by patch</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Download and apply Ely.by game patch:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QComboBox" name="applyElyPatch">
+                <item>
+                 <property name="text">
+                  <string>Always</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>When using Ely.by or Offline account only</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>When using Ely.by account only</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Never</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
             <widget class="QGroupBox" name="windowSizeGroupBox">
              <property name="enabled">
               <bool>true</bool>

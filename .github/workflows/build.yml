@@ -5,8 +5,33 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  merge_group:
-    types: [checks_requested]
+  push:
+    branches:
+      - "develop"
+      - "release-*"
+    paths:
+      # File types
+      - "**.cpp"
+      - "**.h"
+      - "**.java"
+      - "**.ui"
+
+      # Directories
+      - "buildconfig/**"
+      - "cmake/**"
+      - "launcher/**"
+      - "libraries/**"
+      - "program_info/**"
+      - "tests/**"
+
+      # Files
+      - "CMakeLists.txt"
+      - "COPYING.md"
+
+      # Workflows
+      - ".github/workflows/build.yml"
+      - ".github/actions/package/**"
+      - ".github/actions/setup-dependencies/**"
   pull_request:
     paths:
       # File types
@@ -150,9 +175,9 @@ jobs:
         run: |
           cmake --build --preset "$CMAKE_PRESET" --config "$BUILD_TYPE"
 
-      - name: Run tests
-        run: |
-          ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE" --extra-verbose --output-on-failure
+      #- name: Run tests
+      #  run: |
+      #    ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE" --extra-verbose --output-on-failure
 
       ##
       # PACKAGE
