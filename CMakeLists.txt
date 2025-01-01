@@ -170,8 +170,8 @@ endif()
 set(Launcher_NEWS_RSS_URL "https://prismlauncher.org/feed/feed.xml" CACHE STRING "URL to fetch Prism Launcher's news RSS feed from.")
 set(Launcher_NEWS_OPEN_URL "https://prismlauncher.org/news" CACHE STRING "URL that gets opened when the user clicks 'More News'")
 set(Launcher_HELP_URL "https://prismlauncher.org/wiki/help-pages/%1" CACHE STRING "URL (with arg %1 to be substituted with page-id) that gets opened when the user requests help")
-set(Launcher_LOGIN_CALLBACK_URL "https://prismlauncher.org/successful-login" CACHE STRING "URL that gets opened when the user successfully logins.")
-set(Launcher_FMLLIBS_BASE_URL "https://files.prismlauncher.org/fmllibs/" CACHE STRING "URL for FML Libraries.")
+set(Launcher_LOGIN_CALLBACK_URL "https://elyprismlauncher.github.io/successful-login" CACHE STRING "URL that gets opened when the user successfully logins.")
+set(Launcher_FMLLIBS_BASE_URL "https://epl.mctaylors.ru/files/fmllibs/" CACHE STRING "URL for FML Libraries.")
 
 ######## Set version numbers ########
 set(Launcher_VERSION_MAJOR 10)
@@ -186,32 +186,32 @@ set(Launcher_VERSION_NAME4_COMMA "${Launcher_VERSION_MAJOR},${Launcher_VERSION_M
 set(Launcher_BUILD_PLATFORM "unknown" CACHE STRING "A short string identifying the platform that this build was built for. Only used to display in the about dialog.")
 
 # Github repo URL with releases for updater
-set(Launcher_UPDATER_GITHUB_REPO "https://github.com/PrismLauncher/PrismLauncher" CACHE STRING "Base github URL for the updater.")
+set(Launcher_UPDATER_GITHUB_REPO "https://github.com/ElyPrismLauncher/ElyPrismLauncher" CACHE STRING "Base github URL for the updater.")
 
 # Name to help updater identify valid artifacts
 set(Launcher_BUILD_ARTIFACT "" CACHE STRING "Artifact name to help the updater identify valid artifacts.")
 
 # The metadata server
-set(Launcher_META_URL "https://meta.prismlauncher.org/v1/" CACHE STRING "URL to fetch Launcher's meta files from.")
+set(Launcher_META_URL "https://epl.mctaylors.ru/meta/v1/" CACHE STRING "URL to fetch Launcher's meta files from.")
 
 # Imgur API Client ID
 set(Launcher_IMGUR_CLIENT_ID "5b97b0713fba4a3" CACHE STRING "Client ID you can get from Imgur when you register an application")
 
 # Bug tracker URL
-set(Launcher_BUG_TRACKER_URL "https://github.com/PrismLauncher/PrismLauncher/issues" CACHE STRING "URL for the bug tracker.")
+set(Launcher_BUG_TRACKER_URL "https://github.com/ElyPrismLauncher/ElyPrismLauncher/issues" CACHE STRING "URL for the bug tracker.")
 
 # Translations Platform URL
 set(Launcher_TRANSLATIONS_URL "https://hosted.weblate.org/projects/prismlauncher/launcher/" CACHE STRING "URL for the translations platform.")
 set(Launcher_TRANSLATION_FILES_URL "https://i18n.prismlauncher.org/" CACHE STRING "URL for the translations files.")
 
 # Matrix Space
-set(Launcher_MATRIX_URL "https://prismlauncher.org/matrix" CACHE STRING "URL to the Matrix Space")
+#set(Launcher_MATRIX_URL "https://prismlauncher.org/matrix" CACHE STRING "URL to the Matrix Space")
 
 # Discord URL
-set(Launcher_DISCORD_URL "https://prismlauncher.org/discord" CACHE STRING "URL for the Discord guild.")
+set(Launcher_DISCORD_URL "https://discord.gg/5kcBCvnbTp" CACHE STRING "URL for the Discord guild.")
 
 # Subreddit URL
-set(Launcher_SUBREDDIT_URL "https://prismlauncher.org/reddit" CACHE STRING "URL for the subreddit.")
+#set(Launcher_SUBREDDIT_URL "https://prismlauncher.org/reddit" CACHE STRING "URL for the subreddit.")
 
 # Builds
 set(Launcher_QT_VERSION_MAJOR "6" CACHE STRING "Major Qt version to build against")
@@ -253,6 +253,10 @@ endif()
 # By using this key in your builds you accept the terms of use laid down in
 # https://docs.microsoft.com/en-us/legal/microsoft-identity-platform/terms-of-use
 set(Launcher_MSA_CLIENT_ID "c36a9fb6-4f2a-41ff-90bd-ae7cc92031eb" CACHE STRING "Client ID you can get from Microsoft Identity Platform when you register an application")
+
+# By using this key in your builds you accept the terms of use laid down in
+# https://account.ely.by/rules
+set(Launcher_ELY_CLIENT_ID "elyprism-launcher" CACHE STRING "Client ID you can get from Ely.by Accounts for developers when you register an application")
 
 # By using this key in your builds you accept the terms and conditions laid down in
 # https://support.curseforge.com/en/support/solutions/articles/9000207405-curse-forge-3rd-party-api-terms-and-conditions
@@ -337,7 +341,7 @@ include(ECMQtDeclareLoggingCategory)
 
 ####################################### Program Info #######################################
 
-set(Launcher_APP_BINARY_NAME "prismlauncher" CACHE STRING "Name of the Launcher binary")
+set(Launcher_APP_BINARY_NAME "elyprismlauncher" CACHE STRING "Name of the Launcher binary")
 add_subdirectory(program_info)
 
 ####################################### Install layout #######################################
@@ -371,8 +375,8 @@ if(UNIX AND APPLE)
     set(MACOSX_BUNDLE_LONG_VERSION_STRING "${Launcher_VERSION_NAME}")
     set(MACOSX_BUNDLE_ICON_FILE ${Launcher_Name}.icns)
     set(MACOSX_BUNDLE_COPYRIGHT "${Launcher_Copyright_Mac}")
-    set(MACOSX_SPARKLE_UPDATE_PUBLIC_KEY "v55ZWWD6QlPoXGV6VLzOTZxZUggWeE51X8cRQyQh6vA=" CACHE STRING "Public key for Sparkle update feed")
-    set(MACOSX_SPARKLE_UPDATE_FEED_URL "https://prismlauncher.org/feed/appcast.xml" CACHE STRING "URL for Sparkle update feed")
+    set(MACOSX_SPARKLE_UPDATE_PUBLIC_KEY "" CACHE STRING "Public key for Sparkle update feed")
+    set(MACOSX_SPARKLE_UPDATE_FEED_URL "" CACHE STRING "URL for Sparkle update feed")
 
     set(MACOSX_SPARKLE_DOWNLOAD_URL "https://github.com/sparkle-project/Sparkle/releases/download/2.8.0/Sparkle-2.8.0.tar.xz" CACHE STRING "URL to Sparkle release archive")
     set(MACOSX_SPARKLE_SHA256 "fd5681ee92bf238aaac2d08214ceaf0cc8976e452d7f882d80bac1e61581f3b1" CACHE STRING "SHA256 checksum for Sparkle release archive")

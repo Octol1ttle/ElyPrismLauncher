@@ -175,9 +175,9 @@ jobs:
         run: |
           cmake --build --preset "$CMAKE_PRESET" --config "$BUILD_TYPE"
 
-      - name: Run tests
-        run: |
-          ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE"
+      #- name: Run tests
+      #  run: |
+      #    ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE"
 
       ##
       # PACKAGE

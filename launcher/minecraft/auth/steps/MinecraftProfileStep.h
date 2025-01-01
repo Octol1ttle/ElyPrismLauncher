@@ -17,6 +17,9 @@ class MinecraftProfileStep : public AuthStep {
 
     QString describe() override;
 
+   protected:
+    QUrl m_profileUrl = QUrl("https://api.minecraftservices.com/minecraft/profile");
+
    private slots:
     void onRequestDone();
 

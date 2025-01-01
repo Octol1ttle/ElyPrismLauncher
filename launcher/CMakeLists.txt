@@ -232,6 +232,12 @@ set(MINECRAFT_SOURCES
     minecraft/auth/AuthFlow.cpp
     minecraft/auth/AuthFlow.h
 
+    minecraft/auth/steps/ElyDeviceCodeStep.cpp
+    minecraft/auth/steps/ElyDeviceCodeStep.h
+    minecraft/auth/steps/ElyStep.cpp
+    minecraft/auth/steps/ElyStep.h
+    minecraft/auth/steps/ElyYggdrasilTokenStep.cpp
+    minecraft/auth/steps/ElyYggdrasilTokenStep.h
     minecraft/auth/steps/EntitlementsStep.cpp
     minecraft/auth/steps/EntitlementsStep.h
     minecraft/auth/steps/GetSkinStep.cpp
@@ -240,6 +246,8 @@ set(MINECRAFT_SOURCES
     minecraft/auth/steps/LauncherLoginStep.h
     minecraft/auth/steps/MinecraftProfileStep.cpp
     minecraft/auth/steps/MinecraftProfileStep.h
+    minecraft/auth/steps/MinecraftProfileStepEly.cpp
+    minecraft/auth/steps/MinecraftProfileStepEly.h
     minecraft/auth/steps/MSADeviceCodeStep.cpp
     minecraft/auth/steps/MSADeviceCodeStep.h
     minecraft/auth/steps/MSAStep.cpp
@@ -253,6 +261,8 @@ set(MINECRAFT_SOURCES
 
     minecraft/update/AssetUpdateTask.h
     minecraft/update/AssetUpdateTask.cpp
+    minecraft/update/ElyPatchTask.cpp
+    minecraft/update/ElyPatchTask.h
     minecraft/update/FMLLibrariesTask.cpp
     minecraft/update/FMLLibrariesTask.h
     minecraft/update/FoldersTask.cpp
@@ -1071,6 +1081,8 @@ SET(LAUNCHER_SOURCES
     ui/dialogs/ImportResourceDialog.h
     ui/dialogs/MSALoginDialog.cpp
     ui/dialogs/MSALoginDialog.h
+    ui/dialogs/ElyLoginDialog.cpp
+    ui/dialogs/ElyLoginDialog.h
     ui/dialogs/NewComponentDialog.cpp
     ui/dialogs/NewComponentDialog.h
     ui/dialogs/NewInstanceDialog.cpp
