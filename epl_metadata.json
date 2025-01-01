@@ -1,0 +1,164 @@
+{
+  "overrides": {
+    "com.mojang:authlib": {
+      "6.0.58": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/6.0.58-ely.1/authlib-6.0.58-ely.1.jar",
+        "sha1": "7c2a6fd99b3897f447faf7a09f4a74cee396cb02",
+        "size": 120319
+      },
+      "6.0.57": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/6.0.57-ely.4/authlib-6.0.57-ely.4.jar",
+        "sha1": "536fd6852d08783152cbcbbab7cc713cedf17f16",
+        "size": 119942
+      },
+      "6.0.55": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/6.0.55-ely.4/authlib-6.0.55-ely.4.jar",
+        "sha1": "57bc3b1f46f9ad0dd6dc8c590b1a33437a2b13a5",
+        "size": 119752
+      },
+      "6.0.54": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/6.0.54-ely.4/authlib-6.0.54-ely.4.jar",
+        "sha1": "c14016df2ab23bc7b19c758767cab1d933120254",
+        "size": 119748
+      },
+      "6.0.52": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/6.0.52-ely.4/authlib-6.0.52-ely.4.jar",
+        "sha1": "a34f4a0cc9318692a68faee36b5d648a1bbdc10f",
+        "size": 119980
+      },
+      "5.0.51": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/5.0.51-ely.4/authlib-5.0.51-ely.4.jar",
+        "sha1": "41c03ebe604a27ebcd7eeb8dc48405c7b59292a2",
+        "size": 118740
+      },
+      "5.0.50": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/5.0.50-ely.4/authlib-5.0.50-ely.4.jar",
+        "sha1": "c81fcd3fd93764728f24f4021b760155508c751f",
+        "size": 118668
+      },
+      "5.0.47": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/5.0.47-ely.4/authlib-5.0.47-ely.4.jar",
+        "sha1": "697d82604797e68b5d3ad8572bb3420e86668cfc",
+        "size": 115469
+      },
+      "5.0.46": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/5.0.46-ely.4/authlib-5.0.46-ely.4.jar",
+        "sha1": "2737ea492af3dc1f184ea2a567fa00f1b5704a31",
+        "size": 111013
+      },
+      "4.0.43": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/4.0.43-ely.4/authlib-4.0.43-ely.4.jar",
+        "sha1": "75e9ac2a32ea88402fe1e0dab9b6275541ab8548",
+        "size": 126454
+      },
+      "3.18.38": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/3.18.38-ely.5/authlib-3.18.38-ely.5.jar",
+        "sha1": "959d790ea927a2e14947720c1ea76f084b0a2d5c",
+        "size": 123085
+      },
+      "3.16.29": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/3.16.29-ely.5/authlib-3.16.29-ely.5.jar",
+        "sha1": "941f9573c8df124f499a067291b22e8f2c7a3c67",
+        "size": 121805
+      },
+      "3.11.50": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/3.11.50-ely.5/authlib-3.11.50-ely.5.jar",
+        "sha1": "c92e5a7e2bff4359c6595283127733a515b5594b",
+        "size": 125016
+      },
+      "3.11.49": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/3.11.49-ely.5/authlib-3.11.49-ely.5.jar",
+        "sha1": "af70405e55c0f9bb1ff755f52afb5eafda4e5325",
+        "size": 124881
+      },
+      "3.5.41": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/3.5.41-ely.5/authlib-3.5.41-ely.5.jar",
+        "sha1": "47efde009f8487ef8590a45abc36804628be40d4",
+        "size": 109380
+      },
+      "3.3.39": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/3.3.39-ely.4/authlib-3.3.39-ely.4.jar",
+        "sha1": "7f405a11d3e9c519e79389930557e38c1f493f44",
+        "size": 103309
+      },
+      "3.2.38": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/3.2.38-ely.4/authlib-3.2.38-ely.4.jar",
+        "sha1": "fab7e8e424152c25d741429dad6b41dc4175a9ba",
+        "size": 105464
+      },
+      "2.3.31": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/2.3.31-ely.5/authlib-2.3.31-ely.5.jar",
+        "sha1": "ed40d138ad7441669c058c0949c8a5b63adc223d",
+        "size": 91499
+      },
+      "2.1.28": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/2.1.28-ely.5/authlib-2.1.28-ely.5.jar",
+        "sha1": "daed558eb4b27d0a62d201ea657b0862d9484bc1",
+        "size": 81297
+      },
+      "1.6.25": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.6.25-ely.4/authlib-1.6.25-ely.4.jar",
+        "sha1": "78ebba98fc56ead2f9f308cdf3d296afeb0b3944",
+        "size": 74771
+      },
+      "1.5.25": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.5.25-ely.4/authlib-1.5.25-ely.4.jar",
+        "sha1": "e484a7411b06d17e904b4f6f65ed24b19ea93a93",
+        "size": 68300
+      },
+      "1.5.24": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.5.24-ely.4/authlib-1.5.24-ely.4.jar",
+        "sha1": "d0486ae1433149b88aa3a97ef56f81abba668b7e",
+        "size": 68269
+      },
+      "1.5.22": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.5.22-ely.4/authlib-1.5.22-ely.4.jar",
+        "sha1": "e6850fca7fccd441d6d8085df67cc96ff1338c81",
+        "size": 68128
+      },
+      "1.5.21": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.5.21-ely.4/authlib-1.5.21-ely.4.jar",
+        "sha1": "0371caf8776f5010960a1eb1142616af7aa350ab",
+        "size": 68004
+      },
+      "1.5.13": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.5.13-ely.4/authlib-1.5.13-ely.4.jar",
+        "sha1": "8ca8f902dcb64cecec14de54a2e33e34a3f84a1e",
+        "size": 64996
+      },
+      "1.5.12": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.5.12-ely.4/authlib-1.5.12-ely.4.jar",
+        "sha1": "110ad3ed4b7e801aa9c14ee0aeecbc0432262e93",
+        "size": 66078
+      },
+      "1.5.8": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.5.8-ely.4/authlib-1.5.8-ely.4.jar",
+        "sha1": "6ad304ef9178f3ea54d59b7267adf0b1b7054b45",
+        "size": 64109
+      },
+      "1.5.6": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.5.6-ely.4/authlib-1.5.6-ely.4.jar",
+        "sha1": "f32fa19837efdd8590eeb78285a46957fb1f0e8e",
+        "size": 63171
+      },
+      "1.3.1": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.3.1-ely.1/authlib-1.3.1-ely.1.jar",
+        "sha1": "f4081c35eb078366ee80e996f78ddeb4592ba363",
+        "size": 39649
+      },
+      "1.3": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.3-ely.1/authlib-1.3-ely.1.jar",
+        "sha1": "f0286b0fb2568acd884c4e6b42e90a501cc71ec0",
+        "size": 39662
+      },
+      "1.2": {
+        "url": "https://llaun.ch/repo/libraries/by/ely/authlib/1.2-ely.1/authlib-1.2-ely.1.jar",
+        "sha1": "5e7ed37d911174e83f53ed1a521fa0f8072b23ac",
+        "size": 38292
+      }
+    }
+  },
+  "extras": {
+    "authlib-injector": "https://github.com/yushijinhun/authlib-injector/releases/download/v1.2.5/authlib-injector-1.2.5.jar"
+  }
+}

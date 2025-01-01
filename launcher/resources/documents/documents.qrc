@@ -3,6 +3,7 @@
     <qresource prefix="/documents">
         <file>../../../COPYING.md</file>
         <file>login-qr.svg</file>
+        <file>login-qr-ely.svg</file>
     </qresource>
 </RCC>
 

@@ -633,6 +633,34 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="elySettingsGroupBox">
+         <property name="title">
+          <string>Override Ely patch settings</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_18">
+          <item>
+           <widget class="QLabel" name="elyPreferenceLabel">
+            <property name="text">
+             <string>Apply Ely game patch</string>
+            </property>
+            <property name="buddy">
+             <cstring>elyPreferenceComboBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="elyPreferenceComboBox"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="gameTimeGroupBox">
          <property name="enabled">
           <bool>true</bool>

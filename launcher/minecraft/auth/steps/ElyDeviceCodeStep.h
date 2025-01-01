@@ -34,46 +34,21 @@
  */
 
 #pragma once
-#include <QObject>
-#include <QTimer>
 
+#include "MSADeviceCodeStep.h"
 #include "minecraft/auth/AuthStep.h"
 #include "net/NetJob.h"
-#include "net/Upload.h"
 
-class MSADeviceCodeStep : public AuthStep {
+class ElyDeviceCodeStep : public MSADeviceCodeStep {
     Q_OBJECT
    public:
-    explicit MSADeviceCodeStep(AccountData* data, bool startTimers = true);
-    virtual ~MSADeviceCodeStep() noexcept = default;
+    explicit ElyDeviceCodeStep(AccountData* data);
+    virtual ~ElyDeviceCodeStep() noexcept = default;
 
     void perform() override;
 
     QString describe() override;
 
-   public slots:
-    void abort() override;
-
-   signals:
-    void authorizeWithBrowser(QString url, QString code, int expiresIn);
-
    private slots:
-    void startPoolTimer();
     void authenticateUser();
-
-   protected:
-    void deviceAuthorizationFinished();
-    void authenticationFinished();
-
-    QString m_clientId;
-    NetJob::Ptr m_task;
-    std::shared_ptr<QByteArray> m_response;
-    Net::Upload::Ptr m_request;
-    QString m_device_code;
-    QTimer m_pool_timer;
-    QTimer m_expiration_timer;
-
-   private:
-    bool m_is_aborted = false;
-    int interval = 5;
 };

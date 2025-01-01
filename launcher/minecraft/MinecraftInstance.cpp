@@ -70,6 +70,7 @@
 #include "minecraft/launch/ReconstructAssets.h"
 #include "minecraft/launch/ScanModFolders.h"
 #include "minecraft/launch/VerifyJavaInstall.h"
+#include "minecraft/launch/ApplyLibraryOverrides.h"
 
 #include "java/JavaUtils.h"
 
@@ -185,6 +186,10 @@ void MinecraftInstance::loadSpecificSettings()
         // Legacy-related options
         auto legacySettings = m_settings->registerSetting("OverrideLegacySettings", false);
         m_settings->registerOverride(global_settings->getSetting("OnlineFixes"), legacySettings);
+
+        // Ely-related options
+        auto elySettings = m_settings->registerSetting("OverrideElySettings", false);
+        m_settings->registerOverride(global_settings->getSetting("ElyPatchPreference"), elySettings);
 
         auto envSetting = m_settings->registerSetting("OverrideEnv", false);
         m_settings->registerOverride(global_settings->getSetting("Env"), envSetting);
@@ -1108,6 +1113,7 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
         if (!session->demo) {
             process->appendStep(makeShared<ClaimAccount>(pptr, session));
         }
+        process->appendStep(makeShared<ApplyLibraryOverrides>(pptr, session));
         for (auto t : createUpdateTask()) {
             process->appendStep(makeShared<TaskStepWrapper>(pptr, t));
         }

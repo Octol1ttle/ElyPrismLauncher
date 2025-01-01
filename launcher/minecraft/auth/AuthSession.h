@@ -38,6 +38,10 @@ struct AuthSession {
     bool auth_server_online = false;
     // Did the user request online mode?
     bool wants_online = true;
+    // Did the user select an Ely account?
+    bool wants_ely_patch = false;
+    // Was the authlib replaced?
+    bool ely_authlib_replaced = false;
 
     // Is this a demo session?
     bool demo = false;

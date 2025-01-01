@@ -46,9 +46,9 @@ ProfileSelectDialog::ProfileSelectDialog(const QString& message, int flags, QWid
         MinecraftAccountPtr account = m_accounts->at(i);
         QString profileLabel;
         if (account->isInUse()) {
-            profileLabel = tr("%1 (in use)").arg(account->profileName());
+            profileLabel = tr("%1 (in use)").arg(account->nameWithType());
         } else {
-            profileLabel = account->profileName();
+            profileLabel = account->nameWithType();
         }
         auto item = new QTreeWidgetItem(view);
         item->setText(0, profileLabel);

@@ -229,6 +229,10 @@ set(MINECRAFT_SOURCES
     minecraft/auth/AuthFlow.cpp
     minecraft/auth/AuthFlow.h
 
+    minecraft/auth/steps/ElyDeviceCodeStep.cpp
+    minecraft/auth/steps/ElyDeviceCodeStep.h
+    minecraft/auth/steps/ElyStep.cpp
+    minecraft/auth/steps/ElyStep.h
     minecraft/auth/steps/EntitlementsStep.cpp
     minecraft/auth/steps/EntitlementsStep.h
     minecraft/auth/steps/GetSkinStep.cpp
@@ -237,6 +241,8 @@ set(MINECRAFT_SOURCES
     minecraft/auth/steps/LauncherLoginStep.h
     minecraft/auth/steps/MinecraftProfileStep.cpp
     minecraft/auth/steps/MinecraftProfileStep.h
+    minecraft/auth/steps/MinecraftProfileStepEly.cpp
+    minecraft/auth/steps/MinecraftProfileStepEly.h
     minecraft/auth/steps/MSADeviceCodeStep.cpp
     minecraft/auth/steps/MSADeviceCodeStep.h
     minecraft/auth/steps/MSAStep.cpp
@@ -282,6 +288,8 @@ set(MINECRAFT_SOURCES
     minecraft/launch/VerifyJavaInstall.h
     minecraft/launch/AutoInstallJava.cpp
     minecraft/launch/AutoInstallJava.h
+    minecraft/launch/ApplyLibraryOverrides.cpp
+    minecraft/launch/ApplyLibraryOverrides.h
 
     minecraft/GradleSpecifier.h
     minecraft/MinecraftInstance.cpp
@@ -1031,6 +1039,8 @@ SET(LAUNCHER_SOURCES
     ui/dialogs/CopyInstanceDialog.h
     ui/dialogs/CustomMessageBox.cpp
     ui/dialogs/CustomMessageBox.h
+    ui/dialogs/ElyLoginDialog.cpp
+    ui/dialogs/ElyLoginDialog.h
     ui/dialogs/ExportInstanceDialog.cpp
     ui/dialogs/ExportInstanceDialog.h
     ui/dialogs/ExportPackDialog.cpp
@@ -1215,6 +1225,7 @@ qt_wrap_ui(LAUNCHER_UI
     ui/dialogs/ImportResourceDialog.ui
     ui/dialogs/MSALoginDialog.ui
     ui/dialogs/OfflineLoginDialog.ui
+    ui/dialogs/ElyLoginDialog.ui
     ui/dialogs/AboutDialog.ui
     ui/dialogs/ReviewMessageBox.ui
     ui/dialogs/ScrollMessageBox.ui

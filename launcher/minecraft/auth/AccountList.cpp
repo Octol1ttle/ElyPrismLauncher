@@ -79,13 +79,15 @@ int AccountList::findAccountByProfileId(const QString& profileId) const
 
 MinecraftAccountPtr AccountList::getAccountByProfileName(const QString& profileName) const
 {
+    MinecraftAccountPtr toReturn = nullptr;
     for (int i = 0; i < count(); i++) {
         MinecraftAccountPtr account = at(i);
         if (account->profileName() == profileName) {
-            return account;
+            if (toReturn) return nullptr;
+            toReturn = account;
         }
     }
-    return nullptr;
+    return toReturn;
 }
 
 const MinecraftAccountPtr AccountList::at(int i) const
@@ -284,6 +286,9 @@ QVariant AccountList::data(const QModelIndex& index, int role) const
                     switch (account->accountType()) {
                         case AccountType::MSA: {
                             return tr("MSA", "Account type");
+                        }
+                        case AccountType::Ely: {
+                            return tr("Ely.by", "Account type");
                         }
                         case AccountType::Offline: {
                             return tr("Offline", "Account type");
@@ -573,16 +578,6 @@ void AccountList::setListFilePath(QString path, bool autosave)
 {
     m_listFilePath = path;
     m_autosave = autosave;
-}
-
-bool AccountList::anyAccountIsValid()
-{
-    for (auto account : m_accounts) {
-        if (account->ownsMinecraft()) {
-            return true;
-        }
-    }
-    return false;
 }
 
 void AccountList::fillQueue()

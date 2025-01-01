@@ -83,7 +83,7 @@ class MinecraftAccount : public QObject, public Usable {
     //! Default constructor
     explicit MinecraftAccount(QObject* parent = 0);
 
-    static MinecraftAccountPtr createBlankMSA();
+    static MinecraftAccountPtr createBlank(AccountType type);
 
     static MinecraftAccountPtr createOffline(const QString& username);
 
@@ -116,7 +116,7 @@ class MinecraftAccount : public QObject, public Usable {
 
     [[nodiscard]] AccountType accountType() const noexcept { return data.type; }
 
-    bool ownsMinecraft() const { return data.type != AccountType::Offline && data.minecraftEntitlement.ownsMinecraft; }
+    bool ownsMinecraft() const { return data.type != AccountType::MSA || data.minecraftEntitlement.ownsMinecraft; }
 
     bool hasProfile() const { return data.profileId().size() != 0; }
 
@@ -126,11 +126,32 @@ class MinecraftAccount : public QObject, public Usable {
             case AccountType::MSA: {
                 return "msa";
             } break;
+            case AccountType::Ely: {
+                return "msa"; // required for chat signing
+            } break;
             case AccountType::Offline: {
                 return "offline";
             } break;
             default: {
                 return "unknown";
+            }
+        }
+    }
+
+    QString nameWithType() const
+    {
+        switch (data.type) {
+            case AccountType::MSA: {
+                return QString("%1 [MSA]").arg(profileName());
+            } break;
+            case AccountType::Ely: {
+                return QString("%1 [Ely]").arg(profileName());
+            } break;
+            case AccountType::Offline: {
+                return QString("%1 [Offline]").arg(profileName());
+            } break;
+            default: {
+                return profileName();
             }
         }
     }
@@ -144,7 +165,7 @@ class MinecraftAccount : public QObject, public Usable {
 
     bool shouldRefresh() const;
 
-    void fillSession(AuthSessionPtr session);
+    void fillSession(AuthSessionPtr session, int elyPatchPreference);
 
     QString lastError() const { return data.lastError(); }
 

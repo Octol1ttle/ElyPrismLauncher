@@ -135,6 +135,8 @@ void APIPage::loadSettings()
 
     QString msaClientID = s->get("MSAClientIDOverride").toString();
     ui->msaClientID->setText(msaClientID);
+    QString elyClientID = s->get("ElyClientIDOverride").toString();
+    ui->elyClientID->setText(elyClientID);
     QString metaURL = s->get("MetaURLOverride").toString();
     ui->metaURL->setText(metaURL);
     QString flameKey = s->get("FlameKeyOverride").toString();
@@ -155,6 +157,8 @@ void APIPage::applySettings()
 
     QString msaClientID = ui->msaClientID->text();
     s->set("MSAClientIDOverride", msaClientID);
+    QString elyClientID = ui->elyClientID->text();
+    s->set("ElyClientIDOverride", elyClientID);
     QUrl metaURL(ui->metaURL->text());
     // Add required trailing slash
     if (!metaURL.isEmpty() && !metaURL.path().endsWith('/')) {

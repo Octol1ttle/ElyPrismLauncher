@@ -149,6 +149,11 @@ class Config {
     QString MSA_CLIENT_ID;
 
     /**
+     * Client ID you can get from Ely.by Accounts for developers when you register an application
+     */
+    QString ELY_CLIENT_ID;
+
+    /**
      * Client API key for CurseForge
      */
     QString FLAME_API_KEY;

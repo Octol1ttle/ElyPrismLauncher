@@ -43,11 +43,13 @@
 #include "net/RawHeaderProxy.h"
 
 // https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code
-MSADeviceCodeStep::MSADeviceCodeStep(AccountData* data) : AuthStep(data)
+MSADeviceCodeStep::MSADeviceCodeStep(AccountData* data, bool startTimers) : AuthStep(data)
 {
-    m_clientId = APPLICATION->getMSAClientID();
-    connect(&m_expiration_timer, &QTimer::timeout, this, &MSADeviceCodeStep::abort);
-    connect(&m_pool_timer, &QTimer::timeout, this, &MSADeviceCodeStep::authenticateUser);
+    if (startTimers) {
+        m_clientId = APPLICATION->getMSAClientID();
+        connect(&m_expiration_timer, &QTimer::timeout, this, &MSADeviceCodeStep::abort);
+        connect(&m_pool_timer, &QTimer::timeout, this, &MSADeviceCodeStep::authenticateUser);
+    }
 }
 
 QString MSADeviceCodeStep::describe()

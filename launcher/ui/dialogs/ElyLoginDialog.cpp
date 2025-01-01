@@ -33,10 +33,10 @@
  *      limitations under the License.
  */
 
-#include "MSALoginDialog.h"
+#include "ElyLoginDialog.h"
 #include "Application.h"
 
-#include "ui_MSALoginDialog.h"
+#include "ui_ElyLoginDialog.h"
 
 #include "DesktopServices.h"
 #include "minecraft/auth/AuthFlow.h"
@@ -47,7 +47,7 @@
 #include <QUrl>
 #include <QtWidgets/QPushButton>
 
-MSALoginDialog::MSALoginDialog(QWidget* parent) : QDialog(parent), ui(new Ui::MSALoginDialog)
+ElyLoginDialog::ElyLoginDialog(QWidget* parent) : QDialog(parent), ui(new Ui::ElyLoginDialog)
 {
     ui->setupUi(this);
 
@@ -60,7 +60,7 @@ MSALoginDialog::MSALoginDialog(QWidget* parent) : QDialog(parent), ui(new Ui::MS
     ui->code->setFont(font);
 
     connect(ui->copyCode, &QPushButton::clicked, this, [this] { QApplication::clipboard()->setText(ui->code->text()); });
-    ui->qr->setPixmap(QIcon((":/documents/login-qr.svg")).pixmap(QSize(150, 150)));
+    ui->qr->setPixmap(QIcon((":/documents/login-qr-ely.svg")).pixmap(QSize(150, 150)));
     connect(ui->loginButton, &QPushButton::clicked, this, [this] {
         if (m_url.isValid()) {
             if (!DesktopServices::openUrl(m_url)) {
@@ -72,26 +72,26 @@ MSALoginDialog::MSALoginDialog(QWidget* parent) : QDialog(parent), ui(new Ui::MS
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }
 
-int MSALoginDialog::exec()
+int ElyLoginDialog::exec()
 {
     // Setup the login task and start it
-    m_account = MinecraftAccount::createBlank(AccountType::MSA);
+    m_account = MinecraftAccount::createBlank(AccountType::Ely);
     m_authflow_task = m_account->login(false);
-    connect(m_authflow_task.get(), &Task::failed, this, &MSALoginDialog::onTaskFailed);
+    connect(m_authflow_task.get(), &Task::failed, this, &ElyLoginDialog::onTaskFailed);
     connect(m_authflow_task.get(), &Task::succeeded, this, &QDialog::accept);
-    connect(m_authflow_task.get(), &Task::aborted, this, &MSALoginDialog::reject);
-    connect(m_authflow_task.get(), &Task::status, this, &MSALoginDialog::onAuthFlowStatus);
-    connect(m_authflow_task.get(), &AuthFlow::authorizeWithBrowser, this, &MSALoginDialog::authorizeWithBrowser);
-    connect(m_authflow_task.get(), &AuthFlow::authorizeWithBrowserWithExtra, this, &MSALoginDialog::authorizeWithBrowserWithExtra);
+    connect(m_authflow_task.get(), &Task::aborted, this, &ElyLoginDialog::reject);
+    connect(m_authflow_task.get(), &Task::status, this, &ElyLoginDialog::onAuthFlowStatus);
+    connect(m_authflow_task.get(), &AuthFlow::authorizeWithBrowser, this, &ElyLoginDialog::authorizeWithBrowser);
+    connect(m_authflow_task.get(), &AuthFlow::authorizeWithBrowserWithExtra, this, &ElyLoginDialog::authorizeWithBrowserWithExtra);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, m_authflow_task.get(), &Task::abort);
 
     m_devicecode_task.reset(new AuthFlow(m_account->accountData(), AuthFlow::Action::DeviceCode));
-    connect(m_devicecode_task.get(), &Task::failed, this, &MSALoginDialog::onTaskFailed);
+    connect(m_devicecode_task.get(), &Task::failed, this, &ElyLoginDialog::onTaskFailed);
     connect(m_devicecode_task.get(), &Task::succeeded, this, &QDialog::accept);
-    connect(m_devicecode_task.get(), &Task::aborted, this, &MSALoginDialog::reject);
-    connect(m_devicecode_task.get(), &Task::status, this, &MSALoginDialog::onDeviceFlowStatus);
-    connect(m_devicecode_task.get(), &AuthFlow::authorizeWithBrowser, this, &MSALoginDialog::authorizeWithBrowser);
-    connect(m_devicecode_task.get(), &AuthFlow::authorizeWithBrowserWithExtra, this, &MSALoginDialog::authorizeWithBrowserWithExtra);
+    connect(m_devicecode_task.get(), &Task::aborted, this, &ElyLoginDialog::reject);
+    connect(m_devicecode_task.get(), &Task::status, this, &ElyLoginDialog::onDeviceFlowStatus);
+    connect(m_devicecode_task.get(), &AuthFlow::authorizeWithBrowser, this, &ElyLoginDialog::authorizeWithBrowser);
+    connect(m_devicecode_task.get(), &AuthFlow::authorizeWithBrowserWithExtra, this, &ElyLoginDialog::authorizeWithBrowserWithExtra);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, m_devicecode_task.get(), &Task::abort);
     QMetaObject::invokeMethod(m_authflow_task.get(), &Task::start, Qt::QueuedConnection);
     QMetaObject::invokeMethod(m_devicecode_task.get(), &Task::start, Qt::QueuedConnection);
@@ -99,12 +99,12 @@ int MSALoginDialog::exec()
     return QDialog::exec();
 }
 
-MSALoginDialog::~MSALoginDialog()
+ElyLoginDialog::~ElyLoginDialog()
 {
     delete ui;
 }
 
-void MSALoginDialog::onTaskFailed(QString reason)
+void ElyLoginDialog::onTaskFailed(QString reason)
 {
     // Set message
     m_authflow_task->disconnect();
@@ -129,23 +129,23 @@ void MSALoginDialog::onTaskFailed(QString reason)
     }
     disconnect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, m_authflow_task.get(), &Task::abort);
     disconnect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, m_devicecode_task.get(), &Task::abort);
-    connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &MSALoginDialog::reject);
+    connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &ElyLoginDialog::reject);
 }
 
-void MSALoginDialog::authorizeWithBrowser(const QUrl& url)
+void ElyLoginDialog::authorizeWithBrowser(const QUrl& url)
 {
     ui->stackedWidget2->setCurrentIndex(1);
     ui->loginButton->setToolTip(QString("<div style='width: 200px;'>%1</div>").arg(url.toString()));
     m_url = url;
 }
 
-void MSALoginDialog::authorizeWithBrowserWithExtra(QString url, QString code, int expiresIn)
+void ElyLoginDialog::authorizeWithBrowserWithExtra(QString url, QString code, int expiresIn)
 {
     ui->stackedWidget->setCurrentIndex(1);
 
     const auto linkString = QString("<a href=\"%1\">%2</a>").arg(url, url);
     ui->code->setText(code);
-    auto isDefaultUrl = url == "https://www.microsoft.com/link";
+    auto isDefaultUrl = url == "http://account.ely.by/code" || url == "https://account.ely.by/code";
     ui->qr->setVisible(isDefaultUrl);
     if (isDefaultUrl) {
         ui->qrMessage->setText(tr("Open %1 or scan the QR and enter the above code.").arg(linkString));
@@ -154,22 +154,22 @@ void MSALoginDialog::authorizeWithBrowserWithExtra(QString url, QString code, in
     }
 }
 
-void MSALoginDialog::onDeviceFlowStatus(QString status)
+void ElyLoginDialog::onDeviceFlowStatus(QString status)
 {
     ui->stackedWidget->setCurrentIndex(0);
     ui->status->setText(status);
 }
 
-void MSALoginDialog::onAuthFlowStatus(QString status)
+void ElyLoginDialog::onAuthFlowStatus(QString status)
 {
     ui->stackedWidget2->setCurrentIndex(0);
     ui->status2->setText(status);
 }
 
 // Public interface
-MinecraftAccountPtr MSALoginDialog::newAccount(QWidget* parent)
+MinecraftAccountPtr ElyLoginDialog::newAccount(QWidget* parent)
 {
-    MSALoginDialog dlg(parent);
+    ElyLoginDialog dlg(parent);
     if (dlg.exec() == QDialog::Accepted) {
         return dlg.m_account;
     }

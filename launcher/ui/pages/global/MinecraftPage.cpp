@@ -48,11 +48,22 @@
 #include "MangoHud.h"
 #endif
 
+std::array<QString, 4> MinecraftPage::ElyPreferenceTypes = {
+    "Always",
+    "When using Ely and Offline accounts",
+    "When using Ely accounts",
+    "Never"
+};
+
 MinecraftPage::MinecraftPage(QWidget* parent) : QWidget(parent), ui(new Ui::MinecraftPage)
 {
     ui->setupUi(this);
     connect(ui->useNativeGLFWCheck, &QAbstractButton::toggled, this, &MinecraftPage::onUseNativeGLFWChanged);
     connect(ui->useNativeOpenALCheck, &QAbstractButton::toggled, this, &MinecraftPage::onUseNativeOpenALChanged);
+    for (auto preferenceType : MinecraftPage::ElyPreferenceTypes) {
+        ui->elyPreferenceComboBox->addItem(preferenceType);
+    }
+
     loadSettings();
     updateCheckboxStuff();
 }
@@ -123,6 +134,8 @@ void MinecraftPage::applySettings()
 
     // Legacy settings
     s->set("OnlineFixes", ui->onlineFixes->isChecked());
+
+    s->set("ElyPatchPreference", ui->elyPreferenceComboBox->currentIndex());
 }
 
 void MinecraftPage::loadSettings()
@@ -177,6 +190,8 @@ void MinecraftPage::loadSettings()
     ui->quitAfterGameStopCheck->setChecked(s->get("QuitAfterGameStop").toBool());
 
     ui->onlineFixes->setChecked(s->get("OnlineFixes").toBool());
+
+    ui->elyPreferenceComboBox->setCurrentIndex(s->get("ElyPatchPreference").toInt());
 }
 
 void MinecraftPage::retranslate()

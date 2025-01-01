@@ -17,10 +17,10 @@ class MinecraftProfileStep : public AuthStep {
 
     QString describe() override;
 
-   private slots:
+   protected slots:
     void onRequestDone();
 
-   private:
+   protected:
     std::shared_ptr<QByteArray> m_response;
     Net::Download::Ptr m_request;
     NetJob::Ptr m_task;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /*
  *  Prism Launcher - Minecraft Launcher
- *  Copyright (c) 2024 Trial97 <alexandru.tripon97@gmail.com>
+ *  Copyright (C) 2022 Sefa Eyeoglu <contact@scrumplex.net>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -34,46 +34,25 @@
  */
 
 #pragma once
-#include <QObject>
-#include <QTimer>
 
 #include "minecraft/auth/AuthStep.h"
-#include "net/NetJob.h"
-#include "net/Upload.h"
 
-class MSADeviceCodeStep : public AuthStep {
+#include <QtNetworkAuth/qoauth2authorizationcodeflow.h>
+class ElyStep : public AuthStep {
     Q_OBJECT
    public:
-    explicit MSADeviceCodeStep(AccountData* data, bool startTimers = true);
-    virtual ~MSADeviceCodeStep() noexcept = default;
+    explicit ElyStep(AccountData* data, bool silent = false);
+    virtual ~ElyStep() noexcept = default;
 
     void perform() override;
 
     QString describe() override;
 
-   public slots:
-    void abort() override;
-
    signals:
-    void authorizeWithBrowser(QString url, QString code, int expiresIn);
-
-   private slots:
-    void startPoolTimer();
-    void authenticateUser();
-
-   protected:
-    void deviceAuthorizationFinished();
-    void authenticationFinished();
-
-    QString m_clientId;
-    NetJob::Ptr m_task;
-    std::shared_ptr<QByteArray> m_response;
-    Net::Upload::Ptr m_request;
-    QString m_device_code;
-    QTimer m_pool_timer;
-    QTimer m_expiration_timer;
+    void authorizeWithBrowser(const QUrl& url);
 
    private:
-    bool m_is_aborted = false;
-    int interval = 5;
+    bool m_silent;
+    QString m_clientId;
+    QOAuth2AuthorizationCodeFlow m_oauth2;
 };

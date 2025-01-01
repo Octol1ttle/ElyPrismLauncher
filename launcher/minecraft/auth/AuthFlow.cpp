@@ -4,12 +4,15 @@
 #include <QNetworkRequest>
 
 #include "minecraft/auth/AccountData.h"
+#include "minecraft/auth/steps/ElyDeviceCodeStep.h"
+#include "minecraft/auth/steps/ElyStep.h"
 #include "minecraft/auth/steps/EntitlementsStep.h"
 #include "minecraft/auth/steps/GetSkinStep.h"
 #include "minecraft/auth/steps/LauncherLoginStep.h"
 #include "minecraft/auth/steps/MSADeviceCodeStep.h"
 #include "minecraft/auth/steps/MSAStep.h"
 #include "minecraft/auth/steps/MinecraftProfileStep.h"
+#include "minecraft/auth/steps/MinecraftProfileStepEly.h"
 #include "minecraft/auth/steps/XboxAuthorizationStep.h"
 #include "minecraft/auth/steps/XboxProfileStep.h"
 #include "minecraft/auth/steps/XboxUserStep.h"
@@ -40,6 +43,19 @@ AuthFlow::AuthFlow(AccountData* data, Action action) : Task(), m_data(data)
         m_steps.append(makeShared<XboxProfileStep>(m_data));
         m_steps.append(makeShared<EntitlementsStep>(m_data));
         m_steps.append(makeShared<MinecraftProfileStep>(m_data));
+        m_steps.append(makeShared<GetSkinStep>(m_data));
+    } else if (data->type == AccountType::Ely) {
+        if (action == Action::DeviceCode) {
+            auto oauthStep = makeShared<ElyDeviceCodeStep>(m_data);
+            connect(oauthStep.get(), &ElyDeviceCodeStep::authorizeWithBrowser, this, &AuthFlow::authorizeWithBrowserWithExtra);
+            connect(this, &Task::aborted, oauthStep.get(), &ElyDeviceCodeStep::abort);
+            m_steps.append(oauthStep);
+        } else {
+            auto oauthStep = makeShared<ElyStep>(m_data, action == Action::Refresh);
+            connect(oauthStep.get(), &ElyStep::authorizeWithBrowser, this, &AuthFlow::authorizeWithBrowser);
+            m_steps.append(oauthStep);
+        }
+        m_steps.append(makeShared<MinecraftProfileStepEly>(m_data));
         m_steps.append(makeShared<GetSkinStep>(m_data));
     }
     changeState(AccountTaskState::STATE_CREATED);

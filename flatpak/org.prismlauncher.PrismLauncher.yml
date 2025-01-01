@@ -142,7 +142,7 @@ modules:
     buildsystem: simple
     build-commands:
       - install -Dm755 prime-run /app/bin/prime-run
-      - mv /app/bin/prismlauncher /app/bin/prismrun
+      - mv /app/bin/elyprismlauncher /app/bin/prismrun
       - install -Dm755 prismlauncher /app/bin/prismlauncher
     sources:
       - type: file

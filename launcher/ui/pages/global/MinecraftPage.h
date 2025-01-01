@@ -52,6 +52,8 @@ class MinecraftPage : public QWidget, public BasePage {
     Q_OBJECT
 
    public:
+    static std::array<QString, 4> ElyPreferenceTypes;
+
     explicit MinecraftPage(QWidget* parent = 0);
     ~MinecraftPage();
 
