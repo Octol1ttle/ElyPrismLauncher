@@ -47,6 +47,7 @@
 #include "minecraft/update/AssetUpdateTask.h"
 #include "minecraft/update/FMLLibrariesTask.h"
 #include "minecraft/update/LibrariesTask.h"
+#include "minecraft/update/ElyPatchTask.h"
 #include "settings/Setting.h"
 #include "settings/SettingsObject.h"
 
@@ -227,6 +228,10 @@ void MinecraftInstance::loadSpecificSettings()
         // Legacy-related options
         auto legacySettings = m_settings->registerSetting("OverrideLegacySettings", false);
         m_settings->registerOverride(global_settings->getSetting("OnlineFixes"), legacySettings);
+
+        // Ely-related options
+        auto elySettings = m_settings->registerSetting("OverrideElySettings", false);
+        m_settings->registerOverride(global_settings->getSetting("ElyPatchPreference"), elySettings);
 
         auto envSetting = m_settings->registerSetting("OverrideEnv", false);
         m_settings->registerOverride(global_settings->getSetting("Env"), envSetting);
@@ -1146,8 +1151,8 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
     }
 
     // load meta
+    auto mode = session->status != AuthSession::PlayableOffline ? Net::Mode::Online : Net::Mode::Offline;
     {
-        auto mode = session->status != AuthSession::PlayableOffline ? Net::Mode::Online : Net::Mode::Offline;
         process->appendStep(makeShared<TaskStepWrapper>(pptr, makeShared<MinecraftLoadAndCheck>(this, mode)));
     }
 
@@ -1162,6 +1167,11 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
         auto step = makeShared<PreLaunchCommand>(pptr);
         step->setWorkingDirectory(gameRoot());
         process->appendStep(step);
+    }
+
+    // prepare Ely patch
+    if (session->wants_ely_patch) {
+        process->appendStep(makeShared<TaskStepWrapper>(pptr, makeShared<ElyPatchTask>(this, runtimeContext(), mode)));
     }
 
     // if we aren't in offline mode,.

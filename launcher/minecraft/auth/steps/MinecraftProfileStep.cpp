@@ -14,15 +14,19 @@ QString MinecraftProfileStep::describe()
     return tr("Fetching the Minecraft profile.");
 }
 
+QString MinecraftProfileStep::getToken()
+{
+    return m_data->yggdrasilToken.token;
+}
+
 void MinecraftProfileStep::perform()
 {
-    QUrl url("https://api.minecraftservices.com/minecraft/profile");
     auto headers = QList<Net::HeaderPair>{ { "Content-Type", "application/json" },
                                            { "Accept", "application/json" },
-                                           { "Authorization", QString("Bearer %1").arg(m_data->yggdrasilToken.token).toUtf8() } };
+                                           { "Authorization", QString("Bearer %1").arg(getToken()).toUtf8() } };
 
     m_response.reset(new QByteArray());
-    m_request = Net::Download::makeByteArray(url, m_response);
+    m_request = Net::Download::makeByteArray(m_profileUrl, m_response);
     m_request->addHeaderProxy(new Net::RawHeaderProxy(headers));
 
     m_task.reset(new NetJob("MinecraftProfileStep", APPLICATION->network()));

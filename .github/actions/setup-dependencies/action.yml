@@ -1,5 +1,5 @@
 name: Setup Dependencies
-description: Install and setup dependencies for building Prism Launcher
+description: Install and setup dependencies for building ElyPrismLauncher
 
 inputs:
   build-type:

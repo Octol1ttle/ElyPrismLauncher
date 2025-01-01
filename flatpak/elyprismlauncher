@@ -8,4 +8,4 @@ done
 export PATH="${PATH}${PATH:+:}/usr/lib/extensions/vulkan/gamescope/bin:/usr/lib/extensions/vulkan/MangoHud/bin"
 export VK_LAYER_PATH="/usr/lib/extensions/vulkan/share/vulkan/implicit_layer.d/"
 
-exec /app/bin/prismrun "$@"
+exec /app/bin/elyprismrun "$@"
