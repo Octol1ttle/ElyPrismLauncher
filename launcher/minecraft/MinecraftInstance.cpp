@@ -228,6 +228,10 @@ void MinecraftInstance::loadSpecificSettings()
         auto legacySettings = m_settings->registerSetting("OverrideLegacySettings", false);
         m_settings->registerOverride(global_settings->getSetting("OnlineFixes"), legacySettings);
 
+        // Ely-related options
+        auto elySettings = m_settings->registerSetting("OverrideElySettings", false);
+        m_settings->registerOverride(global_settings->getSetting("ElyPatchPreference"), elySettings);
+
         auto envSetting = m_settings->registerSetting("OverrideEnv", false);
         m_settings->registerOverride(global_settings->getSetting("Env"), envSetting);
 

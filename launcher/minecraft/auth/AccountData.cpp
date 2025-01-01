@@ -291,12 +291,14 @@ bool AccountData::resumeStateFromV3(QJsonObject data)
         type = AccountType::MSA;
     } else if (typeS == "Offline") {
         type = AccountType::Offline;
+    } else if (typeS == "Ely") {
+        type = AccountType::Ely;
     } else {
         qWarning() << "Failed to parse account data: type is not recognized.";
         return false;
     }
 
-    if (type == AccountType::MSA) {
+    if (type == AccountType::MSA || type == AccountType::Ely) {
         auto clientIDV = data.value("msa-client-id");
         if (clientIDV.isString()) {
             msaClientID = clientIDV.toString();
@@ -328,8 +330,12 @@ bool AccountData::resumeStateFromV3(QJsonObject data)
 QJsonObject AccountData::saveState() const
 {
     QJsonObject output;
-    if (type == AccountType::MSA) {
-        output["type"] = "MSA";
+    if (type == AccountType::MSA || type == AccountType::Ely) {
+        if (type == AccountType::MSA) {
+            output["type"] = "MSA";
+        } else {
+            output["type"] = "Ely";
+        }
         output["msa-client-id"] = msaClientID;
         tokenToJSONV3(output, msaToken, "msa");
         tokenToJSONV3(output, userToken, "utoken");
@@ -375,6 +381,9 @@ QString AccountData::accountDisplayString() const
                 return xboxApiToken.extra["gtg"].toString();
             }
             return "Xbox profile missing";
+        }
+        case AccountType::Ely: {
+            return profileId();
         }
         default: {
             return "Invalid Account";

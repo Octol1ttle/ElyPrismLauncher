@@ -79,7 +79,7 @@ MSALoginDialog::MSALoginDialog(QWidget* parent) : QDialog(parent), ui(new Ui::MS
 int MSALoginDialog::exec()
 {
     // Setup the login task and start it
-    m_account = MinecraftAccount::createBlankMSA();
+    m_account = MinecraftAccount::createBlank(m_accountType);
     m_authflow_task = m_account->login(false);
     connect(m_authflow_task.get(), &Task::failed, this, &MSALoginDialog::onTaskFailed);
     connect(m_authflow_task.get(), &Task::succeeded, this, &QDialog::accept);
@@ -186,7 +186,7 @@ void MSALoginDialog::authorizeWithBrowserWithExtra(QString url, QString code, [[
     this->adjustSize();
 
     const auto linkString = QString("<a href=\"%1\">%2</a>").arg(url, url);
-    if (url == "https://www.microsoft.com/link" && !code.isEmpty()) {
+    if (url == m_linkUrl && !code.isEmpty()) {
         url += QString("?otc=%1").arg(code);
     }
     ui->code->setText(code);

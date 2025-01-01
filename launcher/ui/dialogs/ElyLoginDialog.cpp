@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /*
  *  Prism Launcher - Minecraft Launcher
- *  Copyright (c) 2024 Trial97 <alexandru.tripon97@gmail.com>
+ *  Copyright (c) 2025 Octol1ttle <l1ttleofficial@outlook.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,51 +33,24 @@
  *      limitations under the License.
  */
 
-#pragma once
-#include <QObject>
-#include <QTimer>
+#include "ElyLoginDialog.h"
 
-#include "minecraft/auth/AuthStep.h"
-#include "net/NetJob.h"
-#include "net/Upload.h"
+#include "ui_MSALoginDialog.h"
 
-class MSADeviceCodeStep : public AuthStep {
-    Q_OBJECT
-   public:
-    explicit MSADeviceCodeStep(AccountData* data);
-    virtual ~MSADeviceCodeStep() noexcept = default;
+MinecraftAccountPtr ElyLoginDialog::newAccount(QWidget* parent)
+{
+    ElyLoginDialog dlg(parent);
+    if (dlg.exec() == QDialog::Accepted) {
+        return dlg.m_account;
+    }
+    return nullptr;
+}
 
-    void perform() override;
+ElyLoginDialog::ElyLoginDialog(QWidget* parent) : MSALoginDialog(parent)
+{
+    m_accountType = AccountType::Ely;
+    m_linkUrl = "http://account.ely.by/code";
 
-    QString describe() override;
-
-   public slots:
-    void abort() override;
-
-   signals:
-    void authorizeWithBrowser(QString url, QString code, int expiresIn);
-
-   protected:
-    QString m_clientId;
-    QString m_scopes = "XboxLive.SignIn XboxLive.offline_access";
-    QUrl m_deviceCodeUrl = QUrl("https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode");
-    QUrl m_tokenUrl = QUrl("https://login.microsoftonline.com/consumers/oauth2/v2.0/token");
-
-   private slots:
-    void deviceAuthorizationFinished();
-    void startPoolTimer();
-    void authenticateUser();
-    void authenticationFinished();
-
-   private:
-    QString m_device_code;
-    bool m_is_aborted = false;
-    int interval = 5;
-
-    QTimer m_pool_timer;
-    QTimer m_expiration_timer;
-
-    std::shared_ptr<QByteArray> m_response;
-    Net::Upload::Ptr m_request;
-    NetJob::Ptr m_task;
-};
+    setWindowTitle(tr("Add Ely.by account"));
+    ui->loginButton->setText(tr("Sign in with Ely.by"));
+}
