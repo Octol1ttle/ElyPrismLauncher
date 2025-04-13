@@ -3,10 +3,9 @@
   stdenv,
   cmake,
   cmark,
-  darwin,
+  apple-sdk_11,
   extra-cmake-modules,
   gamemode,
-  ghc_filesystem,
   jdk17,
   kdePackages,
   libnbtplusplus,
@@ -45,7 +44,7 @@ in
 
 stdenv.mkDerivation {
   pname = "prismlauncher-unwrapped";
-  version = "9.3-unstable-${date}";
+  version = "10.0-unstable-${date}";
 
   src = lib.fileset.toSource {
     root = ../.;
@@ -78,14 +77,13 @@ stdenv.mkDerivation {
   buildInputs =
     [
       cmark
-      ghc_filesystem
       kdePackages.qtbase
       kdePackages.qtnetworkauth
       kdePackages.quazip
       tomlplusplus
       zlib
     ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [ darwin.apple_sdk.frameworks.Cocoa ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [ apple-sdk_11 ]
     ++ lib.optional gamemodeSupport gamemode;
 
   hardeningEnable = lib.optionals stdenv.hostPlatform.isLinux [ "pie" ];
