@@ -30,7 +30,7 @@ void ApplyLibraryOverrides::downloadLibraryOverrideList()
 
 void ApplyLibraryOverrides::onLibraryOverrideDownloadFinished()
 {
-    if (m_request->error() != QNetworkReply::NoError) {
+    if (m_request->error() != QNetworkReply::NoError || !m_response) {
         emitFailed("Failed to download EPL metadata.");
         return;
     }
@@ -43,20 +43,20 @@ void ApplyLibraryOverrides::onLibraryOverrideDownloadFinished()
     }
 
     bool replacedAuthlib = false;
-    auto root = doc.object();
-    auto overrides = root["overrides"].toObject();
+    const auto root = doc.object();
+    const QJsonObject overrides = root.value("overrides").toObject();
 
     for (const auto &library : m_instance->getPackProfile()->getProfile()->getLibraries()) {
-        const QString& artifact = library->artifactPrefix();
-        const bool isAuthlib = artifact == "com.mojang:authlib";
+        const QString& libraryArtifact = library->artifactPrefix();
+        const bool isAuthlib = libraryArtifact == "com.mojang:authlib";
 
-        auto artifactRef = overrides[artifact];
-        if (!artifactRef.isObject()) {
+        const QJsonValue artifact = overrides.value(libraryArtifact);
+        if (!artifact.isObject()) {
             continue;
         }
 
-        auto versionRef = artifactRef.toObject()[library->version()];
-        if (!versionRef.isObject()) {
+        const QJsonValue version = artifact.toObject().value(library->version());
+        if (!version.isObject()) {
             continue;
         }
 
@@ -65,14 +65,13 @@ void ApplyLibraryOverrides::onLibraryOverrideDownloadFinished()
             continue;
         }
 
-        auto override = versionRef.toObject();
-        auto newDownloadInfo = std::make_shared<MojangDownloadInfo>();
-        newDownloadInfo->url = override["url"].toString();
-        newDownloadInfo->sha1 = override["sha1"].toString();
-        newDownloadInfo->size = override["size"].toInt();
+        const QJsonObject override = version.toObject();
+        const auto newDownloadInfo = std::make_shared<MojangDownloadInfo>();
+        newDownloadInfo->url = override.value("url").toString();
+        newDownloadInfo->sha1 = override.value("sha1").toString();
+        newDownloadInfo->size = override.value("size").toInt();
 
         const auto newLibraryInfo = std::make_shared<MojangLibraryDownloadInfo>(newDownloadInfo);
-
         library->setMojangDownloadInfo(newLibraryInfo);
 
         replacedAuthlib = replacedAuthlib || isAuthlib;
@@ -85,7 +84,7 @@ void ApplyLibraryOverrides::onLibraryOverrideDownloadFinished()
         return;
     }
 
-    downloadAuthlibInjector(root["extras"].toObject()["authlib-injector"].toString());
+    downloadAuthlibInjector(root.value("extras").toObject().value("authlib-injector").toString());
 }
 
 void ApplyLibraryOverrides::downloadAuthlibInjector(const QUrl &downloadUrl) {
