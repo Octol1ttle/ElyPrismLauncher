@@ -3,7 +3,7 @@
     "com.mojang:authlib": {
       "6.0.58": {
         "url": "https://llaun.ch/repo/libraries/by/ely/authlib/6.0.58-ely.1/authlib-6.0.58-ely.1.jar",
-        "sha1": "7c2a6fd99b3897f447faf7a09f4a74cee396cb02",
+        "sha1": "cd322a5492edc42101842fa3a4206f30edddc368",
         "size": 120319
       },
       "6.0.57": {
