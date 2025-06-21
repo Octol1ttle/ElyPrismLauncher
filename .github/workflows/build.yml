@@ -52,7 +52,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             qt_ver: 5
             qt_host: linux
             qt_arch: ""
