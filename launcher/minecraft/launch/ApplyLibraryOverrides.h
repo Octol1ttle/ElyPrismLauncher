@@ -24,7 +24,7 @@
 class ApplyLibraryOverrides : public LaunchStep {
     Q_OBJECT
    public:
-    explicit ApplyLibraryOverrides(LaunchTask* parent, AuthSessionPtr session);
+    explicit ApplyLibraryOverrides(LaunchTask* parent, const AuthSessionPtr &session);
     virtual ~ApplyLibraryOverrides() = default;
 
     void executeTask() override;

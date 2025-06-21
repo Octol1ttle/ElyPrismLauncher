@@ -6,7 +6,7 @@
 
 #include "Application.h"
 
-ApplyLibraryOverrides::ApplyLibraryOverrides(LaunchTask* parent, AuthSessionPtr session) : LaunchStep(parent), m_session(session), m_instance(m_parent->instance())
+ApplyLibraryOverrides::ApplyLibraryOverrides(LaunchTask* parent, const AuthSessionPtr &session) : LaunchStep(parent), m_session(session), m_instance(m_parent->instance())
 {}
 
 void ApplyLibraryOverrides::executeTask()
@@ -16,7 +16,7 @@ void ApplyLibraryOverrides::executeTask()
 
 void ApplyLibraryOverrides::downloadLibraryOverrideList()
 {
-    const auto libraryOverrideListUrl = QUrl("https://raw.githubusercontent.com/ElyPrismLauncher/ElyPrismLauncher/refs/heads/test/epl_metadata.json");
+    const auto libraryOverrideListUrl = QUrl("https://raw.githubusercontent.com/ElyPrismLauncher/ElyPrismLauncher/refs/heads/develop/epl_metadata.json");
     m_request = Net::Download::makeByteArray(libraryOverrideListUrl, m_response);
 
     m_task.reset(new NetJob("Fetch EPL metadata", APPLICATION->network()));
@@ -46,9 +46,9 @@ void ApplyLibraryOverrides::onLibraryOverrideDownloadFinished()
     const auto root = doc.object();
     const QJsonObject overrides = root.value("overrides").toObject();
 
-    auto libraries = m_instance->getPackProfile()->getProfile()->getLibraries();
-    for (int i = libraries.size() - 1; i >= 0; --i) {
-        const auto library = libraries.at(i);
+    const auto librariesMut = &m_instance->getPackProfile()->getProfile()->getLibrariesMut();
+    for (int i = librariesMut->size() - 1; i >= 0; --i) {
+        const auto library = librariesMut->at(i);
         const QString& libraryArtifact = library->artifactPrefix();
         const bool isAuthlib = libraryArtifact == "com.mojang:authlib";
         if (isAuthlib && !m_session->wants_ely_patch) {
@@ -77,15 +77,13 @@ void ApplyLibraryOverrides::onLibraryOverrideDownloadFinished()
         const auto newLibraryDownloadInfo = std::make_shared<MojangLibraryDownloadInfo>(newDownloadInfo);
         newLibrary->setMojangDownloadInfo(newLibraryDownloadInfo);
 
-        libraries.removeAt(i);
-        libraries.insert(i, newLibrary);
+        librariesMut->removeAt(i);
+        librariesMut->insert(i, newLibrary);
 
         if (isAuthlib) {
             authlibReplaced = true;
         }
     }
-
-    Q_ASSERT(libraries == m_instance->getPackProfile()->getProfile()->getLibraries());
 
     m_session->ely_authlib_replaced = authlibReplaced;
     if (!authlibReplaced && m_session->wants_ely_patch) {
@@ -103,7 +101,10 @@ void ApplyLibraryOverrides::downloadAuthlibInjector(const QUrl &downloadUrl) {
     m_task->addNetAction(m_request);
 
     connect(m_task.get(), &NetJob::succeeded, this, &ApplyLibraryOverrides::emitSucceeded);
-    connect(m_task.get(), &NetJob::failed, this, &ApplyLibraryOverrides::emitFailed);
+    connect(m_task.get(), &NetJob::failed, this, [this](const QString &reason) {
+        m_session->wants_ely_patch = false;
+        emitFailed(reason);
+    });
     connect(m_task.get(), &NetJob::aborted, this, [this] { emitFailed(tr("Aborted")); });
 
     m_task->start();
