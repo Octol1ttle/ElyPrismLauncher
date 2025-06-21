@@ -16,7 +16,7 @@ void ApplyLibraryOverrides::executeTask()
 
 void ApplyLibraryOverrides::downloadLibraryOverrideList()
 {
-    const auto libraryOverrideListUrl = QUrl("https://raw.githubusercontent.com/ElyPrismLauncher/ElyPrismLauncher/refs/heads/develop/epl_metadata.json");
+    const auto libraryOverrideListUrl = QUrl("https://raw.githubusercontent.com/ElyPrismLauncher/ElyPrismLauncher/refs/heads/test/epl_metadata.json");
     m_request = Net::Download::makeByteArray(libraryOverrideListUrl, m_response);
 
     m_task.reset(new NetJob("Fetch EPL metadata", APPLICATION->network()));
@@ -42,13 +42,18 @@ void ApplyLibraryOverrides::onLibraryOverrideDownloadFinished()
         return;
     }
 
-    bool replacedAuthlib = false;
+    bool authlibReplaced = false;
     const auto root = doc.object();
     const QJsonObject overrides = root.value("overrides").toObject();
 
-    for (const auto &library : m_instance->getPackProfile()->getProfile()->getLibraries()) {
+    auto libraries = m_instance->getPackProfile()->getProfile()->getLibraries();
+    for (int i = libraries.size() - 1; i >= 0; --i) {
+        const auto library = libraries.at(i);
         const QString& libraryArtifact = library->artifactPrefix();
         const bool isAuthlib = libraryArtifact == "com.mojang:authlib";
+        if (isAuthlib && !m_session->wants_ely_patch) {
+            continue;
+        }
 
         const QJsonValue artifact = overrides.value(libraryArtifact);
         if (!artifact.isObject()) {
@@ -60,31 +65,35 @@ void ApplyLibraryOverrides::onLibraryOverrideDownloadFinished()
             continue;
         }
 
-        library->setHint("always-stale");
-        if (isAuthlib && !m_session->wants_ely_patch) {
-            continue;
-        }
-
         const QJsonObject override = version.toObject();
+        auto newName = override.value("name").toString();
+
+        LibraryPtr newLibrary(new Library(newName));
         const auto newDownloadInfo = std::make_shared<MojangDownloadInfo>();
-        newDownloadInfo->url = override.value("url").toString();
         newDownloadInfo->sha1 = override.value("sha1").toString();
+        newDownloadInfo->url = override.value("url").toString();
         newDownloadInfo->size = override.value("size").toInt();
 
-        const auto newLibraryInfo = std::make_shared<MojangLibraryDownloadInfo>(newDownloadInfo);
-        library->setMojangDownloadInfo(newLibraryInfo);
+        const auto newLibraryDownloadInfo = std::make_shared<MojangLibraryDownloadInfo>(newDownloadInfo);
+        newLibrary->setMojangDownloadInfo(newLibraryDownloadInfo);
 
-        replacedAuthlib = replacedAuthlib || isAuthlib;
+        libraries.removeAt(i);
+        libraries.insert(i, newLibrary);
+
+        if (isAuthlib) {
+            authlibReplaced = true;
+        }
     }
 
-    m_session->ely_authlib_replaced = replacedAuthlib;
+    Q_ASSERT(libraries == m_instance->getPackProfile()->getProfile()->getLibraries());
 
-    if (replacedAuthlib) {
-        emitSucceeded();
+    m_session->ely_authlib_replaced = authlibReplaced;
+    if (!authlibReplaced && m_session->wants_ely_patch) {
+        downloadAuthlibInjector(root.value("extras").toObject().value("authlib-injector").toString());
         return;
     }
 
-    downloadAuthlibInjector(root.value("extras").toObject().value("authlib-injector").toString());
+    emitSucceeded();
 }
 
 void ApplyLibraryOverrides::downloadAuthlibInjector(const QUrl &downloadUrl) {
