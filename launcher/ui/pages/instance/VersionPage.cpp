@@ -431,7 +431,7 @@ void VersionPage::on_actionDownload_All_triggered()
         return;
     }
 
-    auto updateTasks = m_inst->createUpdateTask();
+    auto updateTasks = m_inst->createUpdateTask(true);
     if (updateTasks.isEmpty()) {
         return;
     }

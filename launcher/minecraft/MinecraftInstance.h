@@ -123,7 +123,7 @@ class MinecraftInstance : public BaseInstance {
     std::shared_ptr<WorldList> worldList();
 
     //////  Launch stuff //////
-    QList<Task::Ptr> createUpdateTask() override;
+    QList<Task::Ptr> createUpdateTask(bool wantsElyPatch) override;
     shared_qobject_ptr<LaunchTask> createLaunchTask(AuthSessionPtr account, MinecraftTarget::Ptr targetToJoin) override;
     QStringList extraArguments() override;
     QStringList verboseDescription(AuthSessionPtr session, MinecraftTarget::Ptr targetToJoin) override;

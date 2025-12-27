@@ -18,13 +18,36 @@
 
 #pragma once
 
-#include "MSADeviceCodeStep.h"
+#include <RuntimeContext.h>
+#include <meta/Version.h>
+#include <minecraft/LaunchProfile.h>
 
-class ElyDeviceCodeStep : public MSADeviceCodeStep {
+#include "tasks/Task.h"
+struct RuntimeContext;
+class MinecraftInstance;
+
+class ElyPatchTask : public Task {
     Q_OBJECT
    public:
-    explicit ElyDeviceCodeStep(AccountData* data);
-    virtual ~ElyDeviceCodeStep() noexcept = default;
+    ElyPatchTask(MinecraftInstance* inst, RuntimeContext& context);
+    virtual ~ElyPatchTask() = default;
 
-    QString describe() override;
+    void executeTask() override;
+
+    bool canAbort() const override;
+
+   public slots:
+    bool abort() override;
+
+   private:
+    void resolveAuthlib(QString version);
+    void resolveAuthlibInjector();
+
+    void applyMetaVersion(Meta::Version::Ptr metaVersion);
+    void applyAuthlib(QString authlibVersion, Meta::Version::Ptr metaVersion);
+
+   private:
+    MinecraftInstance* m_inst;
+    RuntimeContext& m_runtimeContext;
+    Task::Ptr m_currentTask;
 };

@@ -47,6 +47,7 @@
 #include "minecraft/update/AssetUpdateTask.h"
 #include "minecraft/update/FMLLibrariesTask.h"
 #include "minecraft/update/LibrariesTask.h"
+#include "minecraft/update/ElyPatchTask.h"
 #include "settings/Setting.h"
 #include "settings/SettingsObject.h"
 
@@ -1098,9 +1099,9 @@ QString MinecraftInstance::getStatusbarDescription()
     return description;
 }
 
-QList<LaunchStep::Ptr> MinecraftInstance::createUpdateTask()
+QList<LaunchStep::Ptr> MinecraftInstance::createUpdateTask(bool wantsElyPatch)
 {
-    return {
+    QList<LaunchStep::Ptr> tasks = {
         // create folders
         makeShared<FoldersTask>(this),
         // libraries download
@@ -1110,6 +1111,10 @@ QList<LaunchStep::Ptr> MinecraftInstance::createUpdateTask()
         // assets update
         makeShared<AssetUpdateTask>(this),
     };
+    if (wantsElyPatch) {
+        tasks.prepend(makeShared<ElyPatchTask>(this, runtimeContext()));
+    }
+    return tasks;
 }
 
 shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPtr session, MinecraftTarget::Ptr targetToJoin)
@@ -1175,7 +1180,7 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
         if (!session->demo) {
             process->appendStep(makeShared<ClaimAccount>(pptr, session));
         }
-        for (auto t : createUpdateTask()) {
+        for (auto t : createUpdateTask(session->wants_ely_patch)) {
             process->appendStep(makeShared<TaskStepWrapper>(pptr, t));
         }
     }

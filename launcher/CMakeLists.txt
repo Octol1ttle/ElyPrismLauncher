@@ -256,6 +256,8 @@ set(MINECRAFT_SOURCES
 
     minecraft/update/AssetUpdateTask.h
     minecraft/update/AssetUpdateTask.cpp
+    minecraft/update/ElyPatchTask.cpp
+    minecraft/update/ElyPatchTask.h
     minecraft/update/FMLLibrariesTask.cpp
     minecraft/update/FMLLibrariesTask.h
     minecraft/update/FoldersTask.cpp
