@@ -47,22 +47,22 @@ void ElyPatchTask::resolveAuthlib(QString version)
     const auto metaVersionList = APPLICATION->metadataIndex()->get("by.ely.authlib");
     auto metaVersion = metaVersionList->getVersion(version);
 
-    if (metaVersion->isLoaded()) {
-        applyAuthlib(version, metaVersion);
+    if (!metaVersion->isLoaded()) {
+        m_currentTask = APPLICATION->metadataIndex()->loadVersion("by.ely.authlib", version, Net::Mode::Online);
+        connect(m_currentTask.get(), &Task::succeeded, this, [this, version, metaVersion] {
+            applyAuthlib(version, metaVersion);
+        });
+        connect(m_currentTask.get(), &Task::failed, this, [this](QString reason) {
+            qWarning() << "Resolving Ely.by Authlib failed:" << reason;
+            resolveAuthlibInjector();
+        });
+        connect(m_currentTask.get(), &Task::progress, this, &ElyPatchTask::setProgress);
+        connect(m_currentTask.get(), &Task::stepProgress, this, &ElyPatchTask::propagateStepProgress);
+        m_currentTask->start();
         return;
     }
 
-    m_currentTask = APPLICATION->metadataIndex()->loadVersion("by.ely.authlib", version, Net::Mode::Online);
-    connect(m_currentTask.get(), &Task::succeeded, this, [this, version, metaVersion] {
-        applyAuthlib(version, metaVersion);
-    });
-    connect(m_currentTask.get(), &Task::failed, this, [this](QString reason) {
-        qWarning() << "Resolving Ely.by Authlib failed:" << reason;
-        resolveAuthlibInjector();
-    });
-    connect(m_currentTask.get(), &Task::progress, this, &ElyPatchTask::setProgress);
-    connect(m_currentTask.get(), &Task::stepProgress, this, &ElyPatchTask::propagateStepProgress);
-    m_currentTask->start();
+    applyAuthlib(version, metaVersion);
 }
 
 void ElyPatchTask::resolveAuthlibInjector()
@@ -70,6 +70,18 @@ void ElyPatchTask::resolveAuthlibInjector()
     setDetails(tr("Resolving authlib-injector"));
 
     const auto metaVersionList = APPLICATION->metadataIndex()->get("moe.yushi.authlibinjector");
+    if (!metaVersionList->isLoaded()) {
+        m_currentTask = metaVersionList->loadTask(Net::Mode::Online);
+        connect(m_currentTask.get(), &Task::succeeded, this, [this] {
+            resolveAuthlibInjector();
+        });
+        connect(m_currentTask.get(), &Task::failed, this, &ElyPatchTask::failed);
+        connect(m_currentTask.get(), &Task::progress, this, &ElyPatchTask::setProgress);
+        connect(m_currentTask.get(), &Task::stepProgress, this, &ElyPatchTask::propagateStepProgress);
+        m_currentTask->start();
+        return;
+    }
+
     Meta::Version::Ptr recommendedVersion = nullptr;
     for (int i = 0; i < metaVersionList->count(); ++i) {
         const auto version = metaVersionList->concreteAt(i);
@@ -83,24 +95,25 @@ void ElyPatchTask::resolveAuthlibInjector()
         return;
     }
 
-    if (recommendedVersion->isLoaded()) {
-        applyMetaVersion(recommendedVersion);
+    if (!recommendedVersion->isLoaded()) {
+        m_currentTask = APPLICATION->metadataIndex()->loadVersion("moe.yushi.authlibinjector", recommendedVersion->version(), Net::Mode::Online);
+        connect(m_currentTask.get(), &Task::succeeded, this, [this, recommendedVersion] {
+            applyMetaVersion(recommendedVersion);
+        });
+        connect(m_currentTask.get(), &Task::failed, this, &ElyPatchTask::failed);
+        connect(m_currentTask.get(), &Task::progress, this, &ElyPatchTask::setProgress);
+        connect(m_currentTask.get(), &Task::stepProgress, this, &ElyPatchTask::propagateStepProgress);
+        m_currentTask->start();
         return;
     }
 
-    m_currentTask = APPLICATION->metadataIndex()->loadVersion("moe.yushi.authlibinjector", recommendedVersion->version(), Net::Mode::Online);
-    connect(m_currentTask.get(), &Task::succeeded, this, [this, recommendedVersion] {
-        applyMetaVersion(recommendedVersion);
-    });
-    connect(m_currentTask.get(), &Task::failed, this, &ElyPatchTask::failed);
-    connect(m_currentTask.get(), &Task::progress, this, &ElyPatchTask::setProgress);
-    connect(m_currentTask.get(), &Task::stepProgress, this, &ElyPatchTask::propagateStepProgress);
-    m_currentTask->start();
+    applyMetaVersion(recommendedVersion);
 }
 
 void ElyPatchTask::applyMetaVersion(Meta::Version::Ptr metaVersion)
 {
     metaVersion->data()->applyTo(m_inst->getPackProfile()->getProfile().get(), m_runtimeContext);
+    emitSucceeded();
 }
 
 void ElyPatchTask::applyAuthlib(QString authlibVersion, Meta::Version::Ptr metaVersion)
@@ -114,5 +127,4 @@ void ElyPatchTask::applyAuthlib(QString authlibVersion, Meta::Version::Ptr metaV
     }
 
     applyMetaVersion(metaVersion);
-    emitSucceeded();
 }
