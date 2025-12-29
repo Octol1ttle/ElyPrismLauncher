@@ -263,13 +263,13 @@ void MinecraftAccount::fillSession(AuthSessionPtr session, int elyPatchPreferenc
     }
     switch (elyPatchPreference) {
         case 0: { // Always
-            session->wants_ely_patch = session->wants_online;
+            session->wants_ely_patch = true;
         } break;
         case 1: { // When using Ely and Offline accounts
-            session->wants_ely_patch = session->wants_online && (data.type == AccountType::Ely || data.type == AccountType::Offline);
+            session->wants_ely_patch = data.type == AccountType::Ely || data.type == AccountType::Offline;
         } break;
         case 2: { // When using Ely accounts
-            session->wants_ely_patch = session->wants_online && data.type == AccountType::Ely;
+            session->wants_ely_patch = data.type == AccountType::Ely;
         } break;
         default: { // Never/unknown
             session->wants_ely_patch = false;

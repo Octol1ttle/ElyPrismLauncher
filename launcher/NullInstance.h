@@ -53,7 +53,7 @@ class NullInstance : public BaseInstance {
     QSet<QString> traits() const override { return {}; };
     QString instanceConfigFolder() const override { return instanceRoot(); };
     shared_qobject_ptr<LaunchTask> createLaunchTask(AuthSessionPtr, MinecraftTarget::Ptr) override { return nullptr; }
-    QList<Task::Ptr> createUpdateTask(bool wantsElyPatch) override { return {}; }
+    QList<Task::Ptr> createUpdateTask() override { return {}; }
     QProcessEnvironment createEnvironment() override { return QProcessEnvironment(); }
     QProcessEnvironment createLaunchEnvironment() override { return QProcessEnvironment(); }
     QMap<QString, QString> getVariables() override { return QMap<QString, QString>(); }

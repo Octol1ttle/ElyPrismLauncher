@@ -201,7 +201,7 @@ class BaseInstance : public QObject, public std::enable_shared_from_this<BaseIns
     virtual void loadSpecificSettings() = 0;
 
     /// returns a valid update task
-    virtual QList<Task::Ptr> createUpdateTask(bool wantsElyPatch) = 0;
+    virtual QList<Task::Ptr> createUpdateTask() = 0;
 
     /// returns a valid launcher (task container)
     virtual shared_qobject_ptr<LaunchTask> createLaunchTask(AuthSessionPtr account, MinecraftTarget::Ptr targetToJoin) = 0;

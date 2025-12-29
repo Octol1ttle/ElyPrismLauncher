@@ -29,7 +29,7 @@ class MinecraftInstance;
 class ElyPatchTask : public Task {
     Q_OBJECT
    public:
-    ElyPatchTask(MinecraftInstance* inst, RuntimeContext& context);
+    ElyPatchTask(MinecraftInstance* inst, RuntimeContext& context, Net::Mode mode);
     virtual ~ElyPatchTask() = default;
 
     void executeTask() override;
@@ -44,10 +44,11 @@ class ElyPatchTask : public Task {
     void resolveAuthlibInjector();
 
     void applyMetaVersion(Meta::Version::Ptr metaVersion);
-    void applyAuthlib(QString authlibVersion, Meta::Version::Ptr metaVersion);
+    void applyAuthlib(Meta::Version::Ptr metaVersion);
 
    private:
     MinecraftInstance* m_inst;
     RuntimeContext& m_runtimeContext;
+    Net::Mode m_netMode;
     Task::Ptr m_currentTask;
 };

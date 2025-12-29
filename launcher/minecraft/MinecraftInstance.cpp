@@ -1099,9 +1099,9 @@ QString MinecraftInstance::getStatusbarDescription()
     return description;
 }
 
-QList<LaunchStep::Ptr> MinecraftInstance::createUpdateTask(bool wantsElyPatch)
+QList<LaunchStep::Ptr> MinecraftInstance::createUpdateTask()
 {
-    QList<LaunchStep::Ptr> tasks = {
+    return {
         // create folders
         makeShared<FoldersTask>(this),
         // libraries download
@@ -1111,10 +1111,6 @@ QList<LaunchStep::Ptr> MinecraftInstance::createUpdateTask(bool wantsElyPatch)
         // assets update
         makeShared<AssetUpdateTask>(this),
     };
-    if (wantsElyPatch) {
-        tasks.prepend(makeShared<ElyPatchTask>(this, runtimeContext()));
-    }
-    return tasks;
 }
 
 shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPtr session, MinecraftTarget::Ptr targetToJoin)
@@ -1157,8 +1153,8 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
     }
 
     // load meta
+    auto mode = session->status != AuthSession::PlayableOffline ? Net::Mode::Online : Net::Mode::Offline;
     {
-        auto mode = session->status != AuthSession::PlayableOffline ? Net::Mode::Online : Net::Mode::Offline;
         process->appendStep(makeShared<TaskStepWrapper>(pptr, makeShared<MinecraftLoadAndCheck>(this, mode)));
     }
 
@@ -1175,12 +1171,17 @@ shared_qobject_ptr<LaunchTask> MinecraftInstance::createLaunchTask(AuthSessionPt
         process->appendStep(step);
     }
 
+    // prepare Ely patch
+    if (session->wants_ely_patch) {
+        process->appendStep(makeShared<TaskStepWrapper>(pptr, makeShared<ElyPatchTask>(this, runtimeContext(), mode)));
+    }
+
     // if we aren't in offline mode,.
     if (session->status != AuthSession::PlayableOffline) {
         if (!session->demo) {
             process->appendStep(makeShared<ClaimAccount>(pptr, session));
         }
-        for (auto t : createUpdateTask(session->wants_ely_patch)) {
+        for (auto t : createUpdateTask()) {
             process->appendStep(makeShared<TaskStepWrapper>(pptr, t));
         }
     }
