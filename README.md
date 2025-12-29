@@ -1,8 +1,8 @@
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/program_info/org.prismlauncher.PrismLauncher.logo-darkmode.svg">
-  <source media="(prefers-color-scheme: light)" srcset="/program_info/org.prismlauncher.PrismLauncher.logo.svg">
-  <img alt="Prism Launcher" src="/program_info/org.prismlauncher.PrismLauncher.logo.svg" width="40%">
+  <source media="(prefers-color-scheme: dark)" srcset="/program_info/io.github.elyprismlauncher.ElyPrismLauncher.logo-darkmode.svg">
+  <source media="(prefers-color-scheme: light)" srcset="/program_info/io.github.elyprismlauncher.ElyPrismLauncher.logo.svg">
+  <img alt="ElyPrismLauncher" src="/program_info/io.github.elyprismlauncher.ElyPrismLauncher.logo.svg" width="40%">
 </picture>
 </p>
 
@@ -20,8 +20,19 @@ There are already quite a few forks out in the wild that add Ely.by support and/
 
 ## Installation
 
-- All downloads can be found [here](https://github.com/ElyPrismLauncher/ElyPrismLauncher/releases/latest).
-- Last build status can be found in the [GitHub Actions](https://github.com/ElyPrismLauncher/ElyPrismLauncher/actions).
+- All downloads and instructions for ElyPrismLauncher can be found on the [Releases](https://github.com/ElyPrismLauncher/ElyPrismLauncher/releases/latest) page.
+- Last build status can be found in the [GitHub Actions](https://github.com/ElyPrismLauncher/ElyPrismLauncher/actions) tab.
+
+### Development Builds
+
+Please understand that these builds are not intended for most users. There may be bugs, and other instabilities. You have been warned.
+
+There are development builds available through:
+
+- [GitHub Actions](https://github.com/ElyPrismLauncher/ElyPrismLauncher/actions) (includes builds from pull requests opened by contributors)
+- [nightly.link](https://nightly.link/ElyPrismLauncher/ElyPrismLauncher/workflows/build/develop) (this will always point only to the latest version of develop)
+
+These have debug information in the binaries, so their file sizes are relatively larger.
 
 ## Community & Support
 
@@ -31,15 +42,46 @@ Feel free to create a GitHub issue if you find a bug or want to suggest a new fe
 
 ## Building
 
-If you want to build ElyPrismLauncher yourself, check the [Build Instructions](https://prismlauncher.org/wiki/development/build-instructions/).
+If you want to build ElyPrismLauncher yourself, check the build instructions:
 
-## Sponsors & Partners
+- [Windows](https://prismlauncher.org/wiki/development/build-instructions/windows/)
+- [Linux](https://prismlauncher.org/wiki/development/build-instructions/linux/)
+- [MacOS](https://prismlauncher.org/wiki/development/build-instructions/macos/)
+- [OpenBSD](https://prismlauncher.org/wiki/development/build-instructions/openbsd/)
+
+## The following sections are kept as-is from the Prism Launcher README
+
+### Sponsors & Partners
+
+We thank all the wonderful backers over at Open Collective! Support Prism Launcher by [becoming a backer](https://opencollective.com/prismlauncher).
+
+[![OpenCollective Backers](https://opencollective.com/prismlauncher/backers.svg?width=890&limit=1000)](https://opencollective.com/prismlauncher#backers)
 
 Thanks to JetBrains for providing us a few licenses for all their products, as part of their [Open Source program](https://www.jetbrains.com/opensource/).
 
-[![JetBrains](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)](https://www.jetbrains.com/opensource/)
+<a href="https://jb.gg/OpenSource">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://www.jetbrains.com/company/brand/img/logo_jb_dos_4.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg">
+  <img alt="JetBrains logo" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg" width="40%">
+</picture>
+</a>
 
-## Forking/Redistributing/Custom builds policy
+Thanks to Weblate for hosting our translation efforts.
+
+<a href="https://hosted.weblate.org/engage/prismlauncher/">
+<img src="https://hosted.weblate.org/widgets/prismlauncher/-/open-graph.png" alt="Translation status" width="300" />
+</a>
+
+Thanks to Netlify for providing us their excellent web services, as part of their [Open Source program](https://www.netlify.com/open-source/).
+
+<a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-accent.svg" alt="Deploys by Netlify" /> </a>
+
+Thanks to the awesome people over at [MacStadium](https://www.macstadium.com/), for providing M1-Macs for development purposes!
+
+<a href="https://www.macstadium.com"><img src="https://uploads-ssl.webflow.com/5ac3c046c82724970fc60918/5c019d917bba312af7553b49_MacStadium-developerlogo.png" alt="Powered by MacStadium" width="300"></a>
+
+### Forking/Redistributing/Custom builds policy
 
 You are free to fork, redistribute and provide custom builds as long as you follow the terms of the [license](LICENSE) (this is a legal responsibility), and if you made code changes rather than just packaging a custom build, please do the following as a basic courtesy:
 
@@ -57,7 +99,7 @@ Note that if you build this software without removing the provided API keys in [
 
 If you do not agree with these terms and conditions, then remove the associated API keys from the [CMakeLists.txt](CMakeLists.txt) file by setting them to an empty string (`""`).
 
-## License [![https://github.com/ElyPrismLauncher/ElyPrismLauncher/blob/develop/LICENSE](https://img.shields.io/github/license/ElyPrismLauncher/ElyPrismLauncher?label=License&logo=gnu&color=C4282D)](LICENSE)
+### License [![https://github.com/PrismLauncher/PrismLauncher/blob/develop/LICENSE](https://img.shields.io/github/license/PrismLauncher/PrismLauncher?label=License&logo=gnu&color=C4282D)](LICENSE)
 
 All launcher code is available under the GPL-3.0-only license.
 
