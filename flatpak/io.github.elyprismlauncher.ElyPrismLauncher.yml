@@ -1,11 +1,11 @@
-id: org.prismlauncher.PrismLauncher
+id: io.github.elyprismlauncher.ElyPrismLauncher
 runtime: org.kde.Platform
 runtime-version: '6.10'
 sdk: org.kde.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.openjdk17
 
-command: prismlauncher
+command: elyprismlauncher
 finish-args:
   - --share=ipc
   - --socket=x11
@@ -39,7 +39,7 @@ modules:
   # Text to Speech in the game
   - flite.json
 
-  - name: prismlauncher
+  - name: elyprismlauncher
     buildsystem: cmake-ninja
     builddir: true
     config-opts:
@@ -145,10 +145,10 @@ modules:
     buildsystem: simple
     build-commands:
       - install -Dm755 prime-run /app/bin/prime-run
-      - mv /app/bin/elyprismlauncher /app/bin/prismrun
-      - install -Dm755 prismlauncher /app/bin/prismlauncher
+      - mv /app/bin/elyprismlauncher /app/bin/elyprismrun
+      - install -Dm755 elyprismlauncher /app/bin/elyprismlauncher
     sources:
       - type: file
         path: prime-run
       - type: file
-        path: prismlauncher
+        path: elyprismlauncher

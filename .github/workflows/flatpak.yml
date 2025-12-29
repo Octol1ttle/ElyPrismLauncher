@@ -98,5 +98,5 @@ jobs:
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: ElyPrismLauncher-${{ runner.os }}-${{ env.VERSION }}-Flatpak.flatpak
-          manifest-path: flatpak/org.prismlauncher.PrismLauncher.yml
+          manifest-path: flatpak/io.github.elyprismlauncher.ElyPrismLauncher.yml
           arch: ${{ matrix.arch }}
