@@ -1,5 +1,5 @@
 name: Package for Windows
-description: Create a Windows package for Prism Launcher
+description: Create a Windows package for ElyPrismLauncher
 
 inputs:
   version:
@@ -72,13 +72,13 @@ runs:
       uses: azure/trusted-signing-action@v0
       with:
         endpoint: https://eus.codesigning.azure.net/
-        trusted-signing-account-name: PrismLauncher
-        certificate-profile-name: PrismLauncher
+        trusted-signing-account-name: ElyPrismLauncher
+        certificate-profile-name: ElyPrismLauncher
 
         files: |
-          ${{ github.workspace }}\install\prismlauncher.exe
-          ${{ github.workspace }}\install\prismlauncher_filelink.exe
-          ${{ github.workspace }}\install\prismlauncher_updater.exe
+          ${{ github.workspace }}\install\elyprismlauncher.exe
+          ${{ github.workspace }}\install\elyprismlauncher_filelink.exe
+          ${{ github.workspace }}\install\elyprismlauncher_updater.exe
 
         # TODO(@getchoo): Is this all really needed???
         # https://github.com/Azure/trusted-signing-action/blob/fc390cf8ed0f14e248a542af1d838388a47c7a7c/docs/OIDC.md
@@ -144,11 +144,11 @@ runs:
       uses: azure/trusted-signing-action@v0
       with:
         endpoint: https://eus.codesigning.azure.net/
-        trusted-signing-account-name: PrismLauncher
-        certificate-profile-name: PrismLauncher
+        trusted-signing-account-name: ElyPrismLauncher
+        certificate-profile-name: ElyPrismLauncher
 
         files: |
-          ${{ github.workspace }}\PrismLauncher-Setup.exe
+          ${{ github.workspace }}\ElyPrismLauncher-Setup.exe
 
         # TODO(@getchoo): Is this all really needed???
         # https://github.com/Azure/trusted-signing-action/blob/fc390cf8ed0f14e248a542af1d838388a47c7a7c/docs/OIDC.md
@@ -166,17 +166,17 @@ runs:
     - name: Upload binary zip
       uses: actions/upload-artifact@v6
       with:
-        name: PrismLauncher-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
+        name: ElyPrismLauncher-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
         path: install/**
 
     - name: Upload portable zip
       uses: actions/upload-artifact@v6
       with:
-        name: PrismLauncher-${{ inputs.artifact-name }}-Portable-${{ inputs.version }}-${{ inputs.build-type }}
+        name: ElyPrismLauncher-${{ inputs.artifact-name }}-Portable-${{ inputs.version }}-${{ inputs.build-type }}
         path: install-portable/**
 
     - name: Upload installer
       uses: actions/upload-artifact@v6
       with:
-        name: PrismLauncher-${{ inputs.artifact-name }}-Setup-${{ inputs.version }}-${{ inputs.build-type }}
-        path: PrismLauncher-Setup.exe
+        name: ElyPrismLauncher-${{ inputs.artifact-name }}-Setup-${{ inputs.version }}-${{ inputs.build-type }}
+        path: ElyPrismLauncher-Setup.exe
