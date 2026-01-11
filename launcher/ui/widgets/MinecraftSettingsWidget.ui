@@ -60,10 +60,57 @@
             <x>0</x>
             <y>0</y>
             <width>603</width>
-            <height>1042</height>
+            <height>1092</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QGroupBox" name="elyGroupBox">
+             <property name="title">
+              <string>Ely.by patch</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Download and apply Ely.by game patch:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QComboBox" name="applyElyPatch">
+                <item>
+                 <property name="text">
+                  <string>Always</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>When using Ely.by or Offline account only</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>When using Ely.by account only</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Never</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
            <item>
             <widget class="QGroupBox" name="windowSizeGroupBox">
              <property name="enabled">
@@ -553,8 +600,8 @@ It is most likely you will need to change the path - please refer to the mod's w
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>100</width>
-            <height>30</height>
+            <width>624</width>
+            <height>497</height>
            </rect>
           </property>
          </widget>
@@ -577,8 +624,8 @@ It is most likely you will need to change the path - please refer to the mod's w
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>261</width>
-            <height>434</height>
+            <width>624</width>
+            <height>497</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_7">
