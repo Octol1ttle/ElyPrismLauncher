@@ -16,13 +16,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-#include "MinecraftProfileStep.h"
+#include "ElyYggdrasilTokenStep.h"
 
-class MinecraftProfileStepEly : public MinecraftProfileStep {
-    Q_OBJECT
+ElyYggdrasilTokenStep::ElyYggdrasilTokenStep(AccountData* data) : AuthStep(data) {}
 
-   public:
-    explicit MinecraftProfileStepEly(AccountData* data);
-    virtual ~MinecraftProfileStepEly() noexcept = default;
-};
+QString ElyYggdrasilTokenStep::describe()
+{
+    return tr("Updating Yggdrasil token");
+}
+
+void ElyYggdrasilTokenStep::perform()
+{
+    m_data->yggdrasilToken = m_data->msaToken;
+    emit finished(AccountTaskState::STATE_WORKING, tr("Yggdrasil token update succeeded"));
+}

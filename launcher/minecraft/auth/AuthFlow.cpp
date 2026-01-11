@@ -5,6 +5,7 @@
 #include "minecraft/auth/AccountData.h"
 #include "minecraft/auth/steps/ElyDeviceCodeStep.h"
 #include "minecraft/auth/steps/ElyStep.h"
+#include "minecraft/auth/steps/ElyYggdrasilTokenStep.h"
 #include "minecraft/auth/steps/EntitlementsStep.h"
 #include "minecraft/auth/steps/GetSkinStep.h"
 #include "minecraft/auth/steps/LauncherLoginStep.h"
@@ -54,6 +55,7 @@ AuthFlow::AuthFlow(AccountData* data, Action action) : Task(), m_data(data)
             connect(oauthStep.get(), &ElyStep::authorizeWithBrowser, this, &AuthFlow::authorizeWithBrowser);
             m_steps.append(oauthStep);
         }
+        m_steps.append(makeShared<ElyYggdrasilTokenStep>(m_data));
         m_steps.append(makeShared<MinecraftProfileStepEly>(m_data));
         m_steps.append(makeShared<GetSkinStep>(m_data));
     }

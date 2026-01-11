@@ -17,12 +17,17 @@
  */
 
 #pragma once
-#include "MinecraftProfileStep.h"
 
-class MinecraftProfileStepEly : public MinecraftProfileStep {
+#include "minecraft/auth/AuthStep.h"
+
+class ElyYggdrasilTokenStep : public AuthStep {
     Q_OBJECT
 
    public:
-    explicit MinecraftProfileStepEly(AccountData* data);
-    virtual ~MinecraftProfileStepEly() noexcept = default;
+    explicit ElyYggdrasilTokenStep(AccountData* data);
+    virtual ~ElyYggdrasilTokenStep() noexcept = default;
+
+    void perform() override;
+
+    QString describe() override;
 };

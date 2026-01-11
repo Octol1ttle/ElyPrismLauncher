@@ -233,6 +233,8 @@ set(MINECRAFT_SOURCES
     minecraft/auth/steps/ElyDeviceCodeStep.h
     minecraft/auth/steps/ElyStep.cpp
     minecraft/auth/steps/ElyStep.h
+    minecraft/auth/steps/ElyYggdrasilTokenStep.cpp
+    minecraft/auth/steps/ElyYggdrasilTokenStep.h
     minecraft/auth/steps/EntitlementsStep.cpp
     minecraft/auth/steps/EntitlementsStep.h
     minecraft/auth/steps/GetSkinStep.cpp
