@@ -16,7 +16,7 @@ set(Launcher_DisplayName "${Launcher_DisplayName}" PARENT_SCOPE)
 
 set(Launcher_AppID "io.github.elyprismlauncher.ElyPrismLauncher")
 set(Launcher_SVGFileName "${Launcher_AppID}.svg")
-set(Launcher_Copyright "© 2022-2026 ElyPrismLauncher Contributors\\© 2022-2026 Prism Launcher Contributors\\n© 2021-2022 PolyMC Contributors\\n© 2012-2021 MultiMC Contributors")
+set(Launcher_Copyright "© 2022-2026 ElyPrismLauncher Contributors\\n© 2022-2026 Prism Launcher Contributors\\n© 2021-2022 PolyMC Contributors\\n© 2012-2021 MultiMC Contributors")
 set(Launcher_Copyright_Mac "© 2022-2026 ElyPrismLauncher Contributors, © 2022-2026 Prism Launcher Contributors, © 2021-2022 PolyMC Contributors and © 2012-2021 MultiMC Contributors" PARENT_SCOPE)
 set(Launcher_Copyright "${Launcher_Copyright}" PARENT_SCOPE)
 set(Launcher_Domain "elyprismlauncher.github.io" PARENT_SCOPE)
