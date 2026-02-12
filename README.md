@@ -1,10 +1,6 @@
 <p align="center">
-  <img src="program_info/io.github.elyprismlauncher.ElyPrismLauncher_256.png" alt="BLauncher" width="128">
+    <img width="503" height="185" alt="image-removebg-preview(1)" src="https://github.com/user-attachments/assets/250be340-02f6-40df-8553-42d8de262b1f" />
 </p>
-
-<h1 align="center">BLauncher</h1>
-<p align="center"><i>Client for old Minecraft</i></p>
-
 <p align="center">
   <a href="https://github.com/FLEXIY0/BLauncher/releases/latest">Скачать</a> · 
   <a href="https://github.com/FLEXIY0/BLauncher/issues">Issues</a> · 
@@ -40,7 +36,8 @@ BLauncher наследует весь функционал Prism Launcher — у
 
 ### Скриншоты
 
-*Будут добавлены позже.*
+<img width="1576" height="787" alt="изображение" src="https://github.com/user-attachments/assets/2231155c-108b-4804-befd-8fbb27914344" />
+
 
 ---
 
