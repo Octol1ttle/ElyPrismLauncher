@@ -118,6 +118,8 @@
 #include "settings/INISettingsObject.h"
 #include "settings/Setting.h"
 
+#include "MMCZip.h"
+
 #include "meta/Index.h"
 #include "translations/TranslationsModel.h"
 
@@ -657,8 +659,8 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
             new INISettingsObject({ BuildConfig.LAUNCHER_CONFIGFILE, "prismlauncher.cfg", "polymc.cfg", "multimc.cfg" }, this));
 
         // Theming
-        m_settings->registerSetting("IconTheme", QString());
-        m_settings->registerSetting("ApplicationTheme", QString());
+        m_settings->registerSetting("IconTheme", QString("multimc"));
+        m_settings->registerSetting("ApplicationTheme", QString("Windows"));
         m_settings->registerSetting("BackgroundCat", QString("kitteh"));
 
         // Remembered state
@@ -1007,6 +1009,63 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
         qInfo() << "Loading Instances...";
         m_instances->loadList();
         qInfo() << "<> Instances loaded.";
+
+        // Install default instances from bundled ZIPs on first run
+        {
+            QString markerFile = FS::PathCombine(instDir, ".bttr_defaults_installed");
+            if (!QFile::exists(markerFile)) {
+                QStringList searchPaths = {
+#if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD) || defined(Q_OS_OPENBSD)
+                    FS::PathCombine(m_rootPath, "share", BuildConfig.LAUNCHER_NAME, "default instances"),
+#endif
+                    FS::PathCombine(m_rootPath, "default instances"),
+                    FS::PathCombine(applicationDirPath(), "..", "default instances"),
+                };
+
+                QString defaultInstancesDir;
+                for (const auto& path : searchPaths) {
+                    if (QDir(path).exists()) {
+                        defaultInstancesDir = path;
+                        break;
+                    }
+                }
+
+                if (!defaultInstancesDir.isEmpty()) {
+                    qInfo() << "Installing default instances from" << defaultInstancesDir;
+                    QStringList extractedIds;
+                    QDir dir(defaultInstancesDir);
+                    for (const auto& entry : dir.entryInfoList({"*.zip"}, QDir::Files)) {
+                        QString instanceId = entry.baseName();
+                        QString targetDir = FS::PathCombine(instDir, instanceId);
+                        if (!QDir(targetDir).exists()) {
+                            QDir::current().mkpath(targetDir);
+                            auto result = MMCZip::extractDir(entry.absoluteFilePath(), targetDir);
+                            if (result.has_value()) {
+                                qInfo() << "Extracted default instance:" << instanceId;
+                                extractedIds.append(instanceId);
+                            } else {
+                                qWarning() << "Failed to extract default instance:" << instanceId;
+                            }
+                        }
+                    }
+
+                    if (!extractedIds.isEmpty()) {
+                        // Reload to pick up newly extracted instances
+                        m_instances->loadList();
+                        for (const auto& id : extractedIds) {
+                            m_instances->setInstanceGroup(id, "[BTTR] Community");
+                        }
+                        qInfo() << "Installed" << extractedIds.size() << "default instances into [BTTR] Community group.";
+                    }
+                }
+
+                // Create marker file so we don't repeat this
+                QFile marker(markerFile);
+                if (marker.open(QIODevice::WriteOnly)) {
+                    marker.close();
+                }
+            }
+        }
     }
 
     // and accounts
@@ -1224,77 +1283,29 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 
 bool Application::createSetupWizard()
 {
-    bool javaRequired = [this]() {
-        if (BuildConfig.JAVA_DOWNLOADER_ENABLED && settings()->get("AutomaticJavaDownload").toBool()) {
-            return false;
-        }
-        bool ignoreJavaWizard = settings()->get("IgnoreJavaWizard").toBool();
-        if (ignoreJavaWizard) {
-            return false;
-        }
-        QString currentHostName = QHostInfo::localHostName();
-        QString oldHostName = settings()->get("LastHostname").toString();
-        if (currentHostName != oldHostName) {
-            settings()->set("LastHostname", currentHostName);
-            return true;
-        }
-        QString currentJavaPath = settings()->get("JavaPath").toString();
-        QString actualPath = FS::ResolveExecutable(currentJavaPath);
-        return actualPath.isNull();
-    }();
-    bool askjava = BuildConfig.JAVA_DOWNLOADER_ENABLED && !javaRequired && !settings()->get("AutomaticJavaDownload").toBool() &&
-                   !settings()->get("AutomaticJavaSwitch").toBool() && !settings()->get("UserAskedAboutAutomaticJavaDownload").toBool();
-    bool languageRequired = settings()->get("Language").toString().isEmpty();
-    bool pasteInterventionRequired = settings()->get("PastebinURL") != "";
-    bool validWidgets = m_themeManager->isValidApplicationTheme(settings()->get("ApplicationTheme").toString());
-    bool validIcons = m_themeManager->isValidIconTheme(settings()->get("IconTheme").toString());
-    bool login = !m_accounts->anyAccountIsValid() && capabilities() & Application::SupportsMSA;
-    bool themeInterventionRequired = !validWidgets || !validIcons;
-    bool wizardRequired = javaRequired || languageRequired || pasteInterventionRequired || themeInterventionRequired || askjava || login;
-    if (wizardRequired) {
-        // set default theme after going into theme wizard
-        if (!validIcons)
-            settings()->set("IconTheme", QString("pe_colored"));
-        if (!validWidgets) {
-#if defined(Q_OS_WIN32) && QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-            const QString style =
-                QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark ? QStringLiteral("dark") : QStringLiteral("bright");
-#else
-            const QString style = QStringLiteral("system");
-#endif
-
-            settings()->set("ApplicationTheme", style);
-        }
-
-        m_themeManager->applyCurrentlySelectedTheme(true);
-
-        m_setupWizard = new SetupWizard(nullptr);
-        if (languageRequired) {
-            m_setupWizard->addPage(new LanguageWizardPage(m_setupWizard));
-        }
-
-        if (javaRequired) {
-            m_setupWizard->addPage(new JavaWizardPage(m_setupWizard));
-        } else if (askjava) {
-            m_setupWizard->addPage(new AutoJavaWizardPage(m_setupWizard));
-        }
-
-        if (pasteInterventionRequired) {
-            m_setupWizard->addPage(new PasteWizardPage(m_setupWizard));
-        }
-
-        if (themeInterventionRequired) {
-            m_setupWizard->addPage(new ThemeWizardPage(m_setupWizard));
-        }
-
-        if (login) {
-            m_setupWizard->addPage(new LoginWizardPage(m_setupWizard));
-        }
-        connect(m_setupWizard, &QDialog::finished, this, &Application::setupWizardFinished);
-        m_setupWizard->show();
+    // BLauncher: skip setup wizard, apply defaults silently
+    if (settings()->get("Language").toString().isEmpty()) {
+        auto locale = QLocale::system().name();
+        settings()->set("Language", locale);
     }
 
-    return wizardRequired || login;
+    // Fix paste URL if needed
+    if (settings()->get("PastebinURL") != "") {
+        settings()->set("PastebinURL", "");
+    }
+
+    // Enable automatic Java download if available
+    if (BuildConfig.JAVA_DOWNLOADER_ENABLED) {
+        settings()->set("AutomaticJavaDownload", true);
+        settings()->set("AutomaticJavaSwitch", true);
+        settings()->set("UserAskedAboutAutomaticJavaDownload", true);
+    }
+
+    settings()->set("LastHostname", QHostInfo::localHostName());
+
+    m_themeManager->applyCurrentlySelectedTheme(true);
+
+    return false;
 }
 
 bool Application::updaterEnabled()

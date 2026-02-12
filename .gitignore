@@ -27,6 +27,7 @@ compile_commands.json
 # Build dirs
 build
 /build-*
+/dist
 
 # Install dirs
 install

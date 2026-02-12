@@ -174,9 +174,9 @@ set(Launcher_LOGIN_CALLBACK_URL "https://elyprismlauncher.github.io/successful-l
 set(Launcher_FMLLIBS_BASE_URL "https://epl.mctaylors.ru/files/fmllibs/" CACHE STRING "URL for FML Libraries.")
 
 ######## Set version numbers ########
-set(Launcher_VERSION_MAJOR 10)
+set(Launcher_VERSION_MAJOR 1)
 set(Launcher_VERSION_MINOR 0)
-set(Launcher_VERSION_PATCH 4)
+set(Launcher_VERSION_PATCH 0)
 
 set(Launcher_VERSION_NAME "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_PATCH}")
 set(Launcher_VERSION_NAME4 "${Launcher_VERSION_MAJOR}.${Launcher_VERSION_MINOR}.${Launcher_VERSION_PATCH}.0")
@@ -341,7 +341,7 @@ include(ECMQtDeclareLoggingCategory)
 
 ####################################### Program Info #######################################
 
-set(Launcher_APP_BINARY_NAME "elyprismlauncher" CACHE STRING "Name of the Launcher binary")
+set(Launcher_APP_BINARY_NAME "blauncher" CACHE STRING "Name of the Launcher binary")
 add_subdirectory(program_info)
 
 ####################################### Install layout #######################################
@@ -434,6 +434,8 @@ if(UNIX AND APPLE)
                 "Install Xcode command line tools: 'xcode-select --install'")
     endif()
 
+    # Install default instances
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/default instances/" DESTINATION "${RESOURCES_DEST_DIR}/default instances")
 
 elseif(UNIX)
     include(KDEInstallDirs)
@@ -453,6 +455,9 @@ elseif(UNIX)
 
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/launcher/qtlogging.ini" DESTINATION "share/${Launcher_Name}")
 
+    # Install default instances
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/default instances/" DESTINATION "share/${Launcher_Name}/default instances")
+
     set(PLUGIN_DEST_DIR "plugins")
     set(BUNDLE_DEST_DIR ".")
     set(RESOURCES_DEST_DIR ".")
@@ -471,6 +476,9 @@ elseif(WIN32)
     set(PLUGIN_DEST_DIR ".")
     set(RESOURCES_DEST_DIR ".")
     set(JARS_DEST_DIR "jars")
+
+    # Install default instances
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/default instances/" DESTINATION "default instances")
 else()
     message(FATAL_ERROR "Platform not supported")
 endif()
