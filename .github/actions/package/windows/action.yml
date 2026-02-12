@@ -149,7 +149,7 @@ runs:
         certificate-profile-name: ElyPrismLauncher
 
         files: |
-          ${{ github.workspace }}\ElyPrismLauncher-Setup.exe
+          ${{ github.workspace }}\BLauncher-Setup.exe
 
         # recommended in https://github.com/Azure/artifact-signing-action#timestamping-1
         timestamp-rfc3161: "http://timestamp.acs.microsoft.com"
@@ -182,5 +182,5 @@ runs:
     - name: Upload installer
       uses: actions/upload-artifact@v6
       with:
-        name: ElyPrismLauncher-${{ inputs.artifact-name }}-Setup-${{ inputs.version }}-${{ inputs.build-type }}
-        path: ElyPrismLauncher-Setup.exe
+        name: BLauncher-${{ inputs.artifact-name }}-Setup-${{ inputs.version }}-${{ inputs.build-type }}
+        path: BLauncher-Setup.exe

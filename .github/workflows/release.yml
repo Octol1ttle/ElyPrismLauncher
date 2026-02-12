@@ -44,7 +44,7 @@ jobs:
 
           tar --exclude='.git' -czf ElyPrismLauncher-${{ env.VERSION }}.tar.gz ElyPrismLauncher-${{ env.VERSION }}
 
-          for d in ElyPrismLauncher-Windows-MSVC*; do
+          for d in ElyPrismLauncher-Windows-MSVC* BLauncher-Windows-MSVC*; do
             cd "${d}" || continue
             LEGACY="$(echo -n ${d} | grep -o Legacy || true)"
             ARM64="$(echo -n ${d} | grep -o arm64 || true)"
@@ -54,29 +54,29 @@ jobs:
             test -z "${LEGACY}" || NAME="${NAME}-Legacy"
             test -z "${ARM64}" || NAME="${NAME}-arm64"
             test -z "${PORT}" || NAME="${NAME}-Portable"
-            test -z "${INST}" || mv ElyPrismLauncher-*.exe ../${NAME}-Setup-${{ env.VERSION }}.exe
+            test -z "${INST}" || mv *-Setup.exe ../${NAME}-Setup-${{ env.VERSION }}.exe 2>/dev/null || mv BLauncher-Setup.exe ../${NAME}-Setup-${{ env.VERSION }}.exe 2>/dev/null || true
             test -n "${INST}" || zip -r -9 "../${NAME}-${{ env.VERSION }}.zip" *
             cd ..
           done
 
-          for d in ElyPrismLauncher-Windows-MinGW-w64*; do
+          for d in ElyPrismLauncher-Windows-MinGW-w64* BLauncher-Windows-MinGW-w64*; do
             cd "${d}" || continue
             INST="$(echo -n ${d} | grep -o Setup || true)"
             PORT="$(echo -n ${d} | grep -o Portable || true)"
             NAME="ElyPrismLauncher-Windows-MinGW-w64"
             test -z "${PORT}" || NAME="${NAME}-Portable"
-            test -z "${INST}" || mv ElyPrismLauncher-*.exe ../${NAME}-Setup-${{ env.VERSION }}.exe
+            test -z "${INST}" || mv *-Setup.exe ../${NAME}-Setup-${{ env.VERSION }}.exe 2>/dev/null || mv BLauncher-Setup.exe ../${NAME}-Setup-${{ env.VERSION }}.exe 2>/dev/null || true
             test -n "${INST}" || zip -r -9 "../${NAME}-${{ env.VERSION }}.zip" *
             cd ..
           done
 
-          for d in ElyPrismLauncher-Windows-MinGW-arm64*; do
+          for d in ElyPrismLauncher-Windows-MinGW-arm64* BLauncher-Windows-MinGW-arm64*; do
             cd "${d}" || continue
             INST="$(echo -n ${d} | grep -o Setup || true)"
             PORT="$(echo -n ${d} | grep -o Portable || true)"
             NAME="ElyPrismLauncher-Windows-MinGW-arm64"
             test -z "${PORT}" || NAME="${NAME}-Portable"
-            test -z "${INST}" || mv ElyPrismLauncher-*.exe ../${NAME}-Setup-${{ env.VERSION }}.exe
+            test -z "${INST}" || mv *-Setup.exe ../${NAME}-Setup-${{ env.VERSION }}.exe 2>/dev/null || mv BLauncher-Setup.exe ../${NAME}-Setup-${{ env.VERSION }}.exe 2>/dev/null || true
             test -n "${INST}" || zip -r -9 "../${NAME}-${{ env.VERSION }}.zip" *
             cd ..
           done

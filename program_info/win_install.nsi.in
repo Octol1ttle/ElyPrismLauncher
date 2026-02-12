@@ -1,121 +1,107 @@
+; ===================================================================
+; BLauncher Classic Retro Setup (Windows 95/98 Style)
+; ===================================================================
+; NSIS Script — Old-school installer, как в старых добрых временах!
+; Классический интерфейс без Modern UI, в стиле InstallShield 5.x
+; ===================================================================
+
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
-!include "MUI2.nsh"
-
 !include "x64.nsh"
+!include "WinMessages.nsh"
 
 Unicode true
 
-Name "@Launcher_DisplayName@"
+; ===================================================================
+; Основные настройки
+; ===================================================================
+Name "@Launcher_DisplayName@ Setup"
 InstallDir "$LOCALAPPDATA\Programs\@Launcher_CommonName@"
 InstallDirRegKey HKCU "Software\@Launcher_CommonName@" "InstallDir"
 RequestExecutionLevel user
 OutFile "../@Launcher_CommonName@-Setup.exe"
+SetCompressor /SOLID lzma
+SetCompressorDictSize 32
 
-!define MUI_ICON "../@Launcher_Branding_ICO@"
+Icon "../@Launcher_Branding_ICO@"
+UninstallIcon "../@Launcher_Branding_ICO@"
 
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\@Launcher_CommonName@"
 
-;--------------------------------
+; ===================================================================
+; Ретро-стиль: классические цвета Windows 95/98
+; ===================================================================
+; Серый фон как в Windows 95
+BGGradient C0C0C0 808080 FFFFFF
 
-; Pages
+; Классическая надпись вверху
+Caption "@Launcher_DisplayName@ Setup"
+BrandingText "  @Launcher_DisplayName@ v@Launcher_VERSION_NAME@ — Classic Setup"
 
-!insertmacro MUI_PAGE_WELCOME
-!define MUI_COMPONENTSPAGE_NODESC
-!insertmacro MUI_PAGE_COMPONENTS
-!insertmacro MUI_PAGE_DIRECTORY
-!insertmacro MUI_PAGE_INSTFILES
-!define MUI_FINISHPAGE_RUN "$InstDir\@Launcher_APP_BINARY_NAME@.exe"
-!insertmacro MUI_PAGE_FINISH
+; Стиль прогресс бара — классический цветной (как Win98)
+InstallColors 000080 C0C0C0
+InstProgressFlags smooth
 
-!insertmacro MUI_UNPAGE_CONFIRM
-!insertmacro MUI_UNPAGE_INSTFILES
+; XP стиль манифест ОТКЛЮЧЁН — для ретро вида
+XPStyle off
 
-;--------------------------------
+; Детали по умолчанию показываются (как в старых установщиках)
+ShowInstDetails show
+ShowUnInstDetails show
 
-; Languages
-
-!insertmacro MUI_LANGUAGE "English"
-!insertmacro MUI_LANGUAGE "French"
-!insertmacro MUI_LANGUAGE "German"
-!insertmacro MUI_LANGUAGE "Spanish"
-!insertmacro MUI_LANGUAGE "SpanishInternational"
-!insertmacro MUI_LANGUAGE "SimpChinese"
-!insertmacro MUI_LANGUAGE "TradChinese"
-!insertmacro MUI_LANGUAGE "Japanese"
-!insertmacro MUI_LANGUAGE "Korean"
-!insertmacro MUI_LANGUAGE "Italian"
-!insertmacro MUI_LANGUAGE "Dutch"
-!insertmacro MUI_LANGUAGE "Danish"
-!insertmacro MUI_LANGUAGE "Swedish"
-!insertmacro MUI_LANGUAGE "Norwegian"
-!insertmacro MUI_LANGUAGE "NorwegianNynorsk"
-!insertmacro MUI_LANGUAGE "Finnish"
-!insertmacro MUI_LANGUAGE "Greek"
-!insertmacro MUI_LANGUAGE "Russian"
-!insertmacro MUI_LANGUAGE "Portuguese"
-!insertmacro MUI_LANGUAGE "PortugueseBR"
-!insertmacro MUI_LANGUAGE "Polish"
-!insertmacro MUI_LANGUAGE "Ukrainian"
-!insertmacro MUI_LANGUAGE "Czech"
-!insertmacro MUI_LANGUAGE "Slovak"
-!insertmacro MUI_LANGUAGE "Croatian"
-!insertmacro MUI_LANGUAGE "Bulgarian"
-!insertmacro MUI_LANGUAGE "Hungarian"
-!insertmacro MUI_LANGUAGE "Thai"
-!insertmacro MUI_LANGUAGE "Romanian"
-!insertmacro MUI_LANGUAGE "Latvian"
-!insertmacro MUI_LANGUAGE "Macedonian"
-!insertmacro MUI_LANGUAGE "Estonian"
-!insertmacro MUI_LANGUAGE "Turkish"
-!insertmacro MUI_LANGUAGE "Lithuanian"
-!insertmacro MUI_LANGUAGE "Slovenian"
-!insertmacro MUI_LANGUAGE "Serbian"
-!insertmacro MUI_LANGUAGE "SerbianLatin"
-!insertmacro MUI_LANGUAGE "Arabic"
-!insertmacro MUI_LANGUAGE "Farsi"
-!insertmacro MUI_LANGUAGE "Hebrew"
-!insertmacro MUI_LANGUAGE "Indonesian"
-!insertmacro MUI_LANGUAGE "Mongolian"
-!insertmacro MUI_LANGUAGE "Luxembourgish"
-!insertmacro MUI_LANGUAGE "Albanian"
-!insertmacro MUI_LANGUAGE "Breton"
-!insertmacro MUI_LANGUAGE "Belarusian"
-!insertmacro MUI_LANGUAGE "Icelandic"
-!insertmacro MUI_LANGUAGE "Malay"
-!insertmacro MUI_LANGUAGE "Bosnian"
-!insertmacro MUI_LANGUAGE "Kurdish"
-!insertmacro MUI_LANGUAGE "Irish"
-!insertmacro MUI_LANGUAGE "Uzbek"
-!insertmacro MUI_LANGUAGE "Galician"
-!insertmacro MUI_LANGUAGE "Afrikaans"
-!insertmacro MUI_LANGUAGE "Catalan"
-!insertmacro MUI_LANGUAGE "Esperanto"
-!insertmacro MUI_LANGUAGE "Asturian"
-!insertmacro MUI_LANGUAGE "Basque"
-!insertmacro MUI_LANGUAGE "Pashto"
-!insertmacro MUI_LANGUAGE "ScotsGaelic"
-!insertmacro MUI_LANGUAGE "Georgian"
-!insertmacro MUI_LANGUAGE "Vietnamese"
-!insertmacro MUI_LANGUAGE "Welsh"
-!insertmacro MUI_LANGUAGE "Armenian"
-!insertmacro MUI_LANGUAGE "Corsican"
-!insertmacro MUI_LANGUAGE "Tatar"
-!insertmacro MUI_LANGUAGE "Hindi"
-
-;--------------------------------
-
+; ===================================================================
 ; Version info
+; ===================================================================
 VIProductVersion "@Launcher_VERSION_NAME4@"
 VIFileVersion "@Launcher_VERSION_NAME4@"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "@Launcher_DisplayName@"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "@Launcher_DisplayName@ Installer"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "@Launcher_Copyright@"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "@Launcher_VERSION_NAME4@"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "@Launcher_VERSION_NAME4@"
+VIAddVersionKey /LANG=1033 "ProductName" "@Launcher_DisplayName@"
+VIAddVersionKey /LANG=1033 "FileDescription" "@Launcher_DisplayName@ Setup"
+VIAddVersionKey /LANG=1033 "LegalCopyright" "@Launcher_Copyright@"
+VIAddVersionKey /LANG=1033 "FileVersion" "@Launcher_VERSION_NAME4@"
+VIAddVersionKey /LANG=1033 "ProductVersion" "@Launcher_VERSION_NAME4@"
 
-;--------------------------------
+; ===================================================================
+; Старые добрые страницы (Classic NSIS Pages)
+; ===================================================================
+
+; Страница лицензии — классический стиль
+LicenseText "Please read the following License Agreement. You must accept \
+             the terms of this agreement before continuing with the installation." \
+             "I &Agree"
+LicenseData "../COPYING.md"
+
+; Страница компонентов
+ComponentText "This will install @Launcher_DisplayName@ on your computer.$\r$\n$\r$\n\
+Select the components you want to install and uncheck the components$\r$\n\
+you don't want to install. Click Next to continue." \
+              "" \
+              "Select the components to install:"
+
+; Страница выбора директории
+DirText "Setup will install @Launcher_DisplayName@ in the following folder.$\r$\n$\r$\n\
+To install in a different folder, click Browse and select another folder.$\r$\n\
+Click Install to start the installation." \
+        "Destination Folder" \
+        "" \
+        "Browse..."
+
+; Страница завершения (текст по умолчанию)
+UninstallText "This will uninstall @Launcher_DisplayName@ from your computer.$\r$\n$\r$\n\
+Click Uninstall to start the uninstallation."
+
+; Страницы установки (классический порядок)
+Page license
+Page components
+Page directory
+Page instfiles
+
+; Страницы деинсталляции
+UninstPage uninstConfirm
+UninstPage instfiles
+
+; ===================================================================
 ; Conditional comp with file exist
+; ===================================================================
 
 !macro CompileTimeIfFileExist path define
 !tempfile tmpinc
@@ -125,8 +111,9 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductVersion" "@Launcher_VERSION_NAME4@
 !undef tmpinc
 !macroend
 
-;--------------------------------
+; ===================================================================
 ; Shell Associate Macros
+; ===================================================================
 
 !macro APP_SETUP_Def DESCRIPTION ICON APP_ID APP_NAME APP_EXE COMMANDTEXT COMMAND
 
@@ -330,26 +317,61 @@ Function RunUninstall
   Exch $1 ; exitcode
 FunctionEnd
 
-; The "" makes the section hidden.
-Section "" UninstallPrevious
+; ===================================================================
+; Ретро: Приветственное сообщение при запуске (как в Win95 инсталляторах)
+; ===================================================================
 
+Function .onInit
+  ; Показываем splash-сообщение в стиле старых установщиков
+  MessageBox MB_YESNO|MB_ICONQUESTION \
+    "Welcome to @Launcher_DisplayName@ v@Launcher_VERSION_NAME@ Setup!$\r$\n$\r$\n\
+This program will install @Launcher_DisplayName@ on your computer.$\r$\n$\r$\n\
+It is recommended that you close all other applications$\r$\n\
+before continuing.$\r$\n$\r$\n\
+Do you want to continue?" \
+    IDYES proceed
+    Abort
+  proceed:
+
+  ; Проверяем предыдущую установку
   ReadRegStr $0 HKCU "${UNINST_KEY}" "QuietUninstallString"
   ${If} $0 == ""
     ReadRegStr $0 HKCU "${UNINST_KEY}" "UninstallString"
   ${EndIf}
 
   ${If} $0 != ""
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION \
+      "A previous version of @Launcher_DisplayName@ was detected.$\r$\n$\r$\n\
+It is recommended to uninstall the previous version first.$\r$\n$\r$\n\
+Do you want to uninstall it now?" \
+      IDYES uninstprev IDNO skipit
+    uninstprev:
       !insertmacro RunUninstall $0 $0
       ${If} $0 <> 0
-          MessageBox MB_YESNO|MB_ICONSTOP "Failed to uninstall, continue anyway?" /SD IDYES IDYES +2
-              Abort
+        MessageBox MB_YESNO|MB_ICONSTOP \
+          "Failed to uninstall previous version.$\r$\n\
+Continue anyway?" /SD IDYES IDYES skipit
+          Abort
       ${EndIf}
+    skipit:
   ${EndIf}
 
-SectionEnd
+  ; Обработка /NoShortcuts
+  ${GetParameters} $R0
+  ${GetOptions} $R0 "/NoShortcuts" $R1
+  ${IfNot} ${Errors}
+    SectionGetFlags ${SEC_SM_SHORTCUTS} $0
+    IntOp $0 $0 & 0xFFFFFFFE
+    SectionSetFlags ${SEC_SM_SHORTCUTS} $0
+    SectionGetFlags ${SEC_DESKTOP_SHORTCUTS} $0
+    IntOp $0 $0 & 0xFFFFFFFE
+    SectionSetFlags ${SEC_DESKTOP_SHORTCUTS} $0
+  ${EndIf}
+FunctionEnd
 
-;------------------------------------
+; ===================================================================
 ; include nice plugins
+; ===================================================================
 
 ; NScurl - curl in NSIS
 ; used for MSVS redist download
@@ -362,15 +384,24 @@ SectionEnd
 !AddPluginDir /amd64-unicode   "../NSISPlugins/NScurl/Plugins/amd64-unicode"
 !endif
 
-;------------------------------------
+; ===================================================================
+; Основная секция установки
+; ===================================================================
 
-; The stuff to install
-Section "@Launcher_DisplayName@"
+Section "@Launcher_DisplayName@ (required)" SEC_MAIN
 
   SectionIn RO
 
+  ; Убиваем запущенные копии
+  DetailPrint "=== @Launcher_DisplayName@ Setup ==="
+  DetailPrint ""
+  DetailPrint "Checking for running instances..."
   nsExec::Exec /TIMEOUT=2000 'TaskKill /IM @Launcher_APP_BINARY_NAME@.exe /F'
+  DetailPrint "Done."
+  DetailPrint ""
 
+  ; Устанавливаем файлы
+  DetailPrint "Installing files..."
   SetOutPath $INSTDIR
 
   File "@Launcher_APP_BINARY_NAME@.exe"
@@ -379,12 +410,17 @@ Section "@Launcher_DisplayName@"
   File "qt.conf"
   File "qtlogging.ini"
   File *.dll
+
+  DetailPrint "Installing plugins and resources..."
   File /r "iconengines"
   File /r "imageformats"
   File /r "jars"
   File /r "platforms"
   File /r "styles"
   File /nonfatal /r "tls"
+
+  DetailPrint ""
+  DetailPrint "Writing registry entries..."
 
   ; Write the installation path into the registry
   WriteRegStr HKCU Software\@Launcher_CommonName@ "InstallDir" "$INSTDIR"
@@ -420,22 +456,44 @@ Section "@Launcher_DisplayName@"
     WriteUninstaller "$INSTDIR\uninstall.exe"
   ${EndIf}
 
+  DetailPrint ""
+  DetailPrint "Installation of core files complete!"
+
 SectionEnd
+
+; ===================================================================
+; Visual C++ Redistributable (only for MSVC builds)
+; ===================================================================
 
 @Launcher_MSVC_Redist_NSIS_Section@
 
-Section "Start Menu Shortcut" SM_SHORTCUTS
+; ===================================================================
+; Ярлыки — Меню Пуск
+; ===================================================================
 
+Section "Start Menu Shortcuts" SEC_SM_SHORTCUTS
+
+  DetailPrint "Creating Start Menu shortcut..."
   CreateShortcut "$SMPROGRAMS\@Launcher_DisplayName@.lnk" "$INSTDIR\@Launcher_APP_BINARY_NAME@.exe" "" "$INSTDIR\@Launcher_APP_BINARY_NAME@.exe" 0
+  DetailPrint "Done."
 
 SectionEnd
 
-Section /o "Desktop Shortcut" DESKTOP_SHORTCUTS
+; ===================================================================
+; Ярлыки — Рабочий стол
+; ===================================================================
 
+Section /o "Desktop Shortcut" SEC_DESKTOP_SHORTCUTS
+
+  DetailPrint "Creating Desktop shortcut..."
   CreateShortcut "$DESKTOP\@Launcher_DisplayName@.lnk" "$INSTDIR\@Launcher_APP_BINARY_NAME@.exe" "" "$INSTDIR\@Launcher_APP_BINARY_NAME@.exe" 0
+  DetailPrint "Done."
 
 SectionEnd
 
+; ===================================================================
+; Shell Association
+; ===================================================================
 
 !define APPID "@Launcher_CommonName@.App"
 !define APPEXE "@Launcher_APP_BINARY_NAME@.exe"
@@ -444,7 +502,9 @@ SectionEnd
 !define APPNAME "@Launcher_DisplayName@"
 !define APPCMDTEXT "@Launcher_DisplayName@"
 
-Section /o "Shell Association (Open-With dialog)" SHELL_ASSOC
+Section /o "Shell Association (Open-With dialog)" SEC_SHELL_ASSOC
+
+  DetailPrint "Registering file associations..."
 
   !insertmacro APP_SETUP `${APPDESCRIPTION}` `${APPICON}` `${APPID}` `${APPCMDTEXT}` `${APPEXE}` `${APPCMDTEXT}` '$INSTDIR\${APPEXE} -I "%1"'
 
@@ -452,20 +512,41 @@ Section /o "Shell Association (Open-With dialog)" SHELL_ASSOC
   !insertmacro APP_ASSOCIATE ".zip" `${APPID}` `${APPEXE}` false
 
   !insertmacro NotifyShell_AssocChanged
+
+  DetailPrint "Done."
+
 SectionEnd
 
+; ===================================================================
+; Ретро: Финальное сообщение
+; ===================================================================
 
-;--------------------------------
+Function .onInstSuccess
+  MessageBox MB_YESNO|MB_ICONINFORMATION \
+    "@Launcher_DisplayName@ has been successfully installed!$\r$\n$\r$\n\
+    Would you like to launch @Launcher_DisplayName@ now?" \
+    IDYES launch IDNO done
+  launch:
+    Exec "$INSTDIR\@Launcher_APP_BINARY_NAME@.exe"
+  done:
+FunctionEnd
 
-; Uninstaller
+; ===================================================================
+; Деинсталлятор
+; ===================================================================
 
 Section "Uninstall"
 
+  DetailPrint "=== @Launcher_DisplayName@ Uninstall ==="
+  DetailPrint ""
+  DetailPrint "Stopping running instances..."
   nsExec::Exec /TIMEOUT=2000 'TaskKill /IM @Launcher_APP_BINARY_NAME@.exe /F'
 
+  DetailPrint "Removing registry entries..."
   DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\@Launcher_CommonName@"
   DeleteRegKey HKCU SOFTWARE\@Launcher_CommonName@
 
+  DetailPrint "Removing files..."
   Delete $INSTDIR\@Launcher_APP_BINARY_NAME@.exe
   Delete $INSTDIR\@Launcher_APP_BINARY_NAME@_filelink.exe
   Delete $INSTDIR\@Launcher_APP_BINARY_NAME@_updater.exe
@@ -474,6 +555,7 @@ Section "Uninstall"
 
   Delete $INSTDIR\uninstall.exe
 
+  DetailPrint "Removing directories..."
   RMDir /r $INSTDIR\iconengines
   RMDir /r $INSTDIR\imageformats
   RMDir /r $INSTDIR\jars
@@ -481,12 +563,20 @@ Section "Uninstall"
   RMDir /r $INSTDIR\styles
   RMDir /r $INSTDIR\tls
 
+  DetailPrint "Removing shortcuts..."
   Delete "$SMPROGRAMS\@Launcher_DisplayName@.lnk"
   Delete "$DESKTOP\@Launcher_DisplayName@.lnk"
 
   RMDir "$INSTDIR"
 
+  DetailPrint ""
+  DetailPrint "Uninstallation complete!"
+
 SectionEnd
+
+; ===================================================================
+; Деинсталляция Shell Associations
+; ===================================================================
 
 Section -un.ShellAssoc
 
@@ -496,17 +586,14 @@ Section -un.ShellAssoc
   !insertmacro APP_UNASSOCIATE ".mrpack" `${APPID}` `${APPEXE}`
 
   !insertmacro NotifyShell_AssocChanged
+
 SectionEnd
 
-;--------------------------------
+; ===================================================================
+; Ретро: Сообщение при деинсталляции
+; ===================================================================
 
-; Extra command line parameters
-
-Function .onInit
-${GetParameters} $R0
-${GetOptions} $R0 "/NoShortcuts" $R1
-${IfNot} ${Errors}
-  !insertmacro UnselectSection ${SM_SHORTCUTS}
-  !insertmacro UnselectSection ${DESKTOP_SHORTCUTS}
-${EndIf}
+Function un.onUninstSuccess
+  MessageBox MB_OK|MB_ICONINFORMATION \
+    "@Launcher_DisplayName@ has been successfully removed from your computer."
 FunctionEnd

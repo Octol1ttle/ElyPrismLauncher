@@ -1,0 +1,308 @@
+name: "Build Retro Setup.exe (NSIS)"
+
+# ================================================================
+# Workflow для сборки ретро-установщика BLauncher (Windows 95/98 стиль)
+# Использует NSIS для создания классического Setup.exe
+# ================================================================
+
+on:
+  # Ручной запуск
+  workflow_dispatch:
+    inputs:
+      build-type:
+        description: "Build type"
+        type: choice
+        options:
+          - Release
+          - Debug
+        default: Release
+
+  # Автоматически при создании тега
+  push:
+    tags:
+      - "*"
+
+  # Можно вызывать из других workflow
+  workflow_call:
+    inputs:
+      build-type:
+        description: Type of build (Debug or Release)
+        type: string
+        default: Release
+
+concurrency:
+  group: setup-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ================================================================
+  # Сборка Setup.exe для Windows
+  # ================================================================
+  build-setup:
+    name: "Setup.exe (${{ matrix.name }})"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # --- MSVC x64 ---
+          - name: "MSVC-x64"
+            os: windows-2022
+            cmake-preset: windows_msvc
+            msystem: ""
+            vcvars-arch: amd64
+            qt-version: "6.10.2"
+            artifact-suffix: "Windows-MSVC"
+
+          # --- MSVC ARM64 ---
+          - name: "MSVC-arm64"
+            os: windows-11-arm
+            cmake-preset: windows_msvc
+            msystem: ""
+            vcvars-arch: arm64
+            qt-version: "6.10.2"
+            artifact-suffix: "Windows-MSVC-arm64"
+
+          # --- MinGW x64 ---
+          - name: "MinGW-x64"
+            os: windows-2022
+            cmake-preset: windows_mingw
+            msystem: CLANG64
+            vcvars-arch: amd64_x86
+            qt-version: ""
+            artifact-suffix: "Windows-MinGW-w64"
+
+          # --- MinGW ARM64 ---
+          - name: "MinGW-arm64"
+            os: windows-11-arm
+            cmake-preset: windows_mingw
+            msystem: CLANGARM64
+            vcvars-arch: arm64
+            qt-version: ""
+            artifact-suffix: "Windows-MinGW-arm64"
+
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: ${{ matrix.msystem != '' && 'msys2 {0}' || 'bash' }}
+
+    env:
+      ARTIFACT_NAME: ${{ matrix.artifact-suffix }}-Qt6
+      BUILD_PLATFORM: official
+      BUILD_TYPE: ${{ inputs.build-type || 'Release' }}
+      CMAKE_PRESET: ${{ matrix.cmake-preset }}
+
+      # NScurl plugin для скачивания VC++ Redist в оффлайн-режиме
+      NSCURL_VERSION: "v24.9.26.122"
+      NSCURL_SHA256: "AEE6C4BE3CB6455858E9C1EE4B3AFE0DB9960FA03FE99CCDEDC28390D57CCBB0"
+
+    steps:
+      # ==============================================================
+      # 1. ПОДГОТОВКА
+      # ==============================================================
+
+      - name: "📦 Checkout source code"
+        uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - name: "🔧 Setup dependencies"
+        id: setup-deps
+        uses: ./.github/actions/setup-dependencies
+        with:
+          build-type: ${{ env.BUILD_TYPE }}
+          artifact-name: ${{ matrix.artifact-suffix }}
+          msystem: ${{ matrix.msystem }}
+          vcvars-arch: ${{ matrix.vcvars-arch }}
+          qt-version: ${{ matrix.qt-version }}
+
+      # ==============================================================
+      # 2. СБОРКА ПРОЕКТА
+      # ==============================================================
+
+      - name: "⚙️ Configure CMake"
+        run: |
+          cmake --preset "$CMAKE_PRESET"
+
+      - name: "🔨 Build project"
+        run: |
+          cmake --build --preset "$CMAKE_PRESET" --config "$BUILD_TYPE"
+
+      # ==============================================================
+      # 3. УСТАНОВКА (cmake install)
+      # ==============================================================
+
+      - name: "📁 Install files (MinGW)"
+        if: ${{ matrix.msystem != '' }}
+        shell: msys2 {0}
+        env:
+          BUILD_DIR: build
+          INSTALL_DIR: install
+        run: |
+          cmake --install $BUILD_DIR --config $BUILD_TYPE
+          touch $INSTALL_DIR/manifest.txt
+          for l in $(find $INSTALL_DIR -type f); do
+            l=$(cygpath -u $l)
+            l=${l#$(pwd)/}
+            l=${l#$INSTALL_DIR/}
+            l=${l#./}
+            echo $l
+          done >> $INSTALL_DIR/manifest.txt
+
+      - name: "📁 Install files (MSVC)"
+        if: ${{ matrix.msystem == '' }}
+        shell: pwsh
+        env:
+          BUILD_DIR: build
+          INSTALL_DIR: install
+        run: |
+          cmake --install ${{ env.BUILD_DIR }} --config ${{ env.BUILD_TYPE }}
+
+          cd ${{ github.workspace }}
+          Get-ChildItem ${{ env.INSTALL_DIR }} -Recurse |
+            ForEach FullName |
+            Resolve-Path -Relative |
+            %{ $_.TrimStart('.\') } |
+            %{ $_.TrimStart('${{ env.INSTALL_DIR }}') } |
+            %{ $_.TrimStart('\') } |
+            Out-File -FilePath ${{ env.INSTALL_DIR }}/manifest.txt
+
+      # ==============================================================
+      # 4. УСТАНОВКА NSIS И ПЛАГИНОВ
+      # ==============================================================
+
+      - name: "🛠️ Install NSIS"
+        shell: pwsh
+        run: |
+          # NSIS уже предустановлен на GitHub Actions Windows runners
+          # Проверяем наличие
+          $nsisPath = Get-Command makensis -ErrorAction SilentlyContinue
+          if ($nsisPath) {
+            Write-Host "✅ NSIS found: $($nsisPath.Source)"
+            makensis /VERSION
+          } else {
+            Write-Host "⚠️ NSIS not found, installing via choco..."
+            choco install nsis -y --no-progress
+            # Обновляем PATH
+            $env:PATH = "C:\Program Files (x86)\NSIS;$env:PATH"
+            echo "C:\Program Files (x86)\NSIS" | Out-File -Append $env:GITHUB_PATH
+            makensis /VERSION
+          }
+
+      - name: "📥 Download NScurl plugin"
+        shell: pwsh
+        run: |
+          # Создаём директорию для плагинов
+          New-Item -Name NSISPlugins -ItemType Directory -Force
+
+          # Скачиваем NScurl
+          Write-Host "Downloading NScurl ${{ env.NSCURL_VERSION }}..."
+          Invoke-Webrequest `
+            "https://github.com/negrutiu/nsis-nscurl/releases/download/${{ env.NSCURL_VERSION }}/NScurl.zip" `
+            -OutFile NSISPlugins\NScurl.zip
+
+          # Проверяем хеш
+          $hash = Get-FileHash NSISPlugins\NScurl.zip -Algorithm Sha256 |
+            Select-Object -ExpandProperty Hash
+          if ($hash -ne "${{ env.NSCURL_SHA256 }}") {
+            Write-Error "❌ NScurl.zip SHA256 mismatch! Expected: ${{ env.NSCURL_SHA256 }}, Got: $hash"
+            exit 1
+          }
+          Write-Host "✅ SHA256 verified: $hash"
+
+          # Распаковываем
+          Expand-Archive -Path NSISPlugins\NScurl.zip -DestinationPath NSISPlugins\NScurl
+          Write-Host "✅ NScurl extracted successfully"
+
+      # ==============================================================
+      # 5. СБОРКА РЕТРО SETUP.EXE
+      # ==============================================================
+
+      - name: "🏗️ Build Retro Setup.exe (NSIS)"
+        shell: pwsh
+        env:
+          BUILD_DIR: build
+          INSTALL_DIR: install
+        run: |
+          Write-Host "============================================"
+          Write-Host "  Building BLauncher Retro Setup.exe"
+          Write-Host "  Classic Windows 95/98 Style Installer"
+          Write-Host "============================================"
+          Write-Host ""
+
+          # Переходим в install директорию (файлы ставятся относительно неё)
+          cd ${{ env.INSTALL_DIR }}
+
+          # Запускаем NSIS с нашим ретро-скриптом
+          Write-Host "Running makensis..."
+          makensis -NOCD "${{ github.workspace }}/${{ env.BUILD_DIR }}/program_info/win_install.nsi"
+
+          # Проверяем результат
+          $setupFile = Get-ChildItem "${{ github.workspace }}" -Filter "BLauncher-Setup.exe" -ErrorAction SilentlyContinue
+          if ($setupFile) {
+            $size = [math]::Round($setupFile.Length / 1MB, 2)
+            Write-Host ""
+            Write-Host "============================================"
+            Write-Host "  ✅ Setup.exe created successfully!"
+            Write-Host "  📦 File: $($setupFile.Name)"
+            Write-Host "  📏 Size: ${size} MB"
+            Write-Host "============================================"
+          } else {
+            Write-Error "❌ Setup.exe was not created!"
+            exit 1
+          }
+
+      # ==============================================================
+      # 6. ПОЛУЧЕНИЕ ВЕРСИИ
+      # ==============================================================
+
+      - name: "🏷️ Get version"
+        id: version
+        shell: bash
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            version="${{ github.ref_name }}"
+          else
+            version="$(git rev-parse --short HEAD)"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "📌 Version: $version"
+
+      # ==============================================================
+      # 7. ЗАГРУЗКА АРТЕФАКТОВ
+      # ==============================================================
+
+      - name: "📤 Upload Setup.exe"
+        uses: actions/upload-artifact@v6
+        with:
+          name: "BLauncher-${{ matrix.artifact-suffix }}-Setup-${{ steps.version.outputs.version }}"
+          path: "BLauncher-Setup.exe"
+          if-no-files-found: error
+
+      - name: "📤 Upload portable build"
+        uses: actions/upload-artifact@v6
+        with:
+          name: "BLauncher-${{ matrix.artifact-suffix }}-${{ steps.version.outputs.version }}"
+          path: install/**
+
+      # ==============================================================
+      # 8. SUMMARY
+      # ==============================================================
+
+      - name: "📋 Job Summary"
+        if: always()
+        shell: bash
+        run: |
+          echo "## 🎮 BLauncher Retro Setup Build" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Parameter | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Platform** | ${{ matrix.name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Build Type** | ${{ env.BUILD_TYPE }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Version** | ${{ steps.version.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Style** | 🖥️ Classic Retro (Win95/98) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Installer** | NSIS (Nullsoft) |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> Setup.exe uses classic NSIS interface without Modern UI," >> $GITHUB_STEP_SUMMARY
+          echo "> providing that authentic Windows 95/98 installation experience! 🕹️" >> $GITHUB_STEP_SUMMARY
