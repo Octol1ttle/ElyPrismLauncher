@@ -7,6 +7,7 @@
 
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
+!include "Sections.nsh"
 !include "x64.nsh"
 !include "WinMessages.nsh"
 
@@ -317,57 +318,7 @@ Function RunUninstall
   Exch $1 ; exitcode
 FunctionEnd
 
-; ===================================================================
-; Ретро: Приветственное сообщение при запуске (как в Win95 инсталляторах)
-; ===================================================================
-
-Function .onInit
-  ; Показываем splash-сообщение в стиле старых установщиков
-  MessageBox MB_YESNO|MB_ICONQUESTION \
-    "Welcome to @Launcher_DisplayName@ v@Launcher_VERSION_NAME@ Setup!$\r$\n$\r$\n\
-This program will install @Launcher_DisplayName@ on your computer.$\r$\n$\r$\n\
-It is recommended that you close all other applications$\r$\n\
-before continuing.$\r$\n$\r$\n\
-Do you want to continue?" \
-    IDYES proceed
-    Abort
-  proceed:
-
-  ; Проверяем предыдущую установку
-  ReadRegStr $0 HKCU "${UNINST_KEY}" "QuietUninstallString"
-  ${If} $0 == ""
-    ReadRegStr $0 HKCU "${UNINST_KEY}" "UninstallString"
-  ${EndIf}
-
-  ${If} $0 != ""
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION \
-      "A previous version of @Launcher_DisplayName@ was detected.$\r$\n$\r$\n\
-It is recommended to uninstall the previous version first.$\r$\n$\r$\n\
-Do you want to uninstall it now?" \
-      IDYES uninstprev IDNO skipit
-    uninstprev:
-      !insertmacro RunUninstall $0 $0
-      ${If} $0 <> 0
-        MessageBox MB_YESNO|MB_ICONSTOP \
-          "Failed to uninstall previous version.$\r$\n\
-Continue anyway?" /SD IDYES IDYES skipit
-          Abort
-      ${EndIf}
-    skipit:
-  ${EndIf}
-
-  ; Обработка /NoShortcuts
-  ${GetParameters} $R0
-  ${GetOptions} $R0 "/NoShortcuts" $R1
-  ${IfNot} ${Errors}
-    SectionGetFlags ${SEC_SM_SHORTCUTS} $0
-    IntOp $0 $0 & 0xFFFFFFFE
-    SectionSetFlags ${SEC_SM_SHORTCUTS} $0
-    SectionGetFlags ${SEC_DESKTOP_SHORTCUTS} $0
-    IntOp $0 $0 & 0xFFFFFFFE
-    SectionSetFlags ${SEC_DESKTOP_SHORTCUTS} $0
-  ${EndIf}
-FunctionEnd
+; .onInit moved after section definitions (NSIS requires it)
 
 ; ===================================================================
 ; include nice plugins
@@ -518,13 +469,61 @@ Section /o "Shell Association (Open-With dialog)" SEC_SHELL_ASSOC
 SectionEnd
 
 ; ===================================================================
+; Ретро: Приветственное сообщение при запуске (как в Win95 инсталляторах)
+; ===================================================================
+
+Function .onInit
+  ; Показываем splash-сообщение в стиле старых установщиков
+  MessageBox MB_YESNO|MB_ICONQUESTION \
+    "Welcome to @Launcher_DisplayName@ v@Launcher_VERSION_NAME@ Setup!$\r$\n$\r$\n\
+This program will install @Launcher_DisplayName@ on your computer.$\r$\n$\r$\n\
+It is recommended that you close all other applications$\r$\n\
+before continuing.$\r$\n$\r$\n\
+Do you want to continue?" \
+    IDYES proceed
+    Abort
+  proceed:
+
+  ; Проверяем предыдущую установку
+  ReadRegStr $0 HKCU "${UNINST_KEY}" "QuietUninstallString"
+  ${If} $0 == ""
+    ReadRegStr $0 HKCU "${UNINST_KEY}" "UninstallString"
+  ${EndIf}
+
+  ${If} $0 != ""
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION \
+      "A previous version of @Launcher_DisplayName@ was detected.$\r$\n$\r$\n\
+It is recommended to uninstall the previous version first.$\r$\n$\r$\n\
+Do you want to uninstall it now?" \
+      IDYES uninstprev IDNO skipit
+    uninstprev:
+      !insertmacro RunUninstall $0 $0
+      ${If} $0 <> 0
+        MessageBox MB_YESNO|MB_ICONSTOP \
+          "Failed to uninstall previous version.$\r$\n\
+Continue anyway?" /SD IDYES IDYES skipit
+          Abort
+      ${EndIf}
+    skipit:
+  ${EndIf}
+
+  ; Обработка /NoShortcuts
+  ${GetParameters} $R0
+  ${GetOptions} $R0 "/NoShortcuts" $R1
+  ${IfNot} ${Errors}
+    !insertmacro UnselectSection ${SEC_SM_SHORTCUTS}
+    !insertmacro UnselectSection ${SEC_DESKTOP_SHORTCUTS}
+  ${EndIf}
+FunctionEnd
+
+; ===================================================================
 ; Ретро: Финальное сообщение
 ; ===================================================================
 
 Function .onInstSuccess
   MessageBox MB_YESNO|MB_ICONINFORMATION \
     "@Launcher_DisplayName@ has been successfully installed!$\r$\n$\r$\n\
-    Would you like to launch @Launcher_DisplayName@ now?" \
+Would you like to launch @Launcher_DisplayName@ now?" \
     IDYES launch IDNO done
   launch:
     Exec "$INSTDIR\@Launcher_APP_BINARY_NAME@.exe"
