@@ -1,71 +1,76 @@
-<p align="center">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/program_info/io.github.elyprismlauncher.ElyPrismLauncher.logo-darkmode.svg">
-  <source media="(prefers-color-scheme: light)" srcset="/program_info/io.github.elyprismlauncher.ElyPrismLauncher.logo.svg">
-  <img alt="ElyPrismLauncher" src="/program_info/io.github.elyprismlauncher.ElyPrismLauncher.logo.svg" width="40%">
-</picture>
-</p>
+# 🎮 BLauncher
 
-<p align="center">
-  This <b>fork</b> of Prism Launcher adds integrated support for Ely.by accounts (MSA accounts can still be used)<br />
-  <br />This is <b>not</b> endorsed by Prism Launcher or Ely.by.
-</p>
+> Форк [Prism Launcher](https://prismlauncher.org) с поддержкой офлайн-аккаунтов.
 
-## Why this fork?
+---
 
-There are already quite a few forks out in the wild that add Ely.by support and/or disable the Microsoft account requirement. This fork goes beyond simply adding a login-password prompt and authlib-injector download.
+## Что это?
 
-- Modern and secure login: ElyPrismLauncher uses OAuth2 to log you in. This means that your credentials are never transferred to the launcher. Instead, you log into your account on the official Ely.by page in the browser, and Ely.by gives the launcher a token to access your account with limited privileges.
-- Skins support on servers: All other forks rely exclusively on authlib-injector to patch Minecraft to support Ely.by. But authlib-injector can't provide skins on servers that don't have a special skins plugin installed. ElyPrismLauncher uses Ely.by's official Authlib patches, allowing you to see skins anywhere
+**BLauncher** — это модифицированная версия Prism Launcher, заточенная под:
 
-## Installation
+- 🔓 **Офлайн-аккаунт** — играй без привязки к Microsoft / Mojang
+- 🧪 **Бета-версии Minecraft** — готовые сборки для тестирования snapshot и beta
+- ⚡ **Простота** — скачал, поставил, играешь
 
-- All downloads and instructions for ElyPrismLauncher can be found on the [Releases](https://github.com/ElyPrismLauncher/ElyPrismLauncher/releases/latest) page.
-- Last build status can be found in the [GitHub Actions](https://github.com/ElyPrismLauncher/ElyPrismLauncher/actions) tab.
+Проект в активной разработке. Обновления выходят по запросам в [Issues](https://github.com/FLEXIY0/BLauncher/issues).
 
-### Development Builds
+---
 
-Please understand that these builds are not intended for most users. There may be bugs, and other instabilities. You have been warned.
+## Скачать
 
-There are development builds available through:
+| Платформа | Ссылка |
+|---|---|
+| 🪟 Windows (Setup.exe) | [Releases](https://github.com/FLEXIY0/BLauncher/releases/latest) |
+| 🪟 Windows (Portable) | [Releases](https://github.com/FLEXIY0/BLauncher/releases/latest) |
+| 🐧 Linux (AppImage) | [Releases](https://github.com/FLEXIY0/BLauncher/releases/latest) |
+| 🐧 Linux (Portable) | [Releases](https://github.com/FLEXIY0/BLauncher/releases/latest) |
 
-- [GitHub Actions](https://github.com/ElyPrismLauncher/ElyPrismLauncher/actions) (includes builds from pull requests opened by contributors)
-- [nightly.link](https://nightly.link/ElyPrismLauncher/ElyPrismLauncher/workflows/build/develop) (this will always point only to the latest version of develop)
+Дев-сборки доступны во вкладке [Actions](https://github.com/FLEXIY0/BLauncher/actions).
 
-These have debug information in the binaries, so their file sizes are relatively larger.
+---
 
-## Community & Support
+## Скриншоты
 
-Feel free to create a GitHub issue if you find a bug or want to suggest a new feature. We have a Discord server where other community members can help you:
+> 🖼️ *Скоро будут добавлены*
 
-[![ElyPrismLauncher Discord server](https://discordapp.com/api/guilds/1201522867901313045/widget.png?style=banner3)](https://discord.gg/5kcBCvnbTp)
+---
 
-## Building
+## Возможности
 
-If you want to build ElyPrismLauncher yourself, check the [build instructions](https://prismlauncher.org/wiki/development/build-instructions).
+- Поддержка офлайн-аккаунтов (Ely.by OAuth2)
+- Управление несколькими инстансами Minecraft
+- Поддержка модов (Forge, Fabric, Quilt, NeoForge)
+- Импорт модпаков CurseForge / Modrinth
+- Автоматическая установка Java
+- Ретро-установщик в стиле Windows 95/98 🖥️
 
-## The following comes from the original Prism Launcher README
+---
 
-### Forking/Redistributing/Custom builds policy
+## Сборка из исходников
 
-You are free to fork, redistribute and provide custom builds as long as you follow the terms of the [license](LICENSE) (this is a legal responsibility), and if you made code changes rather than just packaging a custom build, please do the following as a basic courtesy:
+Инструкции по сборке: [Build Instructions](https://prismlauncher.org/wiki/development/build-instructions)
 
-- Make it clear that your fork is not Prism Launcher and is not endorsed by or affiliated with the Prism Launcher project (<https://prismlauncher.org>).
-- Go through [CMakeLists.txt](CMakeLists.txt) and change Prism Launcher's API keys to your own or set them to empty strings (`""`) to disable them (this way the program will still compile but the functionality requiring those keys will be disabled).
+```bash
+git clone --recursive https://github.com/FLEXIY0/BLauncher.git
+cd BLauncher
+cmake --preset linux       # или windows_msvc / windows_mingw
+cmake --build --preset linux --config Release
+```
 
-If you have any questions or want any clarification on the above conditions please make an issue and ask us.
+---
 
-If you are just building Prism Launcher for your distribution, please make sure to set the `Launcher_BUILD_PLATFORM` to a slug representing your distribution. Examples are `archlinux`, `fedora` and `nixpkgs`.
+## Обратная связь
 
-Note that if you build this software without removing the provided API keys in [CMakeLists.txt](CMakeLists.txt) you are accepting the following terms and conditions:
+- 🐛 Баги и предложения → [Issues](https://github.com/FLEXIY0/BLauncher/issues)
+- 📦 Релизы → [Releases](https://github.com/FLEXIY0/BLauncher/releases)
+- 💬 Обсуждения → [Discussions](https://github.com/FLEXIY0/BLauncher/discussions)
 
-- [Microsoft Identity Platform Terms of Use](https://docs.microsoft.com/en-us/legal/microsoft-identity-platform/terms-of-use)
-- [CurseForge 3rd Party API Terms and Conditions](https://support.curseforge.com/en/support/solutions/articles/9000207405-curse-forge-3rd-party-api-terms-and-conditions)
+Проект обновляется по требованиям из Issues — создавай запрос, и он будет рассмотрен.
 
-If you do not agree with these terms and conditions, then remove the associated API keys from the [CMakeLists.txt](CMakeLists.txt) file by setting them to an empty string (`""`).
+---
 
-### License [![https://github.com/PrismLauncher/PrismLauncher/blob/develop/LICENSE](https://img.shields.io/github/license/PrismLauncher/PrismLauncher?label=License&logo=gnu&color=C4282D)](LICENSE)
+## Лицензия
 
-All launcher code is available under the GPL-3.0-only license.
+GPL-3.0 — см. [LICENSE](LICENSE)
 
-The logo and related assets are under the CC BY-SA 4.0 license.
+Основан на [Prism Launcher](https://github.com/PrismLauncher/PrismLauncher) и [ElyPrismLauncher](https://github.com/ElyPrismLauncher/ElyPrismLauncher).
