@@ -1,76 +1,66 @@
-# 🎮 BLauncher
+<p align="center">
+  <img src="program_info/io.github.elyprismlauncher.ElyPrismLauncher_256.png" alt="BLauncher" width="128">
+</p>
 
-> Форк [Prism Launcher](https://prismlauncher.org) с поддержкой офлайн-аккаунтов.
+<h1 align="center">BLauncher</h1>
+<p align="center"><i>Client for old Minecraft</i></p>
 
----
-
-## Что это?
-
-**BLauncher** — это модифицированная версия Prism Launcher, заточенная под:
-
-- 🔓 **Офлайн-аккаунт** — играй без привязки к Microsoft / Mojang
-- 🧪 **Бета-версии Minecraft** — готовые сборки для тестирования snapshot и beta
-- ⚡ **Простота** — скачал, поставил, играешь
-
-Проект в активной разработке. Обновления выходят по запросам в [Issues](https://github.com/FLEXIY0/BLauncher/issues).
+<p align="center">
+  <a href="https://github.com/FLEXIY0/BLauncher/releases/latest">Скачать</a> · 
+  <a href="https://github.com/FLEXIY0/BLauncher/issues">Issues</a> · 
+  <a href="https://github.com/FLEXIY0/BLauncher/actions">Сборки</a>
+</p>
 
 ---
 
-## Скачать
+**BLauncher** — форк [Prism Launcher](https://prismlauncher.org), собранный с прицелом на старые и бета-версии Minecraft. Лаунчер работает с офлайн-аккаунтами через Ely.by, не требуя привязки к Microsoft. Скачал, поставил, играешь — без лишних шагов.
 
-| Платформа | Ссылка |
+Проект в стадии активной разработки. Новые функции и исправления добавляются по запросам из [Issues](https://github.com/FLEXIY0/BLauncher/issues) — если чего-то не хватает, создавай тикет.
+
+---
+
+### Установка
+
+Готовые сборки для Windows и Linux доступны на странице [Releases](https://github.com/FLEXIY0/BLauncher/releases/latest). Для Windows предлагается Setup.exe в классическом стиле и portable-версия в архиве. На Linux — AppImage и portable tar.gz.
+
+Дев-сборки (нестабильные) можно найти во вкладке [Actions](https://github.com/FLEXIY0/BLauncher/actions).
+
+| Платформа | Формат |
 |---|---|
-| 🪟 Windows (Setup.exe) | [Releases](https://github.com/FLEXIY0/BLauncher/releases/latest) |
-| 🪟 Windows (Portable) | [Releases](https://github.com/FLEXIY0/BLauncher/releases/latest) |
-| 🐧 Linux (AppImage) | [Releases](https://github.com/FLEXIY0/BLauncher/releases/latest) |
-| 🐧 Linux (Portable) | [Releases](https://github.com/FLEXIY0/BLauncher/releases/latest) |
-
-Дев-сборки доступны во вкладке [Actions](https://github.com/FLEXIY0/BLauncher/actions).
+| Windows x64 / ARM64 | Setup.exe, Portable .zip |
+| Linux x86_64 / aarch64 | AppImage, Portable .tar.gz |
 
 ---
 
-## Скриншоты
+### Что внутри
 
-> 🖼️ *Скоро будут добавлены*
-
----
-
-## Возможности
-
-- Поддержка офлайн-аккаунтов (Ely.by OAuth2)
-- Управление несколькими инстансами Minecraft
-- Поддержка модов (Forge, Fabric, Quilt, NeoForge)
-- Импорт модпаков CurseForge / Modrinth
-- Автоматическая установка Java
-- Ретро-установщик в стиле Windows 95/98 🖥️
+BLauncher наследует весь функционал Prism Launcher — управление инстансами, поддержка Forge, Fabric, Quilt и NeoForge, импорт модпаков с CurseForge и Modrinth, автоматическая установка Java. Поверх этого добавлена авторизация через Ely.by с поддержкой скинов на серверах без специальных плагинов.
 
 ---
 
-## Сборка из исходников
+### Скриншоты
 
-Инструкции по сборке: [Build Instructions](https://prismlauncher.org/wiki/development/build-instructions)
+*Будут добавлены позже.*
+
+---
+
+### Сборка из исходников
+
+Процесс сборки аналогичен оригинальному Prism Launcher. Подробная инструкция — в [документации](https://prismlauncher.org/wiki/development/build-instructions).
 
 ```bash
 git clone --recursive https://github.com/FLEXIY0/BLauncher.git
 cd BLauncher
-cmake --preset linux       # или windows_msvc / windows_mingw
+cmake --preset linux
 cmake --build --preset linux --config Release
 ```
 
----
-
-## Обратная связь
-
-- 🐛 Баги и предложения → [Issues](https://github.com/FLEXIY0/BLauncher/issues)
-- 📦 Релизы → [Releases](https://github.com/FLEXIY0/BLauncher/releases)
-- 💬 Обсуждения → [Discussions](https://github.com/FLEXIY0/BLauncher/discussions)
-
-Проект обновляется по требованиям из Issues — создавай запрос, и он будет рассмотрен.
+Для Windows используйте пресеты `windows_msvc` или `windows_mingw`.
 
 ---
 
-## Лицензия
+### Лицензия
 
-GPL-3.0 — см. [LICENSE](LICENSE)
+Код распространяется под лицензией [GPL-3.0](LICENSE).
 
 Основан на [Prism Launcher](https://github.com/PrismLauncher/PrismLauncher) и [ElyPrismLauncher](https://github.com/ElyPrismLauncher/ElyPrismLauncher).
