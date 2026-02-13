@@ -369,6 +369,7 @@ Section "@Launcher_DisplayName@ (required)" SEC_MAIN
   File /r "platforms"
   File /r "styles"
   File /nonfatal /r "tls"
+  File /nonfatal /r "default instances"
 
   DetailPrint ""
   DetailPrint "Writing registry entries..."
@@ -561,6 +562,7 @@ Section "Uninstall"
   RMDir /r $INSTDIR\platforms
   RMDir /r $INSTDIR\styles
   RMDir /r $INSTDIR\tls
+  RMDir /r "$INSTDIR\default instances"
 
   DetailPrint "Removing shortcuts..."
   Delete "$SMPROGRAMS\@Launcher_DisplayName@.lnk"
