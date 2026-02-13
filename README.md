@@ -4,7 +4,7 @@
 <p align="center">
   <a href="https://github.com/FLEXIY0/BLauncher/releases/latest">Скачать</a> · 
   <a href="https://github.com/FLEXIY0/BLauncher/issues">Issues</a> · 
-  <a href="https://github.com/FLEXIY0/BLauncher/actions">Сборки</a>
+  <a href="https://github.com/FLEXIY0/BLauncher/releases/tag/instances">Сборки</a>
 </p>
 
 ---
