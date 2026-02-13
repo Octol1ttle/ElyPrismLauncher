@@ -245,6 +245,9 @@ void LauncherPage::applySettings()
     s->set("ModMetadataDisabled", !ui->metadataEnableBtn->isChecked());
     s->set("ModDependenciesDisabled", !ui->dependenciesEnableBtn->isChecked());
     s->set("SkipModpackUpdatePrompt", !ui->modpackUpdatePromptBtn->isChecked());
+
+    // Default instances
+    s->set("DefaultInstancesEnabled", ui->defaultInstancesCheckBox->isChecked());
 }
 void LauncherPage::loadSettings()
 {
@@ -294,6 +297,9 @@ void LauncherPage::loadSettings()
     ui->metadataWarningLabel->setHidden(ui->metadataEnableBtn->isChecked());
     ui->dependenciesEnableBtn->setChecked(!s->get("ModDependenciesDisabled").toBool());
     ui->modpackUpdatePromptBtn->setChecked(!s->get("SkipModpackUpdatePrompt").toBool());
+
+    // Default instances
+    ui->defaultInstancesCheckBox->setChecked(s->get("DefaultInstancesEnabled").toBool());
 }
 
 void LauncherPage::retranslate()

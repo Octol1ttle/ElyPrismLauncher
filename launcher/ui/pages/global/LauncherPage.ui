@@ -621,6 +621,35 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="defaultInstancesBox">
+         <property name="title">
+          <string>Default Builds</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_defaultInstances">
+          <item>
+           <widget class="QCheckBox" name="defaultInstancesCheckBox">
+            <property name="toolTip">
+             <string>Automatically install bundled Minecraft instances (BTA, Reindev, InDev+, etc.) on first launch. Disable if you want a clean start.</string>
+            </property>
+            <property name="text">
+             <string>Install default instances on first launch</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="defaultInstancesInfoLabel">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=" color:#888888;"&gt;Bundled instances will be placed into the [BTTR] Community group. To re-install them, delete the .bttr_defaults_installed marker file from your instances folder.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_FeaturesTab">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>

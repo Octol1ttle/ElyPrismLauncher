@@ -773,6 +773,9 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
         // Legacy settings
         m_settings->registerSetting("OnlineFixes", false);
 
+        // Default instances (bundled builds)
+        m_settings->registerSetting("DefaultInstancesEnabled", true);
+
         // Ely settings
         m_settings->registerSetting("ElyPatchPreference", 1);
 
@@ -1012,13 +1015,15 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 
         // Install default instances from bundled ZIPs on first run
         {
+            bool defaultInstancesEnabled = m_settings->get("DefaultInstancesEnabled").toBool();
             QString markerFile = FS::PathCombine(instDir, ".bttr_defaults_installed");
-            if (!QFile::exists(markerFile)) {
+            if (defaultInstancesEnabled && !QFile::exists(markerFile)) {
                 QStringList searchPaths = {
 #if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD) || defined(Q_OS_OPENBSD)
                     FS::PathCombine(m_rootPath, "share", BuildConfig.LAUNCHER_NAME, "default instances"),
 #endif
                     FS::PathCombine(m_rootPath, "default instances"),
+                    FS::PathCombine(applicationDirPath(), "default instances"),
                     FS::PathCombine(applicationDirPath(), "..", "default instances"),
                 };
 
