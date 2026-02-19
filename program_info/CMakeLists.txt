@@ -22,7 +22,7 @@ set(Launcher_Copyright "${Launcher_Copyright}" PARENT_SCOPE)
 set(Launcher_Domain "elyprismlauncher.github.io" PARENT_SCOPE)
 set(Launcher_UserAgent "${Launcher_CommonName}/${Launcher_VERSION_NAME}" PARENT_SCOPE)
 set(Launcher_ConfigFile "blauncher.cfg" PARENT_SCOPE)
-set(Launcher_Git "https://github.com/ElyPrismLauncher/ElyPrismLauncher" PARENT_SCOPE)
+set(Launcher_Git "https://github.com/FLEXIY0/BLauncher" PARENT_SCOPE)
 set(Launcher_AppID "${Launcher_AppID}" PARENT_SCOPE)
 set(Launcher_SVGFileName "${Launcher_SVGFileName}" PARENT_SCOPE)
 

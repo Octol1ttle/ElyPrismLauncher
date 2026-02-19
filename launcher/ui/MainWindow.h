@@ -104,6 +104,8 @@ class MainWindow : public QMainWindow {
 
     void on_actionCopyInstance_triggered();
 
+    void on_actionDownloadLatestBuilds_triggered();
+
     void on_actionChangeInstGroup_triggered();
 
     void on_actionChangeInstIcon_triggered();

@@ -1,0 +1,160 @@
+#include "DownloadBuildsTask.h"
+
+#include "Application.h"
+#include "FileSystem.h"
+#include "InstanceList.h"
+#include "Json.h"
+#include "MMCZip.h"
+#include "minecraft/MinecraftInstance.h"
+#include "net/Download.h"
+
+#include <QDebug>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QTemporaryDir>
+
+DownloadBuildsTask::DownloadBuildsTask(QObject* parent) : Task(parent)
+{
+    m_tempDir.setPath(FS::PathCombine(APPLICATION->settings()->get("InstanceDir").toString(), "_temp_builds_dl"));
+}
+
+void DownloadBuildsTask::executeTask()
+{
+    setStatus(tr("Fetching latest builds list from GitHub..."));
+
+    m_apiJob.reset(new NetJob("Fetch Builds Release", APPLICATION->network()));
+
+    // We target the "instances" tag release directly
+    auto url = QUrl("https://api.github.com/repos/FLEXIY0/BLauncher/releases/tags/instances");
+
+    auto action = Net::Download::makeByteArray(url, m_apiResponse);
+    m_apiJob->addNetAction(action);
+
+    connect(m_apiJob.get(), &NetJob::succeeded, this, &DownloadBuildsTask::fetchReleasesFinished);
+    connect(m_apiJob.get(), &NetJob::failed, this, &DownloadBuildsTask::fetchReleasesFailed);
+
+    m_apiJob->start();
+}
+
+void DownloadBuildsTask::fetchReleasesFinished()
+{
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(*m_apiResponse, &error);
+
+    if (error.error != QJsonParseError::NoError || !doc.isObject()) {
+        emitFailed(tr("Failed to parse GitHub API response."));
+        return;
+    }
+
+    QJsonObject root = doc.object();
+    QJsonArray assets = root.value("assets").toArray();
+
+    if (assets.isEmpty()) {
+        emitFailed(tr("No builds found in the 'instances' release."));
+        return;
+    }
+
+    // Prepare temp dir
+    if (!m_tempDir.exists()) {
+        m_tempDir.mkpath(".");
+    }
+
+    m_assetsToDownload.clear();
+    m_dlJob.reset(new NetJob("Download Builds", APPLICATION->network()));
+
+    for (const QJsonValue& val : assets) {
+        QJsonObject asset = val.toObject();
+        QString name = asset.value("name").toString();
+        QString dlUrl = asset.value("browser_download_url").toString();
+
+        if (name.endsWith(".zip")) {
+            AssetInfo info;
+            info.name = name;
+            info.url = dlUrl;
+            info.targetPath = m_tempDir.absoluteFilePath(name);
+            m_assetsToDownload.append(info);
+
+            auto action = Net::Download::makeFile(QUrl(dlUrl), info.targetPath);
+            m_dlJob->addNetAction(action);
+        }
+    }
+
+    if (m_assetsToDownload.isEmpty()) {
+        emitFailed(tr("No suitable .zip builds found."));
+        return;
+    }
+
+    setStatus(tr("Downloading %1 build(s)...").arg(m_assetsToDownload.size()));
+
+    connect(m_dlJob.get(), &NetJob::succeeded, this, &DownloadBuildsTask::downloadAssetsFinished);
+    connect(m_dlJob.get(), &NetJob::failed, this, &DownloadBuildsTask::downloadAssetsFailed);
+    connect(m_dlJob.get(), &NetJob::progress, this, [this](qint64 current, qint64 total) { setProgress(current, total); });
+
+    m_dlJob->start();
+}
+
+void DownloadBuildsTask::fetchReleasesFailed(QString reason)
+{
+    emitFailed(tr("Failed to fetch builds list: %1").arg(reason));
+}
+
+void DownloadBuildsTask::downloadAssetsFinished()
+{
+    setStatus(tr("Extracting and installing builds..."));
+    setProgress(0, 100);
+    extractAndInstallBuilds();
+}
+
+void DownloadBuildsTask::downloadAssetsFailed(QString reason)
+{
+    // Cleanup Temp
+    m_tempDir.removeRecursively();
+    emitFailed(tr("Failed to download builds: %1").arg(reason));
+}
+
+void DownloadBuildsTask::extractAndInstallBuilds()
+{
+    QString instDir = APPLICATION->settings()->get("InstanceDir").toString();
+    QStringList extractedIds;
+
+    int current = 0;
+    int total = m_assetsToDownload.size();
+
+    for (const auto& asset : m_assetsToDownload) {
+        QString instanceId = QFileInfo(asset.name).completeBaseName();
+        QString targetDir = FS::PathCombine(instDir, instanceId);
+
+        if (!QDir(targetDir).exists()) {
+            QDir::current().mkpath(targetDir);
+            auto result = MMCZip::extractDir(asset.targetPath, targetDir);
+            if (result.has_value()) {
+                qInfo() << "Extracted downloaded build:" << instanceId;
+                extractedIds.append(instanceId);
+            } else {
+                qWarning() << "Failed to extract downloaded build:" << instanceId;
+            }
+        } else {
+            qInfo() << "Build" << instanceId << "already exists, skipping.";
+        }
+
+        current++;
+        setProgress(current, total);
+    }
+
+    // Cleanup Temp
+    m_tempDir.removeRecursively();
+
+    if (!extractedIds.isEmpty()) {
+        // Reload to pick up newly extracted instances
+        auto m_instances = APPLICATION->instances();
+        m_instances->loadList();
+
+        for (const auto& id : extractedIds) {
+            m_instances->setInstanceGroup(id, "[BTTR] Community");
+        }
+        emitSucceeded();
+    } else {
+        emitFailed(tr("All builds are already installed or failed to extract."));
+    }
+}

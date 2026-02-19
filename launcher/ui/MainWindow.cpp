@@ -128,6 +128,7 @@
 
 #include "InstanceCopyTask.h"
 #include "InstanceDirUpdate.h"
+#include "tasks/DownloadBuildsTask.h"
 
 #include "Json.h"
 
@@ -1271,6 +1272,23 @@ void MainWindow::checkForUpdates()
         APPLICATION->triggerUpdateCheck();
     } else {
         qWarning() << "Updater not set up. Cannot check for updates.";
+    }
+}
+
+void MainWindow::on_actionDownloadLatestBuilds_triggered()
+{
+    // Check if the user wants to fetch instances
+    auto reply = CustomMessageBox::selectable(this, tr("Download Latest Builds"),
+                                              tr("This will download and install the latest bundled Minecraft instances "
+                                                 "(like BTA, Reindev, etc.) from the official repository.\n\n"
+                                                 "They will be placed into the [BTTR] Community group.\n"
+                                                 "Do you want to continue?"),
+                                              QMessageBox::Question, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)
+                     ->exec();
+
+    if (reply == QMessageBox::Yes) {
+        auto task = new DownloadBuildsTask(this);
+        runModalTask(task);
     }
 }
 

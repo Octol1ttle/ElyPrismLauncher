@@ -418,6 +418,8 @@ set(TASKS_SOURCES
     tasks/SequentialTask.cpp
     tasks/MultipleOptionsTask.h
     tasks/MultipleOptionsTask.cpp
+    tasks/DownloadBuildsTask.h
+    tasks/DownloadBuildsTask.cpp
 )
 
 set(SETTINGS_SOURCES
