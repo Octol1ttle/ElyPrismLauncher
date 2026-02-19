@@ -773,9 +773,6 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
         // Legacy settings
         m_settings->registerSetting("OnlineFixes", false);
 
-        // Default instances (bundled builds)
-        m_settings->registerSetting("DefaultInstancesEnabled", true);
-
         // Ely settings
         m_settings->registerSetting("ElyPatchPreference", 1);
 
@@ -1012,65 +1009,6 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
         qInfo() << "Loading Instances...";
         m_instances->loadList();
         qInfo() << "<> Instances loaded.";
-
-        // Install default instances from bundled ZIPs on first run
-        {
-            bool defaultInstancesEnabled = m_settings->get("DefaultInstancesEnabled").toBool();
-            QString markerFile = FS::PathCombine(instDir, ".bttr_defaults_installed");
-            if (defaultInstancesEnabled && !QFile::exists(markerFile)) {
-                QStringList searchPaths = {
-#if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD) || defined(Q_OS_OPENBSD)
-                    FS::PathCombine(m_rootPath, "share", BuildConfig.LAUNCHER_NAME, "default instances"),
-#endif
-                    FS::PathCombine(m_rootPath, "default instances"),
-                    FS::PathCombine(applicationDirPath(), "default instances"),
-                    FS::PathCombine(applicationDirPath(), "..", "default instances"),
-                };
-
-                QString defaultInstancesDir;
-                for (const auto& path : searchPaths) {
-                    if (QDir(path).exists()) {
-                        defaultInstancesDir = path;
-                        break;
-                    }
-                }
-
-                if (!defaultInstancesDir.isEmpty()) {
-                    qInfo() << "Installing default instances from" << defaultInstancesDir;
-                    QStringList extractedIds;
-                    QDir dir(defaultInstancesDir);
-                    for (const auto& entry : dir.entryInfoList({"*.zip"}, QDir::Files)) {
-                        QString instanceId = entry.baseName();
-                        QString targetDir = FS::PathCombine(instDir, instanceId);
-                        if (!QDir(targetDir).exists()) {
-                            QDir::current().mkpath(targetDir);
-                            auto result = MMCZip::extractDir(entry.absoluteFilePath(), targetDir);
-                            if (result.has_value()) {
-                                qInfo() << "Extracted default instance:" << instanceId;
-                                extractedIds.append(instanceId);
-                            } else {
-                                qWarning() << "Failed to extract default instance:" << instanceId;
-                            }
-                        }
-                    }
-
-                    if (!extractedIds.isEmpty()) {
-                        // Reload to pick up newly extracted instances
-                        m_instances->loadList();
-                        for (const auto& id : extractedIds) {
-                            m_instances->setInstanceGroup(id, "[BTTR] Community");
-                        }
-                        qInfo() << "Installed" << extractedIds.size() << "default instances into [BTTR] Community group.";
-                    }
-                }
-
-                // Create marker file so we don't repeat this
-                QFile marker(markerFile);
-                if (marker.open(QIODevice::WriteOnly)) {
-                    marker.close();
-                }
-            }
-        }
     }
 
     // and accounts

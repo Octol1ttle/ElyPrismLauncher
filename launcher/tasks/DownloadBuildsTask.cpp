@@ -5,6 +5,8 @@
 #include "InstanceList.h"
 #include "Json.h"
 #include "MMCZip.h"
+#include "icons/IconList.h"
+#include "icons/IconUtils.h"
 #include "minecraft/MinecraftInstance.h"
 #include "net/Download.h"
 
@@ -132,6 +134,20 @@ void DownloadBuildsTask::extractAndInstallBuilds()
             if (result.has_value()) {
                 qInfo() << "Extracted downloaded build:" << instanceId;
                 extractedIds.append(instanceId);
+
+                // Install icon if present
+                QString instIconKey = instanceId;
+                auto importIconPath = IconUtils::findBestIconIn(targetDir, "icon.png");
+                if (importIconPath.isNull() || !QFile::exists(importIconPath))
+                    importIconPath = IconUtils::findBestIconIn(FS::PathCombine(targetDir, "overrides"), "icon.png");
+
+                if (!importIconPath.isNull() && QFile::exists(importIconPath)) {
+                    auto iconList = APPLICATION->icons();
+                    if (iconList->iconFileExists(instIconKey)) {
+                        iconList->deleteIcon(instIconKey);
+                    }
+                    iconList->installIcon(importIconPath, instIconKey + "." + QFileInfo(importIconPath).suffix());
+                }
             } else {
                 qWarning() << "Failed to extract downloaded build:" << instanceId;
             }
@@ -152,7 +168,15 @@ void DownloadBuildsTask::extractAndInstallBuilds()
         m_instances->loadList();
 
         for (const auto& id : extractedIds) {
-            m_instances->setInstanceGroup(id, "[BTTR] Community");
+            auto inst = m_instances->getInstanceById(id);
+            if (inst) {
+                m_instances->setInstanceGroup(id, "[BTTR] Community");
+
+                // If we also installed an icon specifically for this instance ID, assign it
+                if (APPLICATION->icons()->iconFileExists(id)) {
+                    inst->setIconKey(id);
+                }
+            }
         }
         emitSucceeded();
     } else {
