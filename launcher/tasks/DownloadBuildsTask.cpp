@@ -17,6 +17,7 @@
 DownloadBuildsTask::DownloadBuildsTask(QObject* parent) : Task(parent)
 {
     m_tempDir.setPath(FS::PathCombine(APPLICATION->settings()->get("InstanceDir").toString(), "_temp_builds_dl"));
+    m_apiResponse = std::make_shared<QByteArray>();
 }
 
 void DownloadBuildsTask::executeTask()
