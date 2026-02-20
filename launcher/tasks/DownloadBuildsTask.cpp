@@ -183,6 +183,7 @@ void DownloadBuildsTask::extractAndInstallBuilds()
 {
     QString instDir = APPLICATION->settings()->get("InstanceDir").toString();
     QStringList extractedIds;
+    QStringList installedIcons;
 
     int current = 0;
     int total = m_assetsToDownload.size();
@@ -222,6 +223,7 @@ void DownloadBuildsTask::extractAndInstallBuilds()
                         iconList->deleteIcon(instIconKey);
                     }
                     iconList->installIcon(importIconPath, instIconKey + "." + QFileInfo(importIconPath).suffix());
+                    installedIcons.append(instanceId);
                 }
             } else {
                 qWarning() << "Failed to extract downloaded build:" << instanceId;
@@ -246,7 +248,7 @@ void DownloadBuildsTask::extractAndInstallBuilds()
                 m_instances->setInstanceGroup(id, "[BTTR] Community");
 
                 // If we also installed an icon specifically for this instance ID, assign it
-                if (APPLICATION->icons()->iconFileExists(id)) {
+                if (installedIcons.contains(id) || APPLICATION->icons()->iconFileExists(id)) {
                     inst->setIconKey(id);
                 }
             }
