@@ -54,33 +54,7 @@ jobs:
             qt-version: "6.10.2"
             artifact-suffix: "Windows-MSVC"
 
-          # --- MSVC ARM64 ---
-          - name: "MSVC-arm64"
-            os: windows-11-arm
-            cmake-preset: windows_msvc
-            msystem: ""
-            vcvars-arch: arm64
-            qt-version: "6.10.2"
-            artifact-suffix: "Windows-MSVC-arm64"
-
-          # --- MinGW x64 ---
-          - name: "MinGW-x64"
-            os: windows-2022
-            cmake-preset: windows_mingw
-            msystem: CLANG64
-            vcvars-arch: amd64_x86
-            qt-version: ""
-            artifact-suffix: "Windows-MinGW-w64"
-
-          # --- MinGW ARM64 ---
-          - name: "MinGW-arm64"
-            os: windows-11-arm
-            cmake-preset: windows_mingw
-            msystem: CLANGARM64
-            vcvars-arch: arm64
-            qt-version: ""
-            artifact-suffix: "Windows-MinGW-arm64"
-
+          # ONLY BUILD MSVC-x64 temporarily for speed
     runs-on: ${{ matrix.os }}
 
     defaults:
