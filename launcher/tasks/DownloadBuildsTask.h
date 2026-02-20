@@ -12,6 +12,11 @@ class DownloadBuildsTask : public Task {
     explicit DownloadBuildsTask(QObject* parent = nullptr);
     virtual ~DownloadBuildsTask() = default;
 
+    bool canAbort() const override { return true; }
+
+   public slots:
+    bool abort() override;
+
    protected:
     void executeTask() override;
 
@@ -37,6 +42,8 @@ class DownloadBuildsTask : public Task {
         QString targetPath;
     };
     QList<AssetInfo> m_assetsToDownload;
+
+    bool m_reinstallExisting = false;
 
     QDir m_tempDir;
 };

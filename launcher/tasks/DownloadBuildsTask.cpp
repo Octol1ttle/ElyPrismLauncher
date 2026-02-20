@@ -15,11 +15,26 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTemporaryDir>
+#include <QWidget>
+
+#include "ui/dialogs/CustomMessageBox.h"
 
 DownloadBuildsTask::DownloadBuildsTask(QObject* parent) : Task(parent)
 {
     m_tempDir.setPath(FS::PathCombine(APPLICATION->settings()->get("InstanceDir").toString(), "_temp_builds_dl"));
     m_apiResponse = std::make_shared<QByteArray>();
+}
+
+bool DownloadBuildsTask::abort()
+{
+    if (m_apiJob) {
+        m_apiJob->abort();
+    }
+    if (m_dlJob) {
+        m_dlJob->abort();
+    }
+    emitAborted();
+    return true;
 }
 
 void DownloadBuildsTask::executeTask()
@@ -88,6 +103,54 @@ void DownloadBuildsTask::fetchReleasesFinished()
         return;
     }
 
+    // Check for existing instances
+    QString instDir = APPLICATION->settings()->get("InstanceDir").toString();
+    QStringList existingInstances;
+    for (const auto& asset : m_assetsToDownload) {
+        QString instanceId = QFileInfo(asset.name).completeBaseName();
+        QString targetDir = FS::PathCombine(instDir, instanceId);
+        if (QDir(targetDir).exists()) {
+            existingInstances.append(instanceId);
+        }
+    }
+
+    if (!existingInstances.isEmpty()) {
+        auto reply = CustomMessageBox::selectable(qobject_cast<QWidget*>(parent()), tr("Сборки уже существуют"),
+                                                  tr("Следующие сборки уже установлены:\n%1\n\nВы хотите переустановить их? Текущие "
+                                                     "сохранения и настройки этих сборок будут удалены!")
+                                                      .arg(existingInstances.join(", ")),
+                                                  QMessageBox::Warning, QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
+                         ->exec();
+
+        if (reply != QMessageBox::Yes) {
+            // Filter out existing from download list
+            QList<AssetInfo> filtered;
+            for (const auto& asset : m_assetsToDownload) {
+                QString instanceId = QFileInfo(asset.name).completeBaseName();
+                if (!existingInstances.contains(instanceId)) {
+                    filtered.append(asset);
+                }
+            }
+            m_assetsToDownload = filtered;
+
+            // If user skipped all existing and there's nothing left
+            if (m_assetsToDownload.isEmpty()) {
+                m_tempDir.removeRecursively();
+                emitSucceeded();
+                return;
+            }
+
+            // Clear and rebuild m_dlJob
+            m_dlJob.reset(new NetJob("Download Builds", APPLICATION->network()));
+            for (const auto& asset : m_assetsToDownload) {
+                auto action = Net::Download::makeFile(QUrl(asset.url), asset.targetPath);
+                m_dlJob->addNetAction(action);
+            }
+        } else {
+            m_reinstallExisting = true;
+        }
+    }
+
     setStatus(tr("Downloading %1 build(s)...").arg(m_assetsToDownload.size()));
 
     connect(m_dlJob.get(), &NetJob::succeeded, this, &DownloadBuildsTask::downloadAssetsFinished);
@@ -128,6 +191,18 @@ void DownloadBuildsTask::extractAndInstallBuilds()
         QString instanceId = QFileInfo(asset.name).completeBaseName();
         QString targetDir = FS::PathCombine(instDir, instanceId);
 
+        if (QDir(targetDir).exists()) {
+            if (m_reinstallExisting) {
+                qInfo() << "Removing existing build for reinstall:" << instanceId;
+                FS::deletePath(targetDir);
+            } else {
+                qInfo() << "Build" << instanceId << "already exists, skipping.";
+                current++;
+                setProgress(current, total);
+                continue;
+            }
+        }
+
         if (!QDir(targetDir).exists()) {
             QDir::current().mkpath(targetDir);
             auto result = MMCZip::extractDir(asset.targetPath, targetDir);
@@ -151,8 +226,6 @@ void DownloadBuildsTask::extractAndInstallBuilds()
             } else {
                 qWarning() << "Failed to extract downloaded build:" << instanceId;
             }
-        } else {
-            qInfo() << "Build" << instanceId << "already exists, skipping.";
         }
 
         current++;
