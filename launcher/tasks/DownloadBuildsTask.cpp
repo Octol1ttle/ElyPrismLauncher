@@ -183,7 +183,6 @@ void DownloadBuildsTask::extractAndInstallBuilds()
 {
     QString instDir = APPLICATION->settings()->get("InstanceDir").toString();
     QStringList extractedIds;
-    QStringList installedIcons;
 
     int current = 0;
     int total = m_assetsToDownload.size();
@@ -210,21 +209,6 @@ void DownloadBuildsTask::extractAndInstallBuilds()
             if (result.has_value()) {
                 qInfo() << "Extracted downloaded build:" << instanceId;
                 extractedIds.append(instanceId);
-
-                // Install icon if present
-                QString instIconKey = instanceId;
-                auto importIconPath = IconUtils::findBestIconIn(targetDir, "icon.png");
-                if (importIconPath.isNull() || !QFile::exists(importIconPath))
-                    importIconPath = IconUtils::findBestIconIn(FS::PathCombine(targetDir, "overrides"), "icon.png");
-
-                if (!importIconPath.isNull() && QFile::exists(importIconPath)) {
-                    auto iconList = APPLICATION->icons();
-                    if (iconList->iconFileExists(instIconKey)) {
-                        iconList->deleteIcon(instIconKey);
-                    }
-                    iconList->installIcon(importIconPath, instIconKey + "." + QFileInfo(importIconPath).suffix());
-                    installedIcons.append(instanceId);
-                }
             } else {
                 qWarning() << "Failed to extract downloaded build:" << instanceId;
             }
@@ -247,8 +231,26 @@ void DownloadBuildsTask::extractAndInstallBuilds()
             if (inst) {
                 m_instances->setInstanceGroup(id, "[BTTR] Community");
 
-                // If we also installed an icon specifically for this instance ID, assign it
-                if (installedIcons.contains(id) || APPLICATION->icons()->iconFileExists(id)) {
+                // Check for icon inside the extracted directory based on inst->iconKey()
+                QString targetDir = FS::PathCombine(instDir, id);
+                QString instIconKey = inst->iconKey();
+                if (instIconKey == "default")
+                    instIconKey = id;
+
+                auto importIconPath = IconUtils::findBestIconIn(targetDir, instIconKey);
+                if (importIconPath.isNull() || !QFile::exists(importIconPath))
+                    importIconPath = IconUtils::findBestIconIn(targetDir, "icon.png");
+                if (importIconPath.isNull() || !QFile::exists(importIconPath))
+                    importIconPath = IconUtils::findBestIconIn(FS::PathCombine(targetDir, "overrides"), "icon.png");
+
+                if (!importIconPath.isNull() && QFile::exists(importIconPath)) {
+                    auto iconList = APPLICATION->icons();
+                    if (iconList->iconFileExists(instIconKey)) {
+                        iconList->deleteIcon(instIconKey);
+                    }
+                    iconList->installIcon(importIconPath, instIconKey + "." + QFileInfo(importIconPath).suffix());
+                    inst->setIconKey(instIconKey);
+                } else if (APPLICATION->icons()->iconFileExists(id)) {
                     inst->setIconKey(id);
                 }
             }
