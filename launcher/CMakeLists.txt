@@ -49,6 +49,8 @@ set(CORE_SOURCES
     InstanceCopyTask.cpp
     InstanceImportTask.h
     InstanceImportTask.cpp
+    tasks/DownloadBuildsTask.h
+    tasks/DownloadBuildsTask.cpp
 
     # Resource downloading task
     ResourceDownloadTask.h
@@ -418,8 +420,6 @@ set(TASKS_SOURCES
     tasks/SequentialTask.cpp
     tasks/MultipleOptionsTask.h
     tasks/MultipleOptionsTask.cpp
-    tasks/DownloadBuildsTask.h
-    tasks/DownloadBuildsTask.cpp
 )
 
 set(SETTINGS_SOURCES
