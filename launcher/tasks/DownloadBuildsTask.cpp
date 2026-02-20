@@ -24,7 +24,7 @@ DownloadBuildsTask::DownloadBuildsTask(QObject* parent) : Task(parent)
 
 void DownloadBuildsTask::executeTask()
 {
-    setStatus(tr("Fetching latest builds list from GitHub..."));
+    setStatus(tr("Получение списка новейших сборок с GitHub..."));
 
     m_apiJob.reset(new NetJob("Fetch Builds Release", APPLICATION->network()));
 
@@ -46,7 +46,7 @@ void DownloadBuildsTask::fetchReleasesFinished()
     QJsonDocument doc = QJsonDocument::fromJson(*m_apiResponse, &error);
 
     if (error.error != QJsonParseError::NoError || !doc.isObject()) {
-        emitFailed(tr("Failed to parse GitHub API response."));
+        emitFailed(tr("Не удалось обработать ответ от GitHub API."));
         return;
     }
 
@@ -54,7 +54,7 @@ void DownloadBuildsTask::fetchReleasesFinished()
     QJsonArray assets = root.value("assets").toArray();
 
     if (assets.isEmpty()) {
-        emitFailed(tr("No builds found in the 'instances' release."));
+        emitFailed(tr("В релизе 'instances' не найдено сборок."));
         return;
     }
 
@@ -180,6 +180,6 @@ void DownloadBuildsTask::extractAndInstallBuilds()
         }
         emitSucceeded();
     } else {
-        emitFailed(tr("All builds are already installed or failed to extract."));
+        emitFailed(tr("Все сборки уже установлены, либо произошла ошибка распаковки."));
     }
 }

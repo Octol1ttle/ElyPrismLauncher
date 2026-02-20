@@ -1273,16 +1273,19 @@ void MainWindow::checkForUpdates()
     } else {
         qWarning() << "Updater not set up. Cannot check for updates.";
     }
+
+    // Trigger standard instances download simultaneously
+    on_actionDownloadLatestBuilds_triggered();
 }
 
 void MainWindow::on_actionDownloadLatestBuilds_triggered()
 {
     // Check if the user wants to fetch instances
-    auto reply = CustomMessageBox::selectable(this, tr("Download Latest Builds"),
-                                              tr("This will download and install the latest bundled Minecraft instances "
-                                                 "(like BTA, Reindev, etc.) from the official repository.\n\n"
-                                                 "They will be placed into the [BTTR] Community group.\n"
-                                                 "Do you want to continue?"),
+    auto reply = CustomMessageBox::selectable(this, tr("Загрузить свежие сборки"),
+                                              tr("Это действие скачает и установит последние версии сборок "
+                                                 "(такие как BTA, Reindev, и т.д.) из официального репозитория.\n\n"
+                                                 "Они будут добавлены в группу [BTTR] Community.\n"
+                                                 "Продолжить?"),
                                               QMessageBox::Question, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)
                      ->exec();
 

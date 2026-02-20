@@ -289,10 +289,10 @@
     <iconset theme="download"/>
    </property>
    <property name="text">
-    <string>Download Latest Builds</string>
+    <string>Загрузить свежие сборки</string>
    </property>
    <property name="toolTip">
-    <string>Download and install default instances from GitHub</string>
+    <string>Загрузить и установить базовые сборки с GitHub</string>
    </property>
   </action>
   <action name="actionAddInstance">
