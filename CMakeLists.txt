@@ -434,9 +434,6 @@ if(UNIX AND APPLE)
                 "Install Xcode command line tools: 'xcode-select --install'")
     endif()
 
-    # Install default instances
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/default instances/" DESTINATION "${RESOURCES_DEST_DIR}/default instances")
-
 elseif(UNIX)
     include(KDEInstallDirs)
 
@@ -454,9 +451,6 @@ elseif(UNIX)
     install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${Launcher_mrpack_MIMEInfo} DESTINATION ${KDE_INSTALL_MIMEDIR})
 
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/launcher/qtlogging.ini" DESTINATION "share/${Launcher_Name}")
-
-    # Install default instances
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/default instances/" DESTINATION "share/${Launcher_Name}/default instances")
 
     set(PLUGIN_DEST_DIR "plugins")
     set(BUNDLE_DEST_DIR ".")
@@ -476,9 +470,6 @@ elseif(WIN32)
     set(PLUGIN_DEST_DIR ".")
     set(RESOURCES_DEST_DIR ".")
     set(JARS_DEST_DIR "jars")
-
-    # Install default instances
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/default instances/" DESTINATION "default instances")
 else()
     message(FATAL_ERROR "Platform not supported")
 endif()
