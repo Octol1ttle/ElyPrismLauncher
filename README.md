@@ -1,8 +1,8 @@
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/program_info/io.github.elyprismlauncher.ElyPrismLauncher.logo-darkmode.svg">
-  <source media="(prefers-color-scheme: light)" srcset="/program_info/io.github.elyprismlauncher.ElyPrismLauncher.logo.svg">
-  <img alt="ElyPrismLauncher" src="/program_info/io.github.elyprismlauncher.ElyPrismLauncher.logo.svg" width="40%">
+  <source media="(prefers-color-scheme: dark)" srcset="/program_info/ru.pineconemc.launcher.logo-darkmode.svg">
+  <source media="(prefers-color-scheme: light)" srcset="/program_info/ru.pineconemc.launcher.logo.svg">
+  <img alt="PineconeMC" src="/program_info/ru.pineconemc.launcher.logo.svg" width="40%">
 </picture>
 </p>
 
@@ -15,13 +15,13 @@
 
 There are already quite a few forks out in the wild that add Ely.by support and/or disable the Microsoft account requirement. This fork goes beyond simply adding a login-password prompt and authlib-injector download.
 
-- Modern and secure login: ElyPrismLauncher uses OAuth2 to log you in. This means that your credentials are never transferred to the launcher. Instead, you log into your account on the official Ely.by page in the browser, and Ely.by gives the launcher a token to access your account with limited privileges.
-- Skins support on servers: All other forks rely exclusively on authlib-injector to patch Minecraft to support Ely.by. But authlib-injector can't provide skins on servers that don't have a special skins plugin installed. ElyPrismLauncher uses Ely.by's official Authlib patches, allowing you to see skins anywhere
+- Modern and secure login: PineconeMC uses OAuth2 to log you in. This means that your credentials are never transferred to the launcher. Instead, you log into your account on the official Ely.by page in the browser, and Ely.by gives the launcher a token to access your account with limited privileges.
+- Skins support on servers: All other forks rely exclusively on authlib-injector to patch Minecraft to support Ely.by. But authlib-injector can't provide skins on servers that don't have a special skins plugin installed. PineconeMC uses Ely.by's official Authlib patches, allowing you to see skins anywhere
 
 ## Installation
 
-- All downloads and instructions for ElyPrismLauncher can be found on the [Releases](https://github.com/ElyPrismLauncher/ElyPrismLauncher/releases/latest) page.
-- Last build status can be found in the [GitHub Actions](https://github.com/ElyPrismLauncher/ElyPrismLauncher/actions) tab.
+- All downloads and instructions for PineconeMC can be found on the [Releases](https://github.com/PineconeMC/Launcher/releases/latest) page.
+- Last build status can be found in the [GitHub Actions](https://github.com/PineconeMC/Launcher/actions) tab.
 
 ### Development Builds
 
@@ -29,8 +29,8 @@ Please understand that these builds are not intended for most users. There may b
 
 There are development builds available through:
 
-- [GitHub Actions](https://github.com/ElyPrismLauncher/ElyPrismLauncher/actions) (includes builds from pull requests opened by contributors)
-- [nightly.link](https://nightly.link/ElyPrismLauncher/ElyPrismLauncher/workflows/build/develop) (this will always point only to the latest version of develop)
+- [GitHub Actions](https://github.com/PineconeMC/Launcher/actions) (includes builds from pull requests opened by contributors)
+- [nightly.link](https://nightly.link/PineconeMC/Launcher/workflows/build/develop) (this will always point only to the latest version of develop)
 
 These have debug information in the binaries, so their file sizes are relatively larger.
 
@@ -38,11 +38,11 @@ These have debug information in the binaries, so their file sizes are relatively
 
 Feel free to create a GitHub issue if you find a bug or want to suggest a new feature. We have a Discord server where other community members can help you:
 
-[![ElyPrismLauncher Discord server](https://discordapp.com/api/guilds/1201522867901313045/widget.png?style=banner3)](https://discord.gg/5kcBCvnbTp)
+[![Octol1ttle's Studio Discord server](https://discordapp.com/api/guilds/1201522867901313045/widget.png?style=banner3)](https://discord.gg/5kcBCvnbTp)
 
 ## Building
 
-If you want to build ElyPrismLauncher yourself, check the [build instructions](https://prismlauncher.org/wiki/development/build-instructions).
+If you want to build PineconeMC yourself, check the [build instructions](https://prismlauncher.org/wiki/development/build-instructions).
 
 ## The following comes from the original Prism Launcher README
 
@@ -69,3 +69,4 @@ If you do not agree with these terms and conditions, then remove the associated 
 All launcher code is available under the GPL-3.0-only license.
 
 The logo and related assets are under the CC BY-SA 4.0 license.
+
