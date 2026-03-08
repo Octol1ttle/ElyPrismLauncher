@@ -43,8 +43,8 @@
           "fill" : "automatic",
           "glass" : true,
           "hidden" : false,
-          "image-name" : "rainbow.svg",
-          "name" : "rainbow",
+          "image-name" : "shards.svg",
+          "name" : "shards",
           "position" : {
             "scale" : 19.28,
             "translation-in-points" : [

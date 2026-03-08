@@ -1,22 +1,22 @@
-prismlauncher(6)
+pineconemc(6)
 
 
 # NAME
 
-prismlauncher - a launcher and instance manager for Minecraft.
+pineconemc - a launcher and instance manager for Minecraft.
 
 
 # SYNOPSIS
 
-*prismlauncher* [OPTIONS...]
+*pineconemc* [OPTIONS...]
 
 
 # DESCRIPTION
 
-Prism Launcher is a custom launcher for Minecraft that allows you to easily manage
+PineconeMC is a custom launcher for Minecraft that allows you to easily manage
 multiple installations of Minecraft at once. It also allows you to easily
 install and remove mods by simply dragging and dropping.
-Here are the current features of Prism Launcher.
+Here are the current features of PineconeMC.
 
 # OPTIONS
 
@@ -69,14 +69,14 @@ variables, besides other common Qt variables:
 
 # BUGS
 
-https://github.com/PrismLauncher/PrismLauncher/issues
+https://github.com/PineconeMC/Launcher/issues
 
 # RESOURCES
 
-GitHub: https://github.com/PrismLauncher/PrismLauncher
+GitHub: https://github.com/PineconeMC/Launcher
 
-Main website: https://prismlauncher.org
+Main website: https://pineconemc.ru
 
 # AUTHORS
 
-Prism Launcher Contributors
+PineconeMC & Prism Launcher Contributors
