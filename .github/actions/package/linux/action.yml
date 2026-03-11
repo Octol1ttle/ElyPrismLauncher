@@ -92,9 +92,9 @@ runs:
 
         #makes the launcher use portals for file picking
         echo "QT_QPA_PLATFORMTHEME=xdgdesktopportal" > "$INSTALL_APPIMAGE_DIR"/.env
-        ln -s io.github.elyprismlauncher.ElyPrismLauncher.metainfo.xml "$INSTALL_APPIMAGE_DIR"/share/metainfo/io.github.elyprismlauncher.ElyPrismLauncher.appdata.xml
-        ln -s share/applications/io.github.elyprismlauncher.ElyPrismLauncher.desktop "$INSTALL_APPIMAGE_DIR"
-        ln -s share/icons/hicolor/256x256/apps/io.github.elyprismlauncher.ElyPrismLauncher.png "$INSTALL_APPIMAGE_DIR"
+        ln -s ru.pineconemc.launcher.metainfo.xml "$INSTALL_APPIMAGE_DIR"/share/metainfo/ru.pineconemc.launcher.appdata.xml
+        ln -s share/applications/ru.pineconemc.launcher.desktop "$INSTALL_APPIMAGE_DIR"
+        ln -s share/icons/hicolor/256x256/apps/ru.pineconemc.launcher.png "$INSTALL_APPIMAGE_DIR"
         mv "$INSTALL_APPIMAGE_DIR"/{sharun,AppRun}
         ls -la "$INSTALL_APPIMAGE_DIR"
 
