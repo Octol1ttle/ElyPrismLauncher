@@ -1,0 +1,11 @@
+prefix=${pcfiledir}/../..
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: libpkgconf
+Description: a library for accessing and manipulating development framework configuration
+URL: http://github.com/pkgconf/pkgconf
+Version: 2.5.1
+Libs: "-L${libdir}" -lpkgconf
+Cflags: "-I${includedir}/pkgconf" -DPKGCONFIG_IS_NOT_STATIC
+

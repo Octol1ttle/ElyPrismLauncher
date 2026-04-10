@@ -971,13 +971,13 @@ void PrismUpdaterApp::backupAppDir()
     if (file_list.isEmpty()) {
         // best guess
         if (BuildConfig.BUILD_ARTIFACT.toLower().contains("linux")) {
-            file_list.append({ "ElyPrismLauncher", "bin", "share", "lib" });
+            file_list.append({ "OasisLauncher", "bin", "share", "lib" });
         } else {  // windows by process of elimination
             file_list.append({
                 "jars",
-                "elyprismlauncher.exe",
-                "elyprismlauncher_filelink.exe",
-                "elyprismlauncher_updater.exe",
+                "OasisLauncher.exe",
+                "OasisLauncher_filelink.exe",
+                "OasisLauncher_updater.exe",
                 "qtlogging.ini",
                 "imageformats",
                 "iconengines",

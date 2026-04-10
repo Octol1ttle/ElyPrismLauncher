@@ -1,0 +1,11 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libcmark
+Description: CommonMark parsing, rendering, and manipulation
+Version: 0.31.1
+Libs: "-L${libdir}" -lcmark
+Cflags: "-I${includedir}"
+

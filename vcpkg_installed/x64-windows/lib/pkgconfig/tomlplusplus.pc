@@ -1,0 +1,11 @@
+prefix=${pcfiledir}/../..
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: tomlplusplus
+Description: TOML config file parser and serializer for C++
+URL: https://marzer.github.io/tomlplusplus
+Version: 3.4.0
+Libs: "-L${libdir}" -ltomlplusplus
+Cflags: "-I${includedir}" -DTOML_HEADER_ONLY=0 -DTOML_SHARED_LIB=1
+

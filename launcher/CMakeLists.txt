@@ -146,8 +146,8 @@ set(NET_SOURCES
     net/ApiUpload.h
     net/NetRequest.cpp
     net/NetRequest.h
-    PineconeNetworkCheck.cpp
-    PineconeNetworkCheck.h
+    OasisNetworkCheck.cpp
+    OasisNetworkCheck.h
 )
 
 # Game launch logic

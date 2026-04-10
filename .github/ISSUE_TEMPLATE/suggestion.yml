@@ -5,25 +5,25 @@ body:
 - type: markdown
   attributes:
     value: |
-      ### Use this form to suggest a feature for PineconeMC.
+      ### Use this form to suggest a feature for Oasis Launcher.
 - type: input
   attributes:
     label: Role
-    description: In what way do you use PineconeMC that needs this feature?
+    description: In what way do you use Oasis Launcher that needs this feature?
     placeholder: I play modded Minecraft.
   validations:
     required: true
 - type: input
   attributes:
     label: Suggestion
-    description: What do you want PineconeMC to do?
+    description: What do you want Oasis Launcher to do?
     placeholder: I want the cat button to meow.
   validations:
     required: true
 - type: input
   attributes:
     label: Benefit
-    description: Why do you need PineconeMC to do this?
+    description: Why do you need Oasis Launcher to do this?
     placeholder: so that I can always hear a cat when I need to.
   validations:
     required: true

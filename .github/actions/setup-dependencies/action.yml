@@ -1,5 +1,5 @@
 name: Setup Dependencies
-description: Install and setup dependencies for building PineconeMC
+description: Install and setup dependencies for building Oasis Launcher
 
 inputs:
   build-type:

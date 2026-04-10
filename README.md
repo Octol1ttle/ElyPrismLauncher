@@ -1,8 +1,8 @@
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/program_info/ru.pineconemc.launcher.logo-darkmode.svg">
-  <source media="(prefers-color-scheme: light)" srcset="/program_info/ru.pineconemc.launcher.logo.svg">
-  <img alt="ru.pineconemc.launcher" src="/program_info/ru.pineconemc.launcher.logo.svg" width="40%">
+  <source media="(prefers-color-scheme: dark)" srcset="/program_info/io.github.oasislauncher.OasisLauncher.logo-darkmode.svg">
+  <source media="(prefers-color-scheme: light)" srcset="/program_info/io.github.oasislauncher.OasisLauncher.logo.svg">
+  <img alt="io.github.oasislauncher.OasisLauncher" src="/program_info/io.github.oasislauncher.OasisLauncher.logo.svg" width="40%">
 </picture>
 </p>
 
@@ -15,13 +15,13 @@
 
 There are already quite a few forks out in the wild that add Ely.by support and/or disable the Microsoft account requirement. This fork goes beyond simply adding a login-password prompt and authlib-injector download.
 
-- Modern and secure login: PineconeMC uses OAuth2 to log you in. This means that your credentials are never transferred to the launcher. Instead, you log into your account on the official Ely.by page in the browser, and Ely.by gives the launcher a token to access your account with limited privileges.
-- Skins support on servers: All other forks rely exclusively on authlib-injector to patch Minecraft to support Ely.by. But authlib-injector can't provide skins on servers that don't have a special skins plugin installed. PineconeMC uses Ely.by's official Authlib patches, allowing you to see skins anywhere
+- Modern and secure login: Oasis Launcher uses OAuth2 to log you in. This means that your credentials are never transferred to the launcher. Instead, you log into your account on the official Ely.by page in the browser, and Ely.by gives the launcher a token to access your account with limited privileges.
+- Skins support on servers: All other forks rely exclusively on authlib-injector to patch Minecraft to support Ely.by. But authlib-injector can't provide skins on servers that don't have a special skins plugin installed. Oasis Launcher uses Ely.by's official Authlib patches, allowing you to see skins anywhere
 
 ## Installation
 
-- All downloads and instructions for PineconeMC can be found on the [Releases](https://github.com/ElyPrismLauncher/Launcher/releases/latest) page.
-- Last build status can be found in the [GitHub Actions](https://github.com/ElyPrismLauncher/Launcher/actions) tab.
+- All downloads and instructions for Oasis Launcher can be found on the [Releases](https://github.com/ByCesarDev/Launcher/releases/latest) page.
+- Last build status can be found in the [GitHub Actions](https://github.com/ByCesarDev/Launcher/actions) tab.
 
 ### Development Builds
 
@@ -29,8 +29,8 @@ Please understand that these builds are not intended for most users. There may b
 
 There are development builds available through:
 
-- [GitHub Actions](https://github.com/ElyPrismLauncher/Launcher/actions) (includes builds from pull requests opened by contributors)
-- [nightly.link](https://nightly.link/ElyPrismLauncher/Launcher/workflows/build/develop) (this will always point only to the latest version of develop)
+- [GitHub Actions](https://github.com/ByCesarDev/Launcher/actions) (includes builds from pull requests opened by contributors)
+- [nightly.link](https://nightly.link/ByCesarDev/Launcher/workflows/build/develop) (this will always point only to the latest version of develop)
 
 These have debug information in the binaries, so their file sizes are relatively larger.
 
@@ -42,7 +42,7 @@ Feel free to create a GitHub issue if you find a bug or want to suggest a new fe
 
 ## Building
 
-If you want to build PineconeMC yourself, check the [build instructions](https://prismlauncher.org/wiki/development/build-instructions).
+If you want to build Oasis Launcher yourself, check the [build instructions](https://prismlauncher.org/wiki/development/build-instructions).
 
 ## The following comes from the original Prism Launcher README
 

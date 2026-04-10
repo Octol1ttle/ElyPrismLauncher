@@ -1,0 +1,28 @@
+{
+   "qt": "@ANDROID_QT6_INSTALL_PREFIX@",
+   "qtDataDirectory": "@QT6_INSTALL_DATA@",
+   "qtLibExecsDirectory": "@QT6_INSTALL_LIBEXECS@",
+   "qtLibsDirectory": "@QT6_INSTALL_LIBS@",
+   "qtPluginsDirectory": "@QT6_INSTALL_PLUGINS@",
+   "qtQmlDirectory": "@QT6_INSTALL_QML@",
+   "rcc-binary": "@QT6_RCC_BINARY@",
+   "sdk": "@ANDROID_SDK_ROOT@",
+   "ndk": "@CMAKE_ANDROID_NDK@",
+   "toolchain-prefix": "llvm",
+   "tool-prefix": "llvm",
+   "toolchain-version": "@CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION@",
+   "ndk-host": "@_LOWER_CMAKE_HOST_SYSTEM_NAME@-@CMAKE_HOST_SYSTEM_PROCESSOR@",
+   "application-binary": "@TARGET@",
+   "qml-root-path": "@CMAKE_SOURCE_DIR@",
+   @DEFINE_QML_IMPORT_PATHS@
+   ##EXTRALIBS##
+   ##EXTRAPLUGINS##
+   "android-package-source-directory": "@ANDROID_APK_DIR@",
+   "stdcpp-path": "@ANDROID_SYSROOT_PREFIX@/lib",
+   "sdkBuildToolsRevision": "@ANDROID_SDK_BUILD_TOOLS_REVISION@",
+   "android-min-sdk-version": "@ANDROID_API_LEVEL@",
+   "android-target-sdk-version": "@ANDROID_SDK_COMPILE_API@",
+   "extraPrefixDirs": [ @EXTRA_PREFIX_DIRS@ ],
+   "extraLibraryDirs": [ @EXTRA_LIB_DIRS@ ],
+   "architectures": { "@CMAKE_ANDROID_ARCH_ABI@": "@ECM_ANDROID_STL_ARCH@" }
+}

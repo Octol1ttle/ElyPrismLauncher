@@ -1,5 +1,5 @@
 name: Package for macOS
-description: Create a macOS package for PineconeMC
+description: Create a macOS package for Oasis Launcher
 
 inputs:
   version:
@@ -62,7 +62,7 @@ runs:
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
 
         cd ${{ env.INSTALL_DIR }}
-        chmod +x "ElyPrismLauncher.app/Contents/MacOS/elyprismlauncher"
+        chmod +x "OasisLauncher.app/Contents/MacOS/oasislauncher"
 
         if [ -n '${{ inputs.apple-codesign-id }}' ]; then
           APPLE_CODESIGN_ID='${{ inputs.apple-codesign-id }}'
@@ -72,7 +72,7 @@ runs:
           ENTITLEMENTS_FILE='../program_info/AdhocSignedApp.entitlements'
         fi
 
-        sudo codesign --sign "$APPLE_CODESIGN_ID" --deep --force --entitlements "$ENTITLEMENTS_FILE" --options runtime "ElyPrismLauncher.app/Contents/MacOS/elyprismlauncher"
+        sudo codesign --sign "$APPLE_CODESIGN_ID" --deep --force --entitlements "$ENTITLEMENTS_FILE" --options runtime "OasisLauncher.app/Contents/MacOS/oasislauncher"
 
     - name: Notarize
       shell: bash
@@ -82,18 +82,18 @@ runs:
         cd ${{ env.INSTALL_DIR }}
 
         if [ -n '${{ inputs.apple-notarize-password }}' ]; then
-          ditto -c -k --sequesterRsrc --keepParent "ElyPrismLauncher.app" ../PineconeMC.zip
-          xcrun notarytool submit ../PineconeMC.zip \
+          ditto -c -k --sequesterRsrc --keepParent "OasisLauncher.app" ../OasisLauncher.zip
+          xcrun notarytool submit ../OasisLauncher.zip \
             --wait --progress \
             --apple-id '${{ inputs.apple-notarize-apple-id }}' \
             --team-id '${{ inputs.apple-notarize-team-id }}' \
             --password '${{ inputs.apple-notarize-password }}'
 
-          xcrun stapler staple "ElyPrismLauncher.app"
+          xcrun stapler staple "OasisLauncher.app"
         else
           echo ":warning: Skipping notarization as credentials are not present." >> $GITHUB_STEP_SUMMARY
         fi
-        ditto -c -k --sequesterRsrc --keepParent "ElyPrismLauncher.app" ../PineconeMC.zip
+        ditto -c -k --sequesterRsrc --keepParent "OasisLauncher.app" ../OasisLauncher.zip
 
     - name: Create DMG
       shell: bash
@@ -103,23 +103,23 @@ runs:
         cd ${{ env.INSTALL_DIR }}
 
         mkdir -p src
-        cp -R "ElyPrismLauncher.app" src/
+        cp -R "OasisLauncher.app" src/
 
         ln -s /Applications src/
 
         hdiutil create \
-            -volname "PineconeMC ${{ inputs.version }}" \
+            -volname "OasisLauncher ${{ inputs.version }}" \
             -srcfolder src \
             -ov -format ULMO \
-            "../PineconeMC.dmg"
+            "../OasisLauncher.dmg"
 
     - name: Make Sparkle signature
       shell: bash
       run: |
         if [ '${{ inputs.sparkle-ed25519-key }}' != '' ]; then
           echo '${{ inputs.sparkle-ed25519-key }}' > ed25519-priv.pem
-          signature_zip=$(/opt/homebrew/opt/openssl@3/bin/openssl pkeyutl -sign -rawin -in ${{ github.workspace }}/PineconeMC.zip -inkey ed25519-priv.pem | openssl base64 | tr -d \\n)
-          signature_dmg=$(/opt/homebrew/opt/openssl@3/bin/openssl pkeyutl -sign -rawin -in ${{ github.workspace }}/PineconeMC.dmg -inkey ed25519-priv.pem | openssl base64 | tr -d \\n)
+          signature_zip=$(/opt/homebrew/opt/openssl@3/bin/openssl pkeyutl -sign -rawin -in ${{ github.workspace }}/OasisLauncher.zip -inkey ed25519-priv.pem | openssl base64 | tr -d \\n)
+          signature_dmg=$(/opt/homebrew/opt/openssl@3/bin/openssl pkeyutl -sign -rawin -in ${{ github.workspace }}/OasisLauncher.dmg -inkey ed25519-priv.pem | openssl base64 | tr -d \\n)
           rm ed25519-priv.pem
           cat >> $GITHUB_STEP_SUMMARY << EOF
         ### Artifact Information :information_source:
@@ -136,11 +136,11 @@ runs:
     - name: Upload binary tarball
       uses: actions/upload-artifact@v7
       with:
-        name: PineconeMC-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
-        path: PineconeMC.zip
+        name: OasisLauncher-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}
+        path: OasisLauncher.zip
 
     - name: Upload disk image
       uses: actions/upload-artifact@v7
       with:
-        name: PineconeMC-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}.dmg
-        path: PineconeMC.dmg
+        name: OasisLauncher-${{ inputs.artifact-name }}-${{ inputs.version }}-${{ inputs.build-type }}.dmg
+        path: OasisLauncher.dmg

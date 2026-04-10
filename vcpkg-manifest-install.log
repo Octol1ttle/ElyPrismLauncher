@@ -1,0 +1,89 @@
+Detecting compiler hash for triplet x64-windows...
+Compiler found: C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe
+The following packages are already installed:
+  * bzip2[core,tool]:x64-windows@1.0.8#6
+    cmark:x64-windows@0.31.1
+    ecm:x64-windows@6.7.0#1
+    libarchive[core,zstd,lzo,lzma,lz4,bzip2]:x64-windows@3.8.2
+  * liblzma:x64-windows@5.8.1
+    libqrencode:x64-windows@4.1.1#3
+  * lz4:x64-windows@1.10.0
+  * lzo:x64-windows@2.10#9
+    pkgconf:x64-windows@2.5.1#4
+    tomlplusplus:x64-windows@3.4.0#1
+  * vcpkg-cmake:x64-windows@2024-04-23
+  * vcpkg-cmake-config:x64-windows@2024-05-23
+  * vcpkg-cmake-get-vars:x64-windows@2025-05-29
+  * vcpkg-tool-meson:x64-windows@1.8.2
+    vulkan-headers:x64-windows@1.4.309.0
+    zlib:x64-windows@1.3.1
+  * zstd:x64-windows@1.5.7
+cmark provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(cmark CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE cmark::cmark)
+
+cmark provides pkg-config modules:
+
+  # CommonMark parsing, rendering, and manipulation
+  libcmark
+
+ecm provides CMake files:
+
+    find_package(ECM CONFIG REQUIRED NO_MODULE)
+    list(INSERT CMAKE_MODULE_PATH 0 ${ECM_MODULE_PATH})
+    include(KDEInstallDirs)
+    include(KDECompilerSettings)
+    include(KDECMakeSettings)
+
+For more infomation, see https://api.kde.org/ecm/
+
+The package zlib is compatible with built-in CMake targets:
+
+    find_package(ZLIB REQUIRED)
+    target_link_libraries(main PRIVATE ZLIB::ZLIB)
+
+libarchive is compatible with the CMake Find Module:
+
+  find_package(LibArchive REQUIRED)
+  target_link_libraries(main PRIVATE LibArchive::LibArchive) # since CMake 3.17
+
+libarchive provides pkg-config modules:
+
+  # library that can create and read several streaming archive formats
+  libarchive
+
+To use libqrencode library in CMakeLists.txt:
+
+    find_path(QRENCODE_INCLUDE_DIR NAMES qrencode.h)
+    find_library(QRENCODE_LIBRARY_RELEASE qrencode)
+    find_library(QRENCODE_LIBRARY_DEBUG qrencoded)
+    set(QRENCODE_LIBRARIES optimized ${QRENCODE_LIBRARY_RELEASE} debug ${QRENCODE_LIBRARY_DEBUG})
+
+    add_executable(main main.cpp)
+    target_include_directories(main PRIVATE ${QRENCODE_INCLUDE_DIR})
+    target_link_libraries(main PRIVATE ${QRENCODE_LIBRARIES})
+
+pkgconf provides pkg-config modules:
+
+  # a library for accessing and manipulating development framework configuration
+  libpkgconf
+
+tomlplusplus provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(tomlplusplus CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE tomlplusplus::tomlplusplus)
+
+tomlplusplus provides pkg-config modules:
+
+  # TOML config file parser and serializer for C++
+  tomlplusplus
+
+Vulkan-Headers provides official find_package support:
+
+    find_package(VulkanHeaders CONFIG)
+    target_link_libraries(main PRIVATE Vulkan::Headers)
+
+All requested installations completed successfully in: 543 us

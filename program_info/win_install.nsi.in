@@ -10,7 +10,7 @@ Name "@Launcher_DisplayName@"
 InstallDir "$LOCALAPPDATA\Programs\@Launcher_CommonName@"
 InstallDirRegKey HKCU "Software\@Launcher_CommonName@" "InstallDir"
 RequestExecutionLevel user
-OutFile "../PineconeMC-Setup.exe"
+OutFile "../OasisLauncher-Setup.exe"
 
 !define MUI_ICON "../@Launcher_Branding_ICO@"
 

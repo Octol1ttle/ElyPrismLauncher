@@ -124,7 +124,7 @@
 #include <DesktopServices.h>
 #include <FileSystem.h>
 #include <LocalPeer.h>
-#include <PineconeNetworkCheck.h>
+#include <OasisNetworkCheck.h>
 
 #include <stdlib.h>
 #include "SysInfo.h"
@@ -1037,8 +1037,8 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
     // now we have network, download translation updates
     m_translations->downloadIndex();
 
-    m_pineconeNetworkCheck = std::make_unique<PineconeNetworkCheck>(m_network.get());
-    connect(m_pineconeNetworkCheck.get(), &PineconeNetworkCheck::shouldReloadNews, this, &Application::shouldReloadNews);
+    m_oasisNetworkCheck = std::make_unique<OasisNetworkCheck>(m_network.get());
+    connect(m_oasisNetworkCheck.get(), &OasisNetworkCheck::shouldReloadNews, this, &Application::shouldReloadNews);
 
     // FIXME: what to do with these?
     m_profilers.insert("jprofiler", std::shared_ptr<BaseProfilerFactory>(new JProfilerFactory()));
