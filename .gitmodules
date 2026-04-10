@@ -1,3 +1,6 @@
 [submodule "libraries/libnbtplusplus"]
 	path = libraries/libnbtplusplus
 	url = https://github.com/PrismLauncher/libnbtplusplus.git
+[submodule "vcpkg"]
+	path = vcpkg
+	url = https://github.com/microsoft/vcpkg.git
