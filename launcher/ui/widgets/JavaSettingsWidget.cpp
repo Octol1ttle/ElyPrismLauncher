@@ -347,8 +347,11 @@ void JavaSettingsWidget::updateLauncherArgs()
     }
     m_versionChecker.reset(new JavaChecker(javaPath, "", 0, 0, 0, 0));
     connect(m_versionChecker.get(), &JavaChecker::checkFinished, this, [this](const JavaChecker::Result& result) {
+        const auto warningColour(QStringLiteral("<span style='color:#f5c211'>%1</span>"));
         if (result.validity != JavaChecker::Result::Validity::Valid) {
-            m_ui->launcherArgsTextBox->setText(tr("Java path invalid"));
+            m_ui->launcherArgsTextBox->setText(tr("Cannot determine"));
+            m_ui->argsNoticeLabel->setText(warningColour.arg(tr("Set a valid Java path or launch the game first")));
+            m_ui->argsNoticeLabel->show();
             return;
         }
 
@@ -364,7 +367,6 @@ void JavaSettingsWidget::updateLauncherArgs()
             JavaPerformance::getCompletePerformanceArgs(result.javaVersion, m_ui->optimizedArgsCheckBox->isChecked(), preset, &warning)
                 .join(" "));
         if (!warning.isEmpty()) {
-            const auto warningColour(QStringLiteral("<span style='color:#f5c211'>%1</span>"));
             m_ui->argsNoticeLabel->setText(warningColour.arg(warning));
             m_ui->argsNoticeLabel->show();
         } else {

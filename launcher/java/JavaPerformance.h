@@ -29,7 +29,7 @@ namespace JavaPerformance {
         ZGC
     };
 
-    QStringList getMojangOptimizationArgs(const JavaVersion& version, GarbageCollectorPreset preset);
+    QStringList getBaseOptimizationArgs(const JavaVersion& version, GarbageCollectorPreset preset);
     QStringList getGarbageCollectorArgs(const JavaVersion& version, GarbageCollectorPreset preset);
     QStringList getCompletePerformanceArgs(const JavaVersion& version, bool useOptimized, GarbageCollectorPreset preset, QString* warning = nullptr);
 }

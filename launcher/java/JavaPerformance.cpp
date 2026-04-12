@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <QObject>
 
-QStringList JavaPerformance::getMojangOptimizationArgs(const JavaVersion& version, const GarbageCollectorPreset preset)
+QStringList JavaPerformance::getBaseOptimizationArgs(const JavaVersion& version, const GarbageCollectorPreset preset)
 {
     QStringList args;
 
@@ -108,5 +108,5 @@ QStringList JavaPerformance::getCompletePerformanceArgs(const JavaVersion& versi
     if (!useOptimized) {
         return getGarbageCollectorArgs(version, preset);
     }
-    return getMojangOptimizationArgs(version, preset) + getGarbageCollectorArgs(version, preset);
+    return getBaseOptimizationArgs(version, preset) + getGarbageCollectorArgs(version, preset);
 }
