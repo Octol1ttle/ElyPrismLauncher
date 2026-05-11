@@ -754,7 +754,8 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
         m_settings->registerSetting("LastHostname", "");
         m_settings->registerSetting("JvmArgs", "");
         m_settings->registerSetting("UseOptimizedJvmArgs", true);
-        m_settings->registerSetting("GarbageCollectorPreset", "ZGC");
+        const auto defaultGCPreset = m_settings->get("MaxMemAlloc").toInt() >= 4096 ? "ZGC" : "G1GC";
+        m_settings->registerSetting("GarbageCollectorPreset", defaultGCPreset);
         m_settings->registerSetting("IgnoreJavaCompatibility", false);
         m_settings->registerSetting("IgnoreJavaWizard", false);
         auto defaultEnableAutoJava = m_settings->get("JavaPath").toString().isEmpty();
