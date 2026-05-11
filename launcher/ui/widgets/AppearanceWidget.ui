@@ -28,33 +28,13 @@
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="3">
-         <widget class="QPushButton" name="catPackFolder">
-          <property name="toolTip">
-           <string>View cat packs folder.</string>
-          </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="iconsLabel">
           <property name="text">
-           <string>Open Folder</string>
+           <string>&amp;Icons:</string>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="widgetStyleFolder">
-          <property name="toolTip">
-           <string>View widget themes folder.</string>
-          </property>
-          <property name="text">
-           <string>Open Folder</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QPushButton" name="iconsFolder">
-          <property name="toolTip">
-           <string>View icon themes folder.</string>
-          </property>
-          <property name="text">
-           <string>Open Folder</string>
+          <property name="buddy">
+           <cstring>iconsComboBox</cstring>
           </property>
          </widget>
         </item>
@@ -68,8 +48,15 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
-         <widget class="QComboBox" name="catPackComboBox"/>
+        <item row="0" column="3">
+         <widget class="QPushButton" name="widgetStyleFolder">
+          <property name="toolTip">
+           <string>View widget themes folder.</string>
+          </property>
+          <property name="text">
+           <string>Open Folder</string>
+          </property>
+         </widget>
         </item>
         <item row="1" column="2">
          <widget class="QComboBox" name="iconsComboBox">
@@ -84,6 +71,9 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="2">
+         <widget class="QComboBox" name="catPackComboBox"/>
+        </item>
         <item row="0" column="2">
          <widget class="QComboBox" name="widgetStyleComboBox">
           <property name="sizePolicy">
@@ -97,16 +87,13 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="2">
-         <widget class="QPushButton" name="reloadThemesButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="iconsFolder">
+          <property name="toolTip">
+           <string>View icon themes folder.</string>
           </property>
           <property name="text">
-           <string>Reload All</string>
+           <string>Open Folder</string>
           </property>
          </widget>
         </item>
@@ -120,15 +107,39 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="iconsLabel">
-          <property name="text">
-           <string>&amp;Icons:</string>
+        <item row="2" column="3">
+         <widget class="QPushButton" name="catPackFolder">
+          <property name="toolTip">
+           <string>View cat packs folder.</string>
           </property>
-          <property name="buddy">
-           <cstring>iconsComboBox</cstring>
+          <property name="text">
+           <string>Open Folder</string>
           </property>
          </widget>
+        </item>
+        <item row="4" column="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QPushButton" name="reloadThemesButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Reload All</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="hideCatButtonCheckBox">
+            <property name="text">
+             <string>Hide cat button</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -346,8 +357,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>81</width>
-          <height>32</height>
+          <width>68</width>
+          <height>22</height>
          </size>
         </property>
         <property name="currentIndex">
@@ -620,7 +631,6 @@
   <tabstop>iconsFolder</tabstop>
   <tabstop>catPackComboBox</tabstop>
   <tabstop>catPackFolder</tabstop>
-  <tabstop>reloadThemesButton</tabstop>
   <tabstop>consoleFont</tabstop>
   <tabstop>fontSizeBox</tabstop>
   <tabstop>catFitComboBox</tabstop>

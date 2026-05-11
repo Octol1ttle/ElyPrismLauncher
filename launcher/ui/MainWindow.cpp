@@ -593,6 +593,7 @@ void MainWindow::updateMainToolBar()
 {
     ui->menuBar->setVisible(APPLICATION->settings()->get("MenuBarInsteadOfToolBar").toBool());
     ui->mainToolBar->setVisible(ui->menuBar->isNativeMenuBar() || !APPLICATION->settings()->get("MenuBarInsteadOfToolBar").toBool());
+    ui->actionCAT->setVisible(APPLICATION->settings()->get("CatButtonVisible").toBool());
 }
 
 void MainWindow::updateLaunchButton()
