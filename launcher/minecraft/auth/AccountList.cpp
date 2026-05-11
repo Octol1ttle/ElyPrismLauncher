@@ -599,6 +599,11 @@ bool AccountList::anyAccountIsValid()
     return true;
 }
 
+bool AccountList::isEmpty() const
+{
+    return m_accounts.isEmpty();
+}
+
 void AccountList::fillQueue()
 {
     if (m_defaultAccount && m_defaultAccount->shouldRefresh()) {
