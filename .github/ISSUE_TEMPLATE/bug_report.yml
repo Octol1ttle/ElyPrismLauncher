@@ -8,6 +8,7 @@ body:
       If you need help with running Minecraft, please visit us on our Discord before making a bug report.
 
       Before submitting a bug report, please make sure you have read this *entire* form, and that:
+      * You have read the FAQ on the [website](https://pineconemc.ru/#faq) ([alternative link](https://elyprismlauncher.github.io/#faq)) and it has not answered your question.
       * You have read the [Prism Launcher wiki](https://prismlauncher.org/wiki/) and it has not answered your question.
       * Your bug is not caused by Minecraft or any mods you have installed.
       * Your issue has not been reported before, [make sure to use the search function!](https://github.com/ElyPrismLauncher/Launcher/issues)
@@ -61,5 +62,8 @@ body:
   attributes:
     label: This issue is unique
     options:
+    - label: I have read the checklist above.
+      required: true
     - label: I have searched the issue tracker and did not find an issue describing my bug.
       required: true
+    - label: I am ticking these checkboxes for no reason so my issue will be closed instantly.
