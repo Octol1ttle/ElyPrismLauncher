@@ -115,6 +115,9 @@ class HttpMetaCache : public QObject {
     auto evictEntry(MetaEntryPtr entry) -> bool;
     bool evictAll();
 
+    // evict meta only
+    bool softEvict();
+
     void addBase(QString base, QString base_root);
 
     // (re)start a timer that calls SaveNow later.

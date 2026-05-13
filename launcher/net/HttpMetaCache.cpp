@@ -187,6 +187,17 @@ auto HttpMetaCache::evictAll() -> bool
     return ret;
 }
 
+bool HttpMetaCache::softEvict()
+{
+    auto& [base_path, entry_list] = m_entries["meta"];
+    for (const MetaEntryPtr& entry : entry_list) {
+        if (!evictEntry(entry))
+            qCWarning(taskHttpMetaCacheLogC) << "Unexpected missing cache entry" << entry->m_basePath;
+    }
+    entry_list.clear();
+    return FS::deletePath(base_path);
+}
+
 auto HttpMetaCache::staleEntry(QString base, QString resource_path) -> MetaEntryPtr
 {
     auto foo = new MetaEntry();

@@ -94,7 +94,7 @@ void PineconeNetworkCheck::finished()
         { Result::UseOldFallback, "https://elyprismlauncher.github.io/meta/v1/" },
     };
     if (handleUrlOverride("MetaURLOverride", metaUrls)) {
-        if (!APPLICATION->metacache()->evictAll()) {
+        if (!APPLICATION->metacache()->softEvict()) {
             qWarning() << "Could not evict metacache during automatic meta switch";
         }
         APPLICATION->metacache()->SaveNow();
