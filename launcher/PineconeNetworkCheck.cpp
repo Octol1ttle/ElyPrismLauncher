@@ -29,9 +29,9 @@ PineconeNetworkCheck::PineconeNetworkCheck(QNetworkAccessManager* network)
     m_network = network;
 
     static auto s_urlToResult = std::array{
-        std::pair { QUrl("https://pineconemc.ru"), Result::UsePrimary },
-        std::pair { QUrl("https://pineconemc.github.io"), Result::UseNewFallback },
-        std::pair { QUrl("https://elyprismlauncher.github.io"), Result::UseOldFallback },
+        std::pair{ QUrl("https://pineconemc.ru"), Result::UsePrimary },
+        std::pair{ QUrl("https://pineconemc.github.io"), Result::UseNewFallback },
+        std::pair{ QUrl("https://elyprismlauncher.github.io"), Result::UseOldFallback },
     };
     for (auto& [url, result] : s_urlToResult) {
         launchRequest(url, result);

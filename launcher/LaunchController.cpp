@@ -220,7 +220,7 @@ bool LaunchController::askPlayDemo() const
     QMessageBox box(m_parentWidget);
     box.setWindowTitle(tr("Play demo?"));
     QString text = m_accountToUse
-                       ? tr("This account does not own Minecraft.\nYou need to purchase the game first to play the full version.")
+                       ? tr("This account does not own Minecraft.\nIf you do not own the game, you must use an Ely.by or Offline account")
                        : tr("No account was selected for launch.");
     text += tr("\n\nDo you want to play the demo?");
     box.setText(text);

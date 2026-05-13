@@ -24,12 +24,7 @@ class PineconeNetworkCheck : public QObject {
     Q_OBJECT
 
    public:
-    enum class Result : std::uint8_t {
-        UsePrimary,
-        UseNewFallback,
-        UseOldFallback,
-        Offline
-    };
+    enum class Result : std::uint8_t { UsePrimary, UseNewFallback, UseOldFallback, Offline };
     Q_ENUM(Result)
 
     explicit PineconeNetworkCheck(QNetworkAccessManager* network);
