@@ -112,7 +112,7 @@ void LaunchController::decideAccount()
         }
     }
 
-    if (!m_accountToUse && accounts->anyAccountIsValid()) {
+    if (!m_accountToUse && !accounts->isEmpty()) {
         // If no default account is set, ask the user which one to use.
         ProfileSelectDialog selectDialog(tr("Which account would you like to use?"), ProfileSelectDialog::GlobalDefaultCheckbox,
                                          m_parentWidget);
