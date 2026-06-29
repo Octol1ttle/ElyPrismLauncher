@@ -126,10 +126,13 @@ bool LegacyFMLLibrariesTask::abort()
 }
 
 QString LegacyFMLLibrariesTask::baseUrl()
-{
-    if (const QString urlOverride = APPLICATION->settings()->get("LegacyFMLLibsURLOverride").toString(); !urlOverride.isEmpty()) {
-        return urlOverride;
+{   
+    auto settings = APPLICATION->settings();
+
+    QString urlOverride = settings->get("LegacyFMLLibsURLOverride").toString();
+    if (urlOverride.isEmpty()) {
+        urlOverride = settings->get("PineconeLegacyFMLLibsURLOverride").toString();
     }
 
-    return BuildConfig.LEGACY_FMLLIBS_BASE_URL;
+    return urlOverride;
 }

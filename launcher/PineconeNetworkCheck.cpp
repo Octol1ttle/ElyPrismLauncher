@@ -73,13 +73,6 @@ bool PineconeNetworkCheck::handleUrlOverride(const QString& overrideName, const 
     const QString newOverride = urlMap.value(m_result);
 
     auto* settings = APPLICATION->settings();
-    const auto currentOverride = settings->get(overrideName).toString();
-    if (currentOverride == newOverride) {
-        return false;
-    }
-    if (!currentOverride.isEmpty() && !urlMap.values().contains(currentOverride)) {
-        return false;
-    }
 
     settings->set(overrideName, newOverride);
     qInfo() << "[PineconeNetworkCheck] Updated setting" << overrideName << "to" << newOverride;
@@ -89,11 +82,11 @@ bool PineconeNetworkCheck::handleUrlOverride(const QString& overrideName, const 
 void PineconeNetworkCheck::finished()
 {
     const QMap<Result, QString> metaUrls = {
-        { Result::UsePrimary, "" },
+        { Result::UsePrimary, "https://meta.pineconemc.ru/v1/" },
         { Result::UseNewFallback, "https://pineconemc.github.io/meta/v1/" },
         { Result::UseOldFallback, "https://elyprismlauncher.github.io/meta/v1/" },
     };
-    if (handleUrlOverride("MetaURLOverride", metaUrls)) {
+    if (handleUrlOverride("PineconeMetaURLOverride", metaUrls)) {
         if (!APPLICATION->metacache()->softEvict()) {
             qWarning() << "Could not evict metacache during automatic meta switch";
         }
@@ -101,11 +94,11 @@ void PineconeNetworkCheck::finished()
     }
 
     const QMap<Result, QString> fmlLibsUrls = {
-        { Result::UsePrimary, "" },
+        { Result::UsePrimary, "https://files.pineconemc.ru/fmllibs/" },
         { Result::UseNewFallback, "https://pineconemc.github.io/files/fmllibs/" },
         { Result::UseOldFallback, "https://elyprismlauncher.github.io/files/fmllibs/" },
     };
-    std::ignore = handleUrlOverride("LegacyFMLLibsURLOverride", fmlLibsUrls);
+    std::ignore = handleUrlOverride("PineconeLegacyFMLLibsURLOverride", fmlLibsUrls);
 
     const QMap<Result, QString> newsUrls = {
         { Result::UsePrimary, "" },

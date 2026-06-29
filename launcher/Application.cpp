@@ -876,12 +876,14 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 
             // Meta URL
             resetIfInvalid(m_settings->registerSetting("MetaURLOverride", "").get());
+            m_settings->registerSetting("PineconeMetaURLOverride", BuildConfig.META_URL).get();
 
             // Resource URL
             resetIfInvalid(m_settings->registerSetting({ "ResourceURLOverride", "ResourceURL" }, "").get());
 
             // Legacy FML libs URL
             resetIfInvalid(m_settings->registerSetting("LegacyFMLLibsURLOverride", "").get());
+            m_settings->registerSetting("PineconeLegacyFMLLibsURLOverride", BuildConfig.LEGACY_FMLLIBS_BASE_URL).get();
         }
 
         m_settings->registerSetting("MetaRefreshOnLaunch", true);

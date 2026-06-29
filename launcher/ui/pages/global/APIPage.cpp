@@ -69,6 +69,8 @@ APIPage::APIPage(QWidget* parent) : QWidget(parent), ui(new Ui::APIPage)
         ui->pasteTypeComboBox->addItem(PasteUpload::PasteTypes.at(pasteType).name, pasteType);
     }
 
+    auto* settings = APPLICATION->settings();
+
     void (QComboBox::*currentIndexChangedSignal)(int)(&QComboBox::currentIndexChanged);
     connect(ui->pasteTypeComboBox, currentIndexChangedSignal, this, &APIPage::updateBaseURLPlaceholder);
     // This function needs to be called even when the ComboBox's index is still in its default state.
@@ -80,9 +82,9 @@ APIPage::APIPage(QWidget* parent) : QWidget(parent), ui(new Ui::APIPage)
     ui->legacyFMLLibsURL->setValidator(new QRegularExpressionValidator(s_validUrlRegExp, ui->legacyFMLLibsURL));
     ui->msaClientID->setValidator(new QRegularExpressionValidator(s_validMSAClientID, ui->msaClientID));
 
-    ui->metaURL->setPlaceholderText(BuildConfig.META_URL);
+    ui->metaURL->setPlaceholderText(settings->get("PineconeMetaURLOverride").toString());
     ui->resourceURL->setPlaceholderText(BuildConfig.DEFAULT_RESOURCE_BASE);
-    ui->legacyFMLLibsURL->setPlaceholderText(BuildConfig.LEGACY_FMLLIBS_BASE_URL);
+    ui->legacyFMLLibsURL->setPlaceholderText(settings->get("PineconeLegacyFMLLibsURLOverride").toString());
     ui->userAgentLineEdit->setPlaceholderText(BuildConfig.USER_AGENT);
 
     loadSettings();

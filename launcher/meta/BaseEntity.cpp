@@ -77,7 +77,7 @@ QUrl BaseEntity::url() const
     auto s = APPLICATION->settings();
     QString metaOverride = s->get("MetaURLOverride").toString();
     if (metaOverride.isEmpty()) {
-        return QUrl(BuildConfig.META_URL).resolved(localFilename());
+        metaOverride = s->get("PineconeMetaURLOverride").toString();
     }
     return QUrl(metaOverride).resolved(localFilename());
 }

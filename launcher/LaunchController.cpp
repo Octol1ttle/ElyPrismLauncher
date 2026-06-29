@@ -400,7 +400,7 @@ void LaunchController::launchInstance()
 
         const auto s = APPLICATION->settings();
         const QString metaOverride = s->get("MetaURLOverride").toString();
-        const QUrl metaUrl = !metaOverride.isEmpty() ? QUrl(metaOverride) : QUrl(BuildConfig.META_URL);
+        const QUrl metaUrl = !metaOverride.isEmpty() ? QUrl(metaOverride) : QUrl(s->get("PineconeMetaURLOverride").toString());
         servers.prepend(metaUrl.host(QUrl::FullyEncoded));
 
         m_launcher->prependStep(makeShared<PrintServers>(m_launcher, servers));
