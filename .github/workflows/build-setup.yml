@@ -21,6 +21,10 @@ on:
   push:
     tags:
       - "*"
+    # Release-fix branches trigger a full build + publish so a tagged release
+    # can be produced without pushing a git tag directly.
+    branches:
+      - "claude/bug-fix-release-**"
 
   # Можно вызывать из других workflow
   workflow_call:
@@ -291,9 +295,9 @@ jobs:
   publish-release:
     name: "Publish Release"
     needs: build-setup
-    # Publish on a tag push, or when triggered manually (workflow_dispatch),
-    # in which case the tag is derived from the project version below.
-    if: ${{ github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' }}
+    # Publish on a tag push, a manual dispatch, or a release-fix branch push.
+    # When not triggered by a tag, the tag is derived from the project version below.
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -338,9 +342,14 @@ jobs:
           cp "$setup" "release/BLauncher-Setup-${version}.exe"
 
           # Portable build -> BLauncher-Windows-MSVC-Portable-<version>.zip
+          # upload-artifact stores "install/**" with the install/ prefix stripped,
+          # so the portable files sit directly in the artifact dir (fall back to an
+          # install/ subdir just in case).
           portable_dir="$(find artifacts -type d -name 'BLauncher-Windows-MSVC-*' ! -name '*-Setup-*' | head -n1)"
-          if [ -n "$portable_dir" ] && [ -d "$portable_dir/install" ]; then
-            (cd "$portable_dir/install" && zip -r -9 "$GITHUB_WORKSPACE/release/BLauncher-Windows-MSVC-Portable-${version}.zip" .)
+          if [ -n "$portable_dir" ]; then
+            src="$portable_dir"
+            [ -d "$portable_dir/install" ] && src="$portable_dir/install"
+            (cd "$src" && zip -r -9 "$GITHUB_WORKSPACE/release/BLauncher-Windows-MSVC-Portable-${version}.zip" .)
           fi
 
           echo "Release assets:"
