@@ -314,6 +314,7 @@
         <file>scalable/instances/prismlauncher.svg</file>
         <file>scalable/instances/fox_legacy.svg</file>
         <file>scalable/instances/bee_legacy.svg</file>
+        <file>scalable/instances/pineconemc.svg</file>
 
         <!-- delete, tag, rename, shortcut, about, new, checkupdate and server LGPL3, Oxygen icons.-->
         <file>scalable/delete.svg</file>
@@ -326,7 +327,7 @@
         <file>scalable/appearance.svg</file>
         <file>scalable/about.svg</file>
         <file>scalable/new.svg</file>
-        <file>scalable/checkupdate.svg</file>  
+        <file>scalable/checkupdate.svg</file>
 
         <file>scalable/instances/quiltmc.svg</file>  <!-- CC0 QuiltMC -->
         <file>scalable/instances/fabricmc.svg</file>  <!-- CC0 unascribed, https://github.com/FabricMC/community/blob/main/media/unascribed/README.md -->
