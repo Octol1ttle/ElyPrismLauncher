@@ -167,13 +167,19 @@ void JavaSettingsWidget::loadSettings()
     m_ui->userArgsTextBox->setPlainText(settings->get("JvmArgs").toString());
 
     m_ui->optimizedArgsCheckBox->setChecked(settings->get("UseOptimizedJvmArgs").toBool());
-    auto preset = settings->get("GarbageCollectorPreset").toString();
-    if (preset == "G1GC") {
-        m_ui->g1gcPresetRadioButton->toggle();
-    } else if (preset == "ZGC") {
-        m_ui->zgcPresetRadioButton->toggle();
-    } else {
-        m_ui->noPresetRadioButton->toggle();
+    switch (const auto presetString = settings->get("GarbageCollectorPreset").toString(); JavaPerformance::presetFromString(presetString)) {
+        case JavaPerformance::GarbageCollectorPreset::None:
+            m_ui->noPresetRadioButton->toggle();
+            break;
+        case JavaPerformance::GarbageCollectorPreset::G1GC:
+            m_ui->g1gcPresetRadioButton->toggle();
+            break;
+        case JavaPerformance::GarbageCollectorPreset::Shenandoah:
+            m_ui->shenandoahPresetRadioButton->toggle();
+            break;
+        case JavaPerformance::GarbageCollectorPreset::ZGC:
+            m_ui->zgcPresetRadioButton->toggle();
+            break;
     }
 }
 
@@ -242,13 +248,7 @@ void JavaSettingsWidget::saveSettings()
     if (javaArgs) {
         settings->set("JvmArgs", m_ui->userArgsTextBox->toPlainText().replace("\n", " "));
         settings->set("UseOptimizedJvmArgs", m_ui->optimizedArgsCheckBox->isChecked());
-        QString preset = "None";
-        if (m_ui->g1gcPresetRadioButton->isChecked()) {
-            preset = "G1GC";
-        } else if (m_ui->zgcPresetRadioButton->isChecked()) {
-            preset = "ZGC";
-        }
-        settings->set("GarbageCollectorPreset", preset);
+        settings->set("GarbageCollectorPreset", JavaPerformance::presetToString(selectedPreset()));
     } else {
         settings->reset("JvmArgs");
         settings->reset("UseOptimizedJvmArgs");
@@ -355,16 +355,9 @@ void JavaSettingsWidget::updateLauncherArgs()
             return;
         }
 
-        auto preset = JavaPerformance::GarbageCollectorPreset::None;
-        if (m_ui->g1gcPresetRadioButton->isChecked()) {
-            preset = JavaPerformance::GarbageCollectorPreset::G1GC;
-        } else if (m_ui->zgcPresetRadioButton->isChecked()) {
-            preset = JavaPerformance::GarbageCollectorPreset::ZGC;
-        }
-
         QString warning;
         m_ui->launcherArgsTextBox->setText(
-            JavaPerformance::getCompletePerformanceArgs(result.javaVersion, m_ui->optimizedArgsCheckBox->isChecked(), preset, &warning)
+            JavaPerformance::getCompletePerformanceArgs(result.javaVersion, m_ui->optimizedArgsCheckBox->isChecked(), selectedPreset(), &warning)
                 .join(" "));
         if (!warning.isEmpty()) {
             m_ui->argsNoticeLabel->setText(warningColour.arg(warning));
@@ -374,4 +367,19 @@ void JavaSettingsWidget::updateLauncherArgs()
         }
     });
     m_versionChecker->start();
+}
+
+JavaPerformance::GarbageCollectorPreset JavaSettingsWidget::selectedPreset() const
+{
+    if (m_ui->g1gcPresetRadioButton->isChecked()) {
+        return JavaPerformance::GarbageCollectorPreset::G1GC;
+    }
+    if (m_ui->shenandoahPresetRadioButton->isChecked()) {
+        return JavaPerformance::GarbageCollectorPreset::Shenandoah;
+    }
+    if (m_ui->zgcPresetRadioButton->isChecked()) {
+        return JavaPerformance::GarbageCollectorPreset::ZGC;
+    }
+
+    return JavaPerformance::GarbageCollectorPreset::None;
 }

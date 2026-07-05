@@ -635,14 +635,8 @@ QStringList MinecraftInstance::javaArguments()
         }
     }
 
-    const auto presetString = m_settings->get("GarbageCollectorPreset");
-    auto preset = JavaPerformance::GarbageCollectorPreset::None;
-    if (presetString == "G1GC") {
-        preset = JavaPerformance::GarbageCollectorPreset::G1GC;
-    }
-    if (presetString == "ZGC") {
-        preset = JavaPerformance::GarbageCollectorPreset::ZGC;
-    }
+    const auto presetString = m_settings->get("GarbageCollectorPreset").toString();
+    const auto preset = JavaPerformance::presetFromString(presetString);
     args.append(JavaPerformance::getCompletePerformanceArgs(javaVersion, m_settings->get("UseOptimizedJvmArgs").toBool(), preset));
 
     if (javaVersion.isModular() && shouldApplyOnlineFixes())

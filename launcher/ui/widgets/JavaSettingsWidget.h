@@ -39,6 +39,7 @@
 #include <QWidget>
 #include "BaseInstance.h"
 #include "JavaCommon.h"
+#include "java/JavaPerformance.h"
 
 namespace Ui {
 class JavaSettingsWidget;
@@ -61,6 +62,9 @@ class JavaSettingsWidget : public QWidget {
     void onJavaTest();
     void updateThresholds();
     void updateLauncherArgs();
+
+   private:
+    JavaPerformance::GarbageCollectorPreset selectedPreset() const;
 
    private:
     BaseInstance* m_instance;

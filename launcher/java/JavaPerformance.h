@@ -26,8 +26,44 @@ namespace JavaPerformance {
     enum class GarbageCollectorPreset : std::uint8_t {
         None,
         G1GC,
+        Shenandoah,
         ZGC
     };
+
+    inline QString presetToString(const GarbageCollectorPreset preset)
+    {
+        switch (preset) {
+            case GarbageCollectorPreset::None:
+                return QStringLiteral("None");
+            case GarbageCollectorPreset::G1GC:
+                return QStringLiteral("G1GC");
+            case GarbageCollectorPreset::Shenandoah:
+                return QStringLiteral("Shenandoah");
+            case GarbageCollectorPreset::ZGC:
+                return QStringLiteral("ZGC");
+        }
+
+        Q_ASSERT_X(false, "JavaPerformance::presetToString", "No preset->string mapping found");
+        return {};
+    }
+
+    inline GarbageCollectorPreset presetFromString(const QString& presetString)
+    {
+        if (presetString == "G1GC") {
+            return GarbageCollectorPreset::G1GC;
+        }
+        if (presetString == "Shenandoah") {
+            return GarbageCollectorPreset::Shenandoah;
+        }
+        if (presetString == "ZGC") {
+            return GarbageCollectorPreset::ZGC;
+        }
+
+        if (presetString != "None") {
+            qWarning() << "Unknown garbage collection preset:" << presetString;
+        }
+        return GarbageCollectorPreset::None;
+    }
 
     QStringList getBaseOptimizationArgs(const JavaVersion& version, GarbageCollectorPreset preset);
     QStringList getGarbageCollectorArgs(const JavaVersion& version, GarbageCollectorPreset preset);

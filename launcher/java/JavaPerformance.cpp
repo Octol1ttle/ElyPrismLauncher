@@ -18,7 +18,6 @@
 
 #include "JavaPerformance.h"
 
-#include <QDebug>
 #include <QObject>
 
 QStringList JavaPerformance::getBaseOptimizationArgs(const JavaVersion& version, const GarbageCollectorPreset preset)
@@ -37,7 +36,7 @@ QStringList JavaPerformance::getBaseOptimizationArgs(const JavaVersion& version,
     // Mojang default
     // Since Java 8 for G1GC
     // Since Java 18 for ZGC
-    if ((version.major() >= 8 && preset == GarbageCollectorPreset::G1GC) || version.major() >= 18) {
+    if ((version.major() >= 8 && preset != GarbageCollectorPreset::ZGC) || version.major() >= 18) {
         args << "-XX:+UseStringDeduplication";
     }
 
@@ -70,8 +69,20 @@ QStringList JavaPerformance::getGarbageCollectorArgs(const JavaVersion& version,
             QStringList args{ "-XX:+UnlockExperimentalVMOptions", "-XX:+UseG1GC",
                               "-XX:G1NewSizePercent=20", "-XX:G1ReservePercent=20",
                               "-XX:MaxGCPauseMillis=50", "-XX:G1HeapRegionSize=32M",
-                              // Aikar's flags
+                              // From Aikar's flags
                               "-XX:SurvivorRatio=32", "-XX:MaxTenuringThreshold=1" };
+            return args;
+        }
+        case GarbageCollectorPreset::Shenandoah: {
+            QStringList args{ "-XX:+UseShenandoahGC" };
+            if (version.major() >= 24) {
+                // https://bugs.openjdk.org/browse/JDK-8337511
+                // https://openjdk.org/jeps/521
+                if (version.major() == 24) {
+                    args << "-XX:+UnlockExperimentalVMOptions";
+                }
+                args << "-XX:ShenandoahGCMode=generational";
+            }
             return args;
         }
         case GarbageCollectorPreset::ZGC: {
@@ -92,21 +103,30 @@ QStringList JavaPerformance::getGarbageCollectorArgs(const JavaVersion& version,
     return {};
 }
 
-QStringList JavaPerformance::getCompletePerformanceArgs(const JavaVersion& version,
-                                                        const bool useOptimized,
-                                                        GarbageCollectorPreset preset,
+QStringList JavaPerformance::getCompletePerformanceArgs(const JavaVersion& version, const bool useOptimized, GarbageCollectorPreset preset,
                                                         QString* warning)
 {
-    // ZGC was declared as production ready in Java 15, but did not receive support for macOS/aarch64 until Java 17
-    if (preset == GarbageCollectorPreset::ZGC && version.major() < 17) {
-        preset = GarbageCollectorPreset::G1GC;
+    GarbageCollectorPreset maximumSupported;
+    if (version.major() >= 17) {
+        maximumSupported = GarbageCollectorPreset::ZGC;
+    } else if (version.major() >= 11) {
+        maximumSupported = GarbageCollectorPreset::Shenandoah;
+    } else {
+        maximumSupported = GarbageCollectorPreset::G1GC;
+    }
+
+    if (preset > maximumSupported) {
+        preset = maximumSupported;
         if (warning) {
-            *warning = QObject::tr("ZGC requires Java 17 or higher, using G1GC");
+            *warning = QObject::tr("%1 may be used instead because the Java version is too old").arg(presetToString(maximumSupported));
         }
     }
 
     if (!useOptimized) {
         return getGarbageCollectorArgs(version, preset);
     }
-    return getBaseOptimizationArgs(version, preset) + getGarbageCollectorArgs(version, preset);
+
+    auto allArgs = getBaseOptimizationArgs(version, preset) + getGarbageCollectorArgs(version, preset);
+    allArgs.removeDuplicates();
+    return allArgs;
 }
