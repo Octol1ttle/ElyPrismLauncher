@@ -3,7 +3,11 @@ name: Build Application and Make Release
 on:
   push:
     tags:
-      - "*"
+      # Upstream ElyPrismLauncher multi-platform release. Scoped to "v*" tags so
+      # plain numeric tags (e.g. 1.0.1) are handled solely by build-setup.yml,
+      # which publishes the BLauncher retro installer. This avoids two workflows
+      # racing to create a GitHub Release for the same tag.
+      - "v*"
 
 jobs:
   build_release:

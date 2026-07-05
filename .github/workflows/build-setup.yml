@@ -64,7 +64,11 @@ jobs:
     env:
       ARTIFACT_NAME: ${{ matrix.artifact-suffix }}-Qt6
       BUILD_PLATFORM: official
-      BUILD_TYPE: ${{ inputs.build-type || 'Release' }}
+      # Tag pushes are always released, so they MUST be Release builds.
+      # A Debug build links against the debug CRT (MSVCP140_1D.dll, VCRUNTIME140D.dll,
+      # ucrtbased.dll) which Microsoft does not redistribute, so it fails to start on
+      # any machine without Visual Studio installed.
+      BUILD_TYPE: ${{ (github.ref_type == 'tag' && 'Release') || inputs.build-type || 'Release' }}
       CMAKE_PRESET: ${{ matrix.cmake-preset }}
 
       # NScurl plugin для скачивания VC++ Redist в оффлайн-режиме
@@ -280,3 +284,61 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "> Setup.exe uses classic NSIS interface without Modern UI," >> $GITHUB_STEP_SUMMARY
           echo "> providing that authentic Windows 95/98 installation experience! 🕹️" >> $GITHUB_STEP_SUMMARY
+
+  # ================================================================
+  # Публикация GitHub Release при пуше тега
+  # ================================================================
+  publish-release:
+    name: "Publish Release"
+    needs: build-setup
+    if: ${{ github.ref_type == 'tag' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: "🏷️ Resolve version"
+        id: version
+        run: echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: "📥 Download build artifacts"
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+
+      - name: "📦 Prepare release assets"
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          mkdir -p release
+
+          # Installer (Setup.exe) -> BLauncher-Setup-<version>.exe
+          setup="$(find artifacts -name 'BLauncher-Setup.exe' | head -n1)"
+          if [ -z "$setup" ]; then
+            echo "::error::BLauncher-Setup.exe not found in artifacts"
+            exit 1
+          fi
+          cp "$setup" "release/BLauncher-Setup-${version}.exe"
+
+          # Portable build -> BLauncher-Windows-MSVC-Portable-<version>.zip
+          portable_dir="$(find artifacts -type d -name 'BLauncher-Windows-MSVC-*' ! -name '*-Setup-*' | head -n1)"
+          if [ -n "$portable_dir" ] && [ -d "$portable_dir/install" ]; then
+            (cd "$portable_dir/install" && zip -r -9 "$GITHUB_WORKSPACE/release/BLauncher-Windows-MSVC-Portable-${version}.zip" .)
+          fi
+
+          echo "Release assets:"
+          ls -la release
+
+      - name: "🚀 Create GitHub Release"
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ github.ref_name }}
+          name: BLauncher ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+          files: |
+            release/BLauncher-Setup-${{ steps.version.outputs.version }}.exe
+            release/BLauncher-Windows-MSVC-Portable-${{ steps.version.outputs.version }}.zip
