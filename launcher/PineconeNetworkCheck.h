@@ -30,6 +30,11 @@ class PineconeNetworkCheck : public QObject {
     explicit PineconeNetworkCheck(QNetworkAccessManager* network);
     ~PineconeNetworkCheck() override = default;
 
+    static QMap<Result, QString> metaUrls();
+    static QMap<Result, QString> fmlLibsUrls();
+    static QMap<Result, QString> newsUrls();
+    static QMap<Result, QString> translationsUrls();
+
    signals:
     void shouldReloadNews(QString newUrl);
 

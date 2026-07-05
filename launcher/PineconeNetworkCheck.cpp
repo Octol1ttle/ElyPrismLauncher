@@ -18,8 +18,6 @@
 
 #include "PineconeNetworkCheck.h"
 
-#include <QNetworkReply>
-
 #include "Application.h"
 #include "net/HttpMetaCache.h"
 #include "settings/SettingsObject.h"
@@ -36,6 +34,42 @@ PineconeNetworkCheck::PineconeNetworkCheck(QNetworkAccessManager* network)
     for (auto& [url, result] : s_urlToResult) {
         launchRequest(url, result);
     }
+}
+
+QMap<PineconeNetworkCheck::Result, QString> PineconeNetworkCheck::metaUrls()
+{
+    return {
+        { Result::UsePrimary, "" },
+        { Result::UseNewFallback, "https://pineconemc.github.io/meta/v1/" },
+        { Result::UseOldFallback, "https://elyprismlauncher.github.io/meta/v1/" },
+    };
+}
+
+QMap<PineconeNetworkCheck::Result, QString> PineconeNetworkCheck::fmlLibsUrls()
+{
+    return {
+        { Result::UsePrimary, "" },
+        { Result::UseNewFallback, "https://pineconemc.github.io/files/fmllibs/" },
+        { Result::UseOldFallback, "https://elyprismlauncher.github.io/files/fmllibs/" },
+    };
+}
+
+QMap<PineconeNetworkCheck::Result, QString> PineconeNetworkCheck::newsUrls()
+{
+    return {
+        { Result::UsePrimary, "" },
+        { Result::UseNewFallback, "https://pineconemc.github.io/feed/feed.xml" },
+        { Result::UseOldFallback, "https://elyprismlauncher.github.io/feed/feed.xml" },
+    };
+}
+
+QMap<PineconeNetworkCheck::Result, QString> PineconeNetworkCheck::translationsUrls()
+{
+    return {
+        { Result::UsePrimary, "" },
+        { Result::UseNewFallback, "https://pineconemc.github.io/i18n" },
+        { Result::UseOldFallback, "https://elyprismlauncher.github.io/i18n" },
+    };
 }
 
 void PineconeNetworkCheck::launchRequest(const QUrl& url, Result ifSuccess)
@@ -88,31 +122,21 @@ bool PineconeNetworkCheck::handleUrlOverride(const QString& overrideName, const 
 
 void PineconeNetworkCheck::finished()
 {
-    const QMap<Result, QString> metaUrls = {
-        { Result::UsePrimary, "" },
-        { Result::UseNewFallback, "https://pineconemc.github.io/meta/v1/" },
-        { Result::UseOldFallback, "https://elyprismlauncher.github.io/meta/v1/" },
-    };
-    if (handleUrlOverride("MetaURLOverride", metaUrls)) {
+    if (APPLICATION->settings()->get("PineconeAutoServers").toBool()) {
+        qInfo() << "[PineconeNetworkCheck] Automatic server switching is disabled";
+        return;
+    }
+
+    if (handleUrlOverride("MetaURLOverride", metaUrls())) {
         if (!APPLICATION->metacache()->softEvict()) {
-            qWarning() << "Could not evict metacache during automatic meta switch";
+            qWarning() << "[PineconeNetworkCheck] Could not evict metacache during automatic meta switch";
         }
         APPLICATION->metacache()->SaveNow();
     }
 
-    const QMap<Result, QString> fmlLibsUrls = {
-        { Result::UsePrimary, "" },
-        { Result::UseNewFallback, "https://pineconemc.github.io/files/fmllibs/" },
-        { Result::UseOldFallback, "https://elyprismlauncher.github.io/files/fmllibs/" },
-    };
-    std::ignore = handleUrlOverride("LegacyFMLLibsURLOverride", fmlLibsUrls);
+    std::ignore = handleUrlOverride("LegacyFMLLibsURLOverride", fmlLibsUrls());
 
-    const QMap<Result, QString> newsUrls = {
-        { Result::UsePrimary, "" },
-        { Result::UseNewFallback, "https://pineconemc.github.io/feed/feed.xml" },
-        { Result::UseOldFallback, "https://elyprismlauncher.github.io/feed/feed.xml" },
-    };
-    if (newsUrls.contains(m_result)) {
+    if (const auto newsUrls = this->newsUrls(); newsUrls.contains(m_result)) {
         emit shouldReloadNews(newsUrls.value(m_result));
     }
 }

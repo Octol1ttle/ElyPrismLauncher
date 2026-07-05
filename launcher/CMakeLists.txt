@@ -146,8 +146,11 @@ set(NET_SOURCES
     net/ApiUpload.h
     net/NetRequest.cpp
     net/NetRequest.h
+
     PineconeNetworkCheck.cpp
     PineconeNetworkCheck.h
+    net/flame/FetchFlameAPIKey.cpp
+    net/flame/FetchFlameAPIKey.h
 )
 
 # Game launch logic

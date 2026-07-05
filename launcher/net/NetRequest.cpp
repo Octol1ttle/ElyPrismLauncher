@@ -108,9 +108,13 @@ void NetRequest::executeTask()
     auto user_agent = BuildConfig.USER_AGENT;
 #endif
 
-    request.setHeader(QNetworkRequest::UserAgentHeader, user_agent.toUtf8());
+
     for (auto& header_proxy : m_headerProxies) {
         header_proxy->writeHeaders(request);
+    }
+    // We don't want to share our user agent in case the official launcher key is used.
+    if (!request.headers().contains("x-api-key")) {
+        request.setHeader(QNetworkRequest::UserAgentHeader, user_agent.toUtf8());
     }
 
 #if defined(LAUNCHER_APPLICATION)

@@ -49,9 +49,12 @@
 
 #include "Application.h"
 #include "BuildConfig.h"
+#include "PineconeNetworkCheck.h"
 #include "net/PasteUpload.h"
+#include "net/flame/FetchFlameAPIKey.h"
 #include "settings/SettingsObject.h"
 #include "tools/BaseProfiler.h"
+#include "ui/dialogs/ProgressDialog.h"
 
 APIPage::APIPage(QWidget* parent) : QWidget(parent), ui(new Ui::APIPage)
 {
@@ -90,6 +93,39 @@ APIPage::APIPage(QWidget* parent) : QWidget(parent), ui(new Ui::APIPage)
     resetBaseURLNote();
     connect(ui->pasteTypeComboBox, currentIndexChangedSignal, this, &APIPage::updateBaseURLNote);
     connect(ui->baseURLEntry, &QLineEdit::textEdited, this, &APIPage::resetBaseURLNote);
+
+    onAutoServersChanged();
+    connect(ui->autoServersCheckBox, &QCheckBox::checkStateChanged, this, &APIPage::onAutoServersChanged);
+    connect(ui->setHostedServers, &QPushButton::clicked, this, [this] {
+        constexpr auto key = PineconeNetworkCheck::Result::UsePrimary;
+        ui->metaURL->setText(PineconeNetworkCheck::metaUrls().value(key));
+        ui->legacyFMLLibsURL->setText(PineconeNetworkCheck::fmlLibsUrls().value(key));
+    });
+    connect(ui->setGitHubNew, &QPushButton::clicked, this, [this] {
+        constexpr auto key = PineconeNetworkCheck::Result::UseNewFallback;
+        ui->metaURL->setText(PineconeNetworkCheck::metaUrls().value(key));
+        ui->legacyFMLLibsURL->setText(PineconeNetworkCheck::fmlLibsUrls().value(key));
+    });
+    connect(ui->setGitHubOld, &QPushButton::clicked, this, [this] {
+        constexpr auto key = PineconeNetworkCheck::Result::UseOldFallback;
+        ui->metaURL->setText(PineconeNetworkCheck::metaUrls().value(key));
+        ui->legacyFMLLibsURL->setText(PineconeNetworkCheck::fmlLibsUrls().value(key));
+    });
+
+    connect(ui->fetchFlameKey, &QPushButton::clicked, this, [this] {
+        FetchFlameAPIKey task{};
+        connect(&task, &Task::succeeded, this, [this, &task] {
+            ui->flameKey->setText(task.result());
+        });
+        connect(&task, &Task::failed, this, [this, &task] {
+            QMessageBox::critical(this, tr("Could not fetch API key"),
+                tr("Could not fetch CurseForge API key:\n%1").arg(task.failReason()));
+        });
+
+        ProgressDialog dialog{this};
+        dialog.setSkipButton(true, tr("Abort"));
+        dialog.execWithTask(&task);
+    });
 }
 
 APIPage::~APIPage()
@@ -117,6 +153,21 @@ void APIPage::updateBaseURLPlaceholder(int index)
     int pasteType = ui->pasteTypeComboBox->itemData(index).toInt();
     QString pasteDefaultURL = PasteUpload::PasteTypes.at(pasteType).defaultBase;
     ui->baseURLEntry->setPlaceholderText(pasteDefaultURL);
+}
+
+void APIPage::onAutoServersChanged() const
+{
+    const bool autoServers = ui->autoServersCheckBox->isChecked();
+    ui->setHostedServers->setEnabled(!autoServers);
+    ui->setGitHubNew->setEnabled(!autoServers);
+    ui->setGitHubOld->setEnabled(!autoServers);
+
+    ui->metaURL->setEnabled(!autoServers);
+    ui->legacyFMLLibsURL->setEnabled(!autoServers);
+    if (autoServers) {
+        ui->metaURL->clear();
+        ui->legacyFMLLibsURL->clear();
+    }
 }
 
 void APIPage::loadSettings()
@@ -156,6 +207,8 @@ void APIPage::loadSettings()
     QString customUserAgent = s->get("UserAgentOverride").toString();
     ui->userAgentLineEdit->setText(customUserAgent);
     ui->technicClientID->setText(s->get("TechnicClientID").toString());
+
+    ui->autoServersCheckBox->setChecked(s->get("PineconeAutoServers").toBool());
 }
 
 void APIPage::applySettings()
@@ -206,6 +259,8 @@ void APIPage::applySettings()
     s->set("ModrinthToken", modrinthToken);
     s->set("UserAgentOverride", ui->userAgentLineEdit->text());
     s->set("TechnicClientID", ui->technicClientID->text());
+
+    s->set("PineconeAutoServers", ui->autoServersCheckBox->isChecked());
 }
 
 bool APIPage::apply()

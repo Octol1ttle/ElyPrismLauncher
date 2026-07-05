@@ -884,6 +884,8 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
             resetIfInvalid(m_settings->registerSetting("LegacyFMLLibsURLOverride", "").get());
         }
 
+        m_settings->registerSetting("PineconeAutoServers", true);
+
         m_settings->registerSetting("CloseAfterLaunch", false);
         m_settings->registerSetting("QuitAfterGameStop", false);
 
