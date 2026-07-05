@@ -122,7 +122,7 @@ bool PineconeNetworkCheck::handleUrlOverride(const QString& overrideName, const 
 
 void PineconeNetworkCheck::finished()
 {
-    if (APPLICATION->settings()->get("PineconeAutoServers").toBool()) {
+    if (!APPLICATION->settings()->get("PineconeAutoServers").toBool()) {
         qInfo() << "[PineconeNetworkCheck] Automatic server switching is disabled";
         return;
     }

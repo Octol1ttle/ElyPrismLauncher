@@ -82,6 +82,7 @@ void FetchFlameAPIKey::downloadFinished()
     const auto& block = qUncompress(res);
     if (block.isEmpty()) {
         emitFailed("Couldn't decompress Curseforge app data.");
+        return;
     }
 
     const auto precedingString = "\"cfCoreApiKey\":\"";
@@ -89,12 +90,14 @@ void FetchFlameAPIKey::downloadFinished()
     const auto& precedingIndex = block.indexOf(preceding);
     if (precedingIndex == -1) {
         emitFailed(QString("Couldn't find string '%1'.").arg(precedingString));
+        return;
     }
 
     const auto& startIndex = precedingIndex + preceding.size();
     const auto& finalIndex = block.indexOf(QByteArray{ "\"" }, startIndex);
     if (finalIndex == -1) {
         emitFailed("Couldn't find closing \" for cfCoreApiKey value.");
+        return;
     }
 
     const auto& keyByteArray = block.mid(startIndex, finalIndex - startIndex);
