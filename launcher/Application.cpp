@@ -764,7 +764,7 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
         m_settings->registerSetting("UserAskedAboutAutomaticJavaDownload", false);
 
         // Legacy settings
-        m_settings->registerSetting("OnlineFixes", false);
+        m_settings->registerSetting("OnlineFixes", true);
 
         // Ely settings
         m_settings->registerSetting("ElyPatchPreference", 1);
