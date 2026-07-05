@@ -291,15 +291,32 @@ jobs:
   publish-release:
     name: "Publish Release"
     needs: build-setup
-    if: ${{ github.ref_type == 'tag' }}
+    # Publish on a tag push, or when triggered manually (workflow_dispatch),
+    # in which case the tag is derived from the project version below.
+    if: ${{ github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: "🏷️ Resolve version"
+      - name: "📦 Checkout source code"
+        uses: actions/checkout@v6
+
+      - name: "🏷️ Resolve version / tag"
         id: version
-        run: echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+        run: |
+          set -euo pipefail
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            version="${{ github.ref_name }}"
+          else
+            # Derive the tag from the launcher version in CMakeLists.txt
+            major="$(grep -oP 'Launcher_VERSION_MAJOR\s+\K[0-9]+' CMakeLists.txt | head -n1)"
+            minor="$(grep -oP 'Launcher_VERSION_MINOR\s+\K[0-9]+' CMakeLists.txt | head -n1)"
+            patch="$(grep -oP 'Launcher_VERSION_PATCH\s+\K[0-9]+' CMakeLists.txt | head -n1)"
+            version="${major}.${minor}.${patch}"
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Resolved release version/tag: ${version}"
 
       - name: "📥 Download build artifacts"
         uses: actions/download-artifact@v7
@@ -333,7 +350,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ steps.version.outputs.version }}
           name: BLauncher ${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
