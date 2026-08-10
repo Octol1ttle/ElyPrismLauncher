@@ -1261,9 +1261,7 @@ LaunchTask* MinecraftInstance::createLaunchTask(AuthSessionPtr session, Minecraf
     if (m_settings->get("QuitAfterGameStop").toBool()) {
         process->appendStep(makeShared<QuitAfterGameStop>(pptr));
     }
-    m_launchProcess = std::move(process);
-    emit launchTaskChanged(m_launchProcess.get());
-    return m_launchProcess.get();
+    return adoptLaunchTask(std::move(process));
 }
 
 JavaVersion MinecraftInstance::getJavaVersion()

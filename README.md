@@ -23,6 +23,17 @@ There are already quite a few forks out in the wild that add Ely.by support and/
 - Modern and secure login: PineconeMC uses OAuth2 to log you in. This means that your credentials are never transferred to the launcher. Instead, you log into your account on the official Ely.by page in the browser, and Ely.by gives the launcher a token to access your account with limited privileges.
 - Skins support on servers: All other forks rely exclusively on authlib-injector to patch Minecraft to support Ely.by. But authlib-injector can't provide skins on servers that don't have a special skins plugin installed. PineconeMC uses Ely.by's official Authlib patches, allowing you to see skins anywhere
 
+## Multiple launches of one instance
+
+PineconeMC can run multiple independent Minecraft processes from the same instance at the same time. The **Launch** action remains available while that instance is running.
+
+- Each launch has its own lifecycle and selectable console log.
+- The instance window can stop the currently selected launch session.
+- Play time is measured as wall-clock time while at least one Minecraft process is running, so parallel sessions do not multiply it.
+- Starting another process displays a warning because all sessions share the same game directory, configuration, saves, and log files. The warning can be disabled with **Don't show this warning again**.
+
+Running multiple processes against one game directory can cause conflicting writes or data loss. Use this feature only when the selected Minecraft versions and mods can safely share those files.
+
 ## Installation
 
 - All downloads and instructions for PineconeMC can be found on the [Releases](https://github.com/ElyPrismLauncher/Launcher/releases/latest) page.

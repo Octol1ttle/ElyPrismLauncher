@@ -48,14 +48,12 @@
 
 void LaunchTask::init()
 {
-    m_instance->setRunning(true);
+    m_instance->launchSessionStarted(this);
 }
 
 std::unique_ptr<LaunchTask> LaunchTask::create(MinecraftInstance* inst)
 {
-    auto task = std::unique_ptr<LaunchTask>(new LaunchTask(inst));
-    task->init();
-    return task;
+    return std::unique_ptr<LaunchTask>(new LaunchTask(inst));
 }
 
 LaunchTask::LaunchTask(MinecraftInstance* instance) : m_instance(instance) {}
@@ -72,7 +70,6 @@ void LaunchTask::prependStep(shared_qobject_ptr<LaunchStep> step)
 
 void LaunchTask::executeTask()
 {
-    m_instance->setCrashed(false);
     if (!m_steps.size()) {
         state = LaunchTask::Finished;
         emitSucceeded();
@@ -290,15 +287,23 @@ void LaunchTask::onLogLine(QString line, MessageLevel level)
 
 void LaunchTask::emitSucceeded()
 {
-    m_instance->setRunning(false);
+    state = LaunchTask::Finished;
+    m_instance->launchSessionFinished(this, false);
     Task::emitSucceeded();
 }
 
 void LaunchTask::emitFailed(QString reason)
 {
-    m_instance->setRunning(false);
-    m_instance->setCrashed(true);
+    state = LaunchTask::Failed;
+    m_instance->launchSessionFinished(this, true);
     Task::emitFailed(reason);
+}
+
+void LaunchTask::emitAborted()
+{
+    state = LaunchTask::Aborted;
+    m_instance->launchSessionFinished(this, false);
+    Task::emitAborted();
 }
 
 QString expandVariables(const QString& input, QProcessEnvironment dict)

@@ -46,6 +46,7 @@
 #include "ui/widgets/PageContainer.h"
 
 #include "InstancePageProvider.h"
+#include "ui/pages/instance/LogPage.h"
 
 #include "icons/IconList.h"
 
@@ -98,7 +99,7 @@ InstanceWindow::InstanceWindow(BaseInstance* instance, QWidget* parent) : QMainW
         m_killButton->setToolTip(tr("Kill the running instance"));
         m_killButton->setShortcut(QKeySequence(tr("Ctrl+K")));
         horizontalLayout->addWidget(m_killButton);
-        connect(m_killButton, &QPushButton::clicked, this, [this] { APPLICATION->kill(m_instance); });
+        connect(m_killButton, &QPushButton::clicked, this, [this] { APPLICATION->kill(m_instance, m_proc); });
 
         updateButtons();
 
@@ -123,10 +124,15 @@ InstanceWindow::InstanceWindow(BaseInstance* instance, QWidget* parent) : QMainW
 
     // set up instance and launch process recognition
     {
-        auto launchTask = m_instance->getLaunchTask();
-        instanceLaunchTaskChanged(launchTask);
-        connect(m_instance, &BaseInstance::launchTaskChanged, this, &InstanceWindow::instanceLaunchTaskChanged);
+        const auto launchTasks = m_instance->launchTasks();
+        if (!launchTasks.isEmpty())
+            m_proc = launchTasks.last();
+        connect(m_instance, &BaseInstance::launchTaskAdded, this, &InstanceWindow::instanceLaunchTaskAdded);
+        connect(m_instance, &BaseInstance::launchTaskRemoved, this, &InstanceWindow::instanceLaunchTaskRemoved);
         connect(m_instance, &BaseInstance::runningStatusChanged, this, &InstanceWindow::runningStateChanged);
+        auto* logPage = dynamic_cast<LogPage*>(m_container->getPage("console"));
+        if (logPage)
+            connect(logPage, &LogPage::selectedLaunchTaskChanged, this, &InstanceWindow::selectedLaunchTaskChanged);
     }
 
     // set up instance destruction detection
@@ -153,7 +159,7 @@ void InstanceWindow::on_instanceStatusChanged(BaseInstance::Status, BaseInstance
 void InstanceWindow::updateButtons()
 {
     m_launchButton->setEnabled(m_instance->canLaunch());
-    m_killButton->setEnabled(m_instance->isRunning());
+    m_killButton->setEnabled(m_proc && m_instance->isRunning());
 
     QMenu* launchMenu = m_launchButton->menu();
     if (launchMenu)
@@ -164,9 +170,30 @@ void InstanceWindow::updateButtons()
     m_launchButton->setMenu(launchMenu);
 }
 
-void InstanceWindow::instanceLaunchTaskChanged(LaunchTask* proc)
+void InstanceWindow::instanceLaunchTaskAdded(LaunchTask* proc)
 {
     m_proc = proc;
+    updateButtons();
+    selectPage("console");
+}
+
+void InstanceWindow::instanceLaunchTaskRemoved(quint64 sessionId)
+{
+    if (m_proc && m_proc->sessionId() == sessionId) {
+        const auto tasks = m_instance->launchTasks();
+        m_proc = nullptr;
+        for (auto* task : tasks) {
+            if (task->sessionId() != sessionId)
+                m_proc = task;
+        }
+    }
+    updateButtons();
+}
+
+void InstanceWindow::selectedLaunchTaskChanged(LaunchTask* proc)
+{
+    m_proc = proc;
+    updateButtons();
 }
 
 void InstanceWindow::runningStateChanged(bool running)
@@ -174,7 +201,7 @@ void InstanceWindow::runningStateChanged(bool running)
     updateButtons();
     m_container->refreshContainer();
     if (running) {
-        selectPage("log");
+        selectPage("console");
     }
 }
 
