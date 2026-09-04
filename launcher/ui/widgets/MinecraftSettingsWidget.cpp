@@ -321,18 +321,18 @@ void MinecraftSettingsWidget::saveSettings()
         settings = APPLICATION->settings();
 
     // Ely.by patch
-        bool ely = m_instance == nullptr || m_ui->elyGroupBox->isChecked();
+    bool ely = m_instance == nullptr || m_ui->elyGroupBox->isChecked();
 
-        if (m_instance != nullptr)
-            settings->set("OverrideElySettings", ely);
+    if (m_instance != nullptr)
+        settings->set("OverrideElySettings", ely);
 
-        if (ely) {
-            settings->set("ElyPatchPreference", m_ui->applyElyPatch->currentIndex());
-        } else {
-            settings->reset("ElyPatchPreference");
-        }
+    if (ely) {
+        settings->set("ElyPatchPreference", m_ui->applyElyPatch->currentIndex());
+    } else {
+        settings->reset("ElyPatchPreference");
+    }
 
-        // Console
+    // Console
     bool console = m_instance == nullptr || m_ui->consoleSettingsBox->isChecked();
 
     if (m_instance != nullptr)
